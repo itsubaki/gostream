@@ -24,6 +24,8 @@ The Stream Processing API for Go
     + [x] Having
     + [ ] GroupBy
  - [ ] Builder
+    + [ ] Event
+    + [ ] Window
 
 ## Install
 

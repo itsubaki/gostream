@@ -7,8 +7,8 @@ func TestBuilder(t *testing.T) {
 		Window("LengthWindow(16, 64)").
 		Selector("IntEvent").
 		Selector("LargerThanInt{Value,97}").
-		Function("Average{Value}").
-		View("Sort{Value}").
+		Function("AverageInt{Value}").
+		View("SortInt{Value}").
 		Build()
 	defer w.Close()
 }

@@ -1,7 +1,7 @@
 package gocep
 
 type Builder struct {
-	window   []string
+	window   string
 	selector []string
 	function []string
 	view     []string
@@ -12,7 +12,7 @@ func NewBuilder() *Builder {
 }
 
 func (b *Builder) Window(window string) *Builder {
-	b.window = append(b.window, window)
+	b.window = window
 	return b
 }
 
@@ -33,4 +33,15 @@ func (b *Builder) View(view string) *Builder {
 
 func (b *Builder) Build() Window {
 	return NewLengthWindow(16, 64)
+}
+
+type EventBuilder struct {
+}
+
+func NewEventBuilder() *EventBuilder {
+	return &EventBuilder{}
+}
+
+func (b *EventBuilder) Build() interface{} {
+	return nil
 }
