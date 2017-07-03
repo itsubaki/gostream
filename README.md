@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/itsubaki/gocep.svg?branch=master)](https://travis-ci.org/itsubaki/gocep)
 
-The CEP(Complex Event Processing) API for Go
+The Stream Processing API for Go
 
 ## TODO
 
