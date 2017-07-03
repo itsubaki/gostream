@@ -23,6 +23,7 @@ The Stream Processing API for Go
     + [x] First, Last
     + [x] Having
     + [ ] GroupBy
+ - [ ] Builder
 
 ## Install
 
