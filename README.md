@@ -7,8 +7,10 @@ The CEP(Complex Event Processing) API for Go
 ## TODO
 
  - [x] Window
-    + [x] LengthWindow, LengthBatchWindow
-    + [x] TimeWindow, TimeBatchWindow
+    + [x] LengthWindow
+    + [x] LengthBatchWindow
+    + [x] TimeWindow
+    + [x] TimeBatchWindow
  - [x] Selector
     + [x] EqualsType, NotEqualsType
     + [x] Equals, NotEquals
