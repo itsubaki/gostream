@@ -45,7 +45,7 @@ type IntEvent struct {
 ```
 
 ```go
-// select avg(Value) from TestEvent.time(10msec) where Value > 97
+// select avg(Value) from IntEvent.time(10msec) where Value > 97
 // 1024 is capacity of input/output queue
 w := NewTimeWindow(10 * time.Millisecond, 1024)
 defer w.Close()
