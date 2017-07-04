@@ -51,7 +51,7 @@ func (f EqualsInt) Select(e Event) bool {
 
 type EqualsFloat struct {
 	Name  string
-	Value float64
+	Value float32
 }
 
 func (f EqualsFloat) Select(e Event) bool {
@@ -87,7 +87,7 @@ func (f NotEqualsInt) Select(e Event) bool {
 
 type NotEqualsFloat struct {
 	Name  string
-	Value float64
+	Value float32
 }
 
 func (f NotEqualsFloat) Select(e Event) bool {
@@ -105,7 +105,7 @@ func (f LargerThanInt) Select(e Event) bool {
 
 type LargerThanFloat struct {
 	Name  string
-	Value float64
+	Value float32
 }
 
 func (f LargerThanFloat) Select(e Event) bool {
@@ -123,7 +123,7 @@ func (f LessThanInt) Select(e Event) bool {
 
 type LessThanFloat struct {
 	Name  string
-	Value float64
+	Value float32
 }
 
 func (f LessThanFloat) Select(e Event) bool {

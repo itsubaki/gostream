@@ -47,8 +47,8 @@ func (e Event) IntValue(name string) int {
 	return e.Value(name).Interface().(int)
 }
 
-func (e Event) FloatValue(name string) float64 {
-	return e.Value(name).Interface().(float64)
+func (e Event) FloatValue(name string) float32 {
+	return e.Value(name).Interface().(float32)
 }
 
 func (e Event) MapValue(name, key string) reflect.Value {

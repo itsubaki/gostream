@@ -156,7 +156,7 @@ func TestSortFloat(t *testing.T) {
 
 	var test = []struct {
 		index int
-		value float64
+		value float32
 	}{
 		{0, 10.0},
 		{1, 20.0},
@@ -187,7 +187,7 @@ func TestSortFloatReverse(t *testing.T) {
 
 	var test = []struct {
 		index int
-		value float64
+		value float32
 	}{
 		{0, 60.0},
 		{1, 50.0},
@@ -231,7 +231,7 @@ func TestHavingLargerThanFloat(t *testing.T) {
 	v := HavingLargerThanFloat{"sum(Value)", 19.9}
 
 	var test = []struct {
-		value  float64
+		value  float32
 		length int
 	}{
 		{10.0, 0},
@@ -275,7 +275,7 @@ func TestHavingLessThanFloat(t *testing.T) {
 	v := HavingLessThanFloat{"sum(Value)", 20.0}
 
 	var test = []struct {
-		value  float64
+		value  float32
 		length int
 	}{
 		{10.0, 1},

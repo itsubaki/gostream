@@ -57,7 +57,7 @@ func TestSumFloat(t *testing.T) {
 
 	var test = []struct {
 		index int
-		sum   float64
+		sum   float32
 	}{
 		{0, 30.0},
 		{1, 30.0},
@@ -80,7 +80,7 @@ func TestAverageInt(t *testing.T) {
 
 	var test = []struct {
 		index int
-		avg   float64
+		avg   float32
 	}{
 		{0, 15.0},
 		{1, 15.0},
@@ -103,7 +103,7 @@ func TestAverageFloat(t *testing.T) {
 
 	var test = []struct {
 		index int
-		avg   float64
+		avg   float32
 	}{
 		{0, 15.0},
 		{1, 15.0},
@@ -149,7 +149,7 @@ func TestMaxFloat(t *testing.T) {
 
 	var test = []struct {
 		index int
-		max   float64
+		max   float32
 	}{
 		{0, 20.0},
 		{1, 20.0},
@@ -195,7 +195,7 @@ func TestMinFloat(t *testing.T) {
 
 	var test = []struct {
 		index int
-		max   float64
+		max   float32
 	}{
 		{0, 10.0},
 		{1, 10.0},
@@ -218,7 +218,7 @@ func TestMedianIntEven(t *testing.T) {
 
 	var test = []struct {
 		index  int
-		median float64
+		median float32
 	}{
 		{0, 15.0},
 		{1, 15.0},
@@ -242,7 +242,7 @@ func TestMedianIntOdd(t *testing.T) {
 
 	var test = []struct {
 		index  int
-		median float64
+		median float32
 	}{
 		{0, 20.0},
 		{1, 20.0},
@@ -265,7 +265,7 @@ func TestMedianFloatEven(t *testing.T) {
 
 	var test = []struct {
 		index  int
-		median float64
+		median float32
 	}{
 		{0, 15.0},
 		{1, 15.0},
@@ -289,7 +289,7 @@ func TestMedianFloatOdd(t *testing.T) {
 
 	var test = []struct {
 		index  int
-		median float64
+		median float32
 	}{
 		{0, 20},
 		{1, 20},
