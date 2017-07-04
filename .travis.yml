@@ -1,0 +1,7 @@
+language: go
+
+install:
+  - go get github.com/itsubaki/gocep
+
+script:
+  - go test -v -race -bench . --benchmem

@@ -1,6 +1,6 @@
 # gocep
 
-[![Build Status](https://travis-ci.org/itsubaki/gocep.svg?branch=master)](https://travis-ci.org/itsubaki/gocep)
+[![Build Status](https://travis-ci.org/itsubaki/gocep.svg?branch=develop)](https://travis-ci.org/itsubaki/gocep)
 
 The Stream Processing API for Go
 
@@ -15,9 +15,10 @@ The Stream Processing API for Go
     + [x] EqualsType, NotEqualsType
     + [x] Equals, NotEquals
     + [x] LargerThan, LessThan
- - [x] Function
+ - [ ] Function
     + [x] Max, Min, Median
     + [x] Count, Sum, Average
+    + [ ] Cast
  - [ ] View
     + [x] Sort, Limit
     + [x] First, Last
