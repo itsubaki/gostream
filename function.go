@@ -102,7 +102,7 @@ type SumFloat struct {
 }
 
 func (f SumFloat) Apply(event []Event) []Event {
-	var sum float32
+	var sum float64
 	for _, e := range event {
 		sum = sum + e.FloatValue(f.Name)
 	}
@@ -124,7 +124,7 @@ func (f AverageInt) Apply(event []Event) []Event {
 		sum = sum + e.IntValue(f.Name)
 	}
 	length := len(event)
-	avg := float32(sum) / float32(length)
+	avg := float64(sum) / float64(length)
 
 	for _, e := range event {
 		e.Record["avg("+f.Name+")"] = avg
@@ -138,12 +138,12 @@ type AverageFloat struct {
 }
 
 func (f AverageFloat) Apply(event []Event) []Event {
-	var sum float32
+	var sum float64
 	for _, e := range event {
 		sum = sum + e.FloatValue(f.Name)
 	}
 	length := len(event)
-	avg := float32(sum) / float32(length)
+	avg := sum / float64(length)
 
 	for _, e := range event {
 		e.Record["avg("+f.Name+")"] = avg
@@ -177,13 +177,13 @@ type MaxFloat struct {
 }
 
 func (f MaxFloat) Apply(event []Event) []Event {
-	max := float64(event[0].FloatValue(f.Name))
+	max := event[0].FloatValue(f.Name)
 	for _, e := range event {
-		max = math.Max(max, float64(e.FloatValue(f.Name)))
+		max = math.Max(max, e.FloatValue(f.Name))
 	}
 
 	for _, e := range event {
-		e.Record["max("+f.Name+")"] = float32(max)
+		e.Record["max("+f.Name+")"] = max
 	}
 
 	return event
@@ -214,13 +214,13 @@ type MinFloat struct {
 }
 
 func (f MinFloat) Apply(event []Event) []Event {
-	min := float64(event[0].FloatValue(f.Name))
+	min := event[0].FloatValue(f.Name)
 	for _, e := range event {
-		min = math.Min(min, float64(e.FloatValue(f.Name)))
+		min = math.Min(min, e.FloatValue(f.Name))
 	}
 
 	for _, e := range event {
-		e.Record["min("+f.Name+")"] = float32(min)
+		e.Record["min("+f.Name+")"] = min
 	}
 
 	return event
@@ -237,9 +237,9 @@ func (f MedianInt) Apply(event []Event) []Event {
 	}
 
 	center := len(values) / 2
-	median := float32(values[center])
+	median := float64(values[center])
 	if len(values)%2 == 0 {
-		median = float32(values[center-1]+values[center]) / float32(2)
+		median = float64(values[center-1]+values[center]) / float64(2)
 	}
 
 	for _, e := range event {
@@ -254,15 +254,15 @@ type MedianFloat struct {
 }
 
 func (f MedianFloat) Apply(event []Event) []Event {
-	values := []float32{}
+	values := []float64{}
 	for _, e := range event {
 		values = append(values, e.FloatValue(f.Name))
 	}
 
 	center := len(values) / 2
-	median := float32(values[center])
+	median := values[center]
 	if len(values)%2 == 0 {
-		median = float32(values[center-1]+values[center]) / float32(2)
+		median = float64(values[center-1]+values[center]) / float64(2)
 	}
 
 	for _, e := range event {

@@ -11,7 +11,7 @@ type IntEvent struct {
 
 type FloatEvent struct {
 	Name  string
-	Value float32
+	Value float64
 }
 
 type BoolEvent struct {
