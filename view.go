@@ -78,7 +78,7 @@ func (s SortableFloat) Len() int {
 }
 
 func (s SortableFloat) Less(i, j int) bool {
-	return s.event[i].Float32Value(s.name) < s.event[j].Float32Value(s.name)
+	return s.event[i].FloatValue(s.name) < s.event[j].FloatValue(s.name)
 }
 
 func (s SortableFloat) Swap(i, j int) {
@@ -114,11 +114,11 @@ func (f HavingLargerThanInt) Apply(event []Event) []Event {
 
 type HavingLargerThanFloat struct {
 	Name  string
-	Value float32
+	Value float64
 }
 
 func (f HavingLargerThanFloat) Apply(event []Event) []Event {
-	if event[len(event)-1].Record[f.Name].(float32) > f.Value {
+	if event[len(event)-1].Record[f.Name].(float64) > f.Value {
 		return event
 	}
 	return []Event{}
@@ -138,11 +138,11 @@ func (f HavingLessThanInt) Apply(event []Event) []Event {
 
 type HavingLessThanFloat struct {
 	Name  string
-	Value float32
+	Value float64
 }
 
 func (f HavingLessThanFloat) Apply(event []Event) []Event {
-	if event[len(event)-1].Record[f.Name].(float32) < f.Value {
+	if event[len(event)-1].Record[f.Name].(float64) < f.Value {
 		return event
 	}
 	return []Event{}

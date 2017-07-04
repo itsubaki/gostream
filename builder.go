@@ -34,14 +34,3 @@ func (b *Builder) View(view string) *Builder {
 func (b *Builder) Build() Window {
 	return NewLengthWindow(16, 64)
 }
-
-type EventBuilder struct {
-}
-
-func NewEventBuilder() *EventBuilder {
-	return &EventBuilder{}
-}
-
-func (b *EventBuilder) Build() interface{} {
-	return nil
-}
