@@ -27,6 +27,7 @@ The Stream Processing API for Go
  - [ ] Builder
     + [ ] Event
     + [ ] Window
+    + [ ] Validate
 
 ## Install
 
