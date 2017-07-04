@@ -53,6 +53,47 @@ func TestLengthWindow(t *testing.T) {
 	}
 }
 
+func TestLengthWindowMap(t *testing.T) {
+
+	w := NewLengthWindow(2, 1024)
+	defer w.Close()
+
+	w.Selector(EqualsType{MapEvent{}})
+	w.Selector(LargerThanMapInt{"Map", "Value", 1})
+	w.Function(Count{})
+	w.Function(AverageMapInt{"Map", "Value"})
+	w.View(SortMapInt{"Map", "Value", true})
+
+	event := []Event{}
+	for i := 0; i < 10; i++ {
+		m := make(map[string]interface{})
+		m["Value"] = i
+		event = w.Update(NewEvent(MapEvent{"name", m}))
+	}
+
+	var test = []struct {
+		index int
+		count int
+		value int
+		avg   float64
+	}{
+		{0, 2, 9, 8.5},
+		{1, 2, 8, 8.5},
+	}
+
+	for _, tt := range test {
+		if event[tt.index].Record["count"] != tt.count {
+			t.Error(event)
+		}
+		if event[tt.index].MapIntValue("Map", "Value") != tt.value {
+			t.Error(event)
+		}
+		if event[tt.index].Record["avg(Map:Value)"] != tt.avg {
+			t.Error(event)
+		}
+	}
+}
+
 func TestLengthWindowListen(t *testing.T) {
 
 	w := NewLengthWindow(2, 1024)
