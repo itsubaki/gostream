@@ -5,18 +5,116 @@ import (
 	"time"
 )
 
-func BenchmarkLengthWindowCount128(b *testing.B) {
+func BenchmarkLengthWindowAverageMap(b *testing.B) {
+	w := NewLengthWindow(128, 1024)
+	defer w.Close()
+
+	w.Selector(EqualsType{MapEvent{}})
+	w.Function(AverageMapInt{"Map", "Value"})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m := make(map[string]interface{})
+		m["Value"] = i
+		w.Update(NewEvent(MapEvent{"foobar", m}))
+	}
+}
+
+func BenchmarkLengthWindowAverageInt(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
 	w.Selector(EqualsType{IntEvent{}})
-	w.Function(Count{})
+	w.Function(AverageInt{"Value"})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		w.Update(NewEvent(IntEvent{"foobar", i}))
 	}
+}
 
+func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
+	w := NewLengthWindow(128, 1024)
+	defer w.Close()
+
+	w.Selector(EqualsType{MapEvent{}})
+	w.Selector(LargerThanMapInt{"Map", "Value", 100})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m := make(map[string]interface{})
+		m["Value"] = i
+		w.Update(NewEvent(MapEvent{"foobar", m}))
+	}
+}
+
+func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
+	w := NewLengthWindow(128, 1024)
+	defer w.Close()
+
+	w.Selector(EqualsType{IntEvent{}})
+	w.Selector(LargerThanInt{"Value", 100})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		w.Update(NewEvent(IntEvent{"foobar", i}))
+	}
+}
+
+func BenchmarkLengthWindowSortMap(b *testing.B) {
+	w := NewLengthWindow(128, 1024)
+	defer w.Close()
+
+	w.Selector(EqualsType{MapEvent{}})
+	w.View(SortMapInt{"Map", "Value", false})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m := make(map[string]interface{})
+		m["Value"] = i
+		w.Update(NewEvent(MapEvent{"foobar", m}))
+	}
+}
+
+func BenchmarkLengthWindowSortInt(b *testing.B) {
+	w := NewLengthWindow(128, 1024)
+	defer w.Close()
+
+	w.Selector(EqualsType{IntEvent{}})
+	w.View(SortInt{"Value", false})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		w.Update(NewEvent(IntEvent{"foobar", i}))
+	}
+}
+
+func BenchmarkLengthWindowSortReverseMap(b *testing.B) {
+	w := NewLengthWindow(128, 1024)
+	defer w.Close()
+
+	w.Selector(EqualsType{MapEvent{}})
+	w.View(SortMapInt{"Map", "Value", true})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m := make(map[string]interface{})
+		m["Value"] = i
+		w.Update(NewEvent(MapEvent{"foobar", m}))
+	}
+}
+
+func BenchmarkLengthWindowSortReverseInt(b *testing.B) {
+	w := NewLengthWindow(128, 1024)
+	defer w.Close()
+
+	w.Selector(EqualsType{IntEvent{}})
+	w.View(SortInt{"Value", true})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		w.Update(NewEvent(IntEvent{"foobar", i}))
+	}
 }
 
 func TestLengthWindow(t *testing.T) {
