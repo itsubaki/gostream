@@ -1,6 +1,32 @@
 package gocep
 
-import "testing"
+import (
+	"testing"
+)
+
+func TestCastMapStringToInt(t *testing.T) {
+	m := make(map[string]interface{})
+	m["piyo"] = "123"
+
+	event := []Event{}
+	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
+
+	cast := CastMapStringToInt{"Map", "piyo"}
+	casted := cast.Apply(event)
+	if casted[0].RecordIntValue("cast(Map:piyo)") != 123 {
+		t.Error(casted)
+	}
+
+	event = []Event{}
+	event = append(event, NewEvent(MapEvent{"new", casted[0].Record}).New())
+	event = append(event, NewEvent(MapEvent{"new", casted[0].Record}).New())
+
+	sum := SumMapInt{"Map", "cast(Map:piyo)"}
+	result := sum.Apply(event)
+	if result[0].RecordIntValue("sum(Map:cast(Map:piyo))") != 246 {
+		t.Error(result)
+	}
+}
 
 func TestSumMapInt(t *testing.T) {
 	m := make(map[string]interface{})

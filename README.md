@@ -15,19 +15,16 @@ The Stream Processing API for Go
     + [x] EqualsType, NotEqualsType
     + [x] Equals, NotEquals
     + [x] LargerThan, LessThan
- - [ ] Function
+ - [x] Function
     + [x] Max, Min, Median
     + [x] Count, Sum, Average
-    + [ ] Cast
+    + [x] Cast
  - [ ] View
     + [x] Sort, Limit
     + [x] First, Last
     + [x] Having
     + [ ] GroupBy
- - [ ] Builder
-    + [ ] Event
-    + [ ] Window
-    + [ ] Validate
+ - [ ] Insert into
 
 ## Install
 

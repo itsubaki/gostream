@@ -1,5 +1,22 @@
 package gocep
 
+import "strconv"
+
+type CastMapStringToInt struct {
+	Name string
+	Key  string
+}
+
+func (f CastMapStringToInt) Apply(event []Event) []Event {
+	for _, e := range event {
+		str := e.MapStringValue(f.Name, f.Key)
+		val, _ := strconv.Atoi(str)
+		e.Record["cast("+f.Name+":"+f.Key+")"] = val
+	}
+
+	return event
+}
+
 type SumMapInt struct {
 	Name string
 	Key  string
