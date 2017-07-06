@@ -278,3 +278,22 @@ func TestLengthWindowPanic(t *testing.T) {
 		t.Error(event)
 	}
 }
+
+func TestInsertInto(t *testing.T) {
+	w := NewLengthWindow(16, 32)
+	defer w.Close()
+	w.Function(CastMapStringToInt{"Map", "piyo"})
+
+	m := make(map[string]interface{})
+	m["piyo"] = "123"
+	e := w.Update(NewEvent(MapEvent{"foobar", m}))
+
+	w2 := NewLengthWindow(16, 32)
+	defer w2.Close()
+	w2.Function(SumMapInt{"Map", "cast(Map:piyo)"})
+	e2 := w2.Update(NewEvent(MapEvent{"foobar", e[0].Record}))
+
+	if e2[0].RecordIntValue("sum(Map:cast(Map:piyo))") != 123 {
+		t.Error(e2)
+	}
+}

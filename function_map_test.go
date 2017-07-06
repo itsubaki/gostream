@@ -1,9 +1,6 @@
 package gocep
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 func TestSumMapInt(t *testing.T) {
 	m := make(map[string]interface{})
@@ -142,7 +139,6 @@ func TestCastMapStringToFloat(t *testing.T) {
 
 	cast := CastMapStringToFloat{"Map", "piyo"}
 	casted := cast.Apply(event)
-	fmt.Println(casted)
 	if casted[0].RecordFloatValue("cast(Map:piyo)") != 12.3 {
 		t.Error(event)
 	}
