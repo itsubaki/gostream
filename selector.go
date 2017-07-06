@@ -11,7 +11,7 @@ type EqualsType struct {
 }
 
 func (f EqualsType) Select(e Event) bool {
-	return e.TypeEquals(reflect.TypeOf(f.Accept))
+	return e.EqualsType(reflect.TypeOf(f.Accept))
 }
 
 type NotEqualsType struct {
@@ -19,7 +19,7 @@ type NotEqualsType struct {
 }
 
 func (f NotEqualsType) Select(e Event) bool {
-	return !e.TypeEquals(reflect.TypeOf(f.Accept))
+	return !e.EqualsType(reflect.TypeOf(f.Accept))
 }
 
 type EqualsString struct {

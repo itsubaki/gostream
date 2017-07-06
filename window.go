@@ -1,9 +1,14 @@
 package gocep
 
-import "time"
+import (
+	"log"
+	"reflect"
+	"time"
+)
 
 type Window interface {
 	Input() chan Event
+	Output() chan []Event
 	Close()
 }
 
@@ -81,6 +86,12 @@ func (w *LengthWindow) Listen(e Event) {
 }
 
 func (w *LengthWindow) Update(e Event) (event []Event) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println(err, reflect.TypeOf(e.Underlying))
+		}
+	}()
+
 	for _, s := range w.selector {
 		if !s.Select(e) {
 			return event

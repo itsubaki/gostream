@@ -260,3 +260,21 @@ func TestTimeBatchWindow10ms(t *testing.T) {
 		w.Update(NewEvent(IntEvent{"foo", i}))
 	}
 }
+
+func TestLengthWindowPanic(t *testing.T) {
+	defer func() {
+		if err := recover(); err != nil {
+			t.Error(err)
+		}
+	}()
+
+	w := NewLengthWindow(10, 16)
+	defer w.Close()
+
+	w.Selector(EqualsType{IntEvent{}})
+	w.Function(AverageMapInt{"Map", "Value"})
+	event := w.Update(NewEvent(IntEvent{"foobar", 10}))
+	if len(event) != 0 {
+		t.Error(event)
+	}
+}

@@ -27,7 +27,7 @@ func (e Event) Type() reflect.Type {
 	return reflect.TypeOf(e.Underlying)
 }
 
-func (e Event) TypeEquals(t reflect.Type) bool {
+func (e Event) EqualsType(t reflect.Type) bool {
 	return e.Type() == t
 }
 

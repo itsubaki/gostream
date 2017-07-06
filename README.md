@@ -82,4 +82,6 @@ s.Add(NewLengthWindow(10, 1024))
 s.Add(...)
 
 s.Push(IntEvent{"name", i})
+s.Push(MapEvent{"name", m})
+s.Push(...)
 ```
