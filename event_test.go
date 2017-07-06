@@ -68,3 +68,12 @@ func TestMapValue(t *testing.T) {
 		t.Error(e)
 	}
 }
+
+func TestRecordStringValue(t *testing.T) {
+	event := NewEvent(IntEvent{"foobar", 123}).New()
+	event.Record["Name"] = "foobar"
+
+	if event.RecordStringValue("Name") != "foobar" {
+		t.Errorf("failed.")
+	}
+}
