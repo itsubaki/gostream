@@ -2,6 +2,7 @@ package gocep
 
 import (
 	"math"
+	"strconv"
 	"time"
 )
 
@@ -267,6 +268,48 @@ func (f MedianFloat) Apply(event []Event) []Event {
 
 	for _, e := range event {
 		e.Record["median("+f.Name+")"] = median
+	}
+
+	return event
+}
+
+type CastStringToInt struct {
+	Name string
+}
+
+func (f CastStringToInt) Apply(event []Event) []Event {
+	for _, e := range event {
+		str := e.StringValue(f.Name)
+		val, _ := strconv.Atoi(str)
+		e.Record["cast("+f.Name+")"] = val
+	}
+
+	return event
+}
+
+type CastStringToFloat struct {
+	Name string
+}
+
+func (f CastStringToFloat) Apply(event []Event) []Event {
+	for _, e := range event {
+		str := e.StringValue(f.Name)
+		val, _ := strconv.ParseFloat(str, 64)
+		e.Record["cast("+f.Name+")"] = val
+	}
+
+	return event
+}
+
+type CastStringToBool struct {
+	Name string
+}
+
+func (f CastStringToBool) Apply(event []Event) []Event {
+	for _, e := range event {
+		str := e.StringValue(f.Name)
+		val, _ := strconv.ParseBool(str)
+		e.Record["cast("+f.Name+")"] = val
 	}
 
 	return event

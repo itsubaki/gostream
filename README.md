@@ -22,7 +22,7 @@ The Stream Processing API for Go
  - [ ] View
     + [x] Sort, Limit
     + [x] First, Last
-    + [x] Having
+    + [ ] Having
     + [ ] GroupBy
  - [ ] Insert into
 

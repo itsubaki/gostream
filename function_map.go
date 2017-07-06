@@ -2,21 +2,6 @@ package gocep
 
 import "strconv"
 
-type CastMapStringToInt struct {
-	Name string
-	Key  string
-}
-
-func (f CastMapStringToInt) Apply(event []Event) []Event {
-	for _, e := range event {
-		str := e.MapStringValue(f.Name, f.Key)
-		val, _ := strconv.Atoi(str)
-		e.Record["cast("+f.Name+":"+f.Key+")"] = val
-	}
-
-	return event
-}
-
 type SumMapInt struct {
 	Name string
 	Key  string
@@ -88,6 +73,51 @@ func (f AverageMapFloat) Apply(event []Event) []Event {
 
 	for _, e := range event {
 		e.Record["avg("+f.Name+":"+f.Key+")"] = avg
+	}
+
+	return event
+}
+
+type CastMapStringToInt struct {
+	Name string
+	Key  string
+}
+
+func (f CastMapStringToInt) Apply(event []Event) []Event {
+	for _, e := range event {
+		str := e.MapStringValue(f.Name, f.Key)
+		val, _ := strconv.Atoi(str)
+		e.Record["cast("+f.Name+":"+f.Key+")"] = val
+	}
+
+	return event
+}
+
+type CastMapStringToFloat struct {
+	Name string
+	Key  string
+}
+
+func (f CastMapStringToFloat) Apply(event []Event) []Event {
+	for _, e := range event {
+		str := e.MapStringValue(f.Name, f.Key)
+		val, _ := strconv.ParseFloat(str, 64)
+		e.Record["cast("+f.Name+":"+f.Key+")"] = val
+	}
+
+	return event
+}
+
+type CastMapStringToBool struct {
+	Name string
+	Key  string
+}
+
+func (f CastMapStringToBool) Apply(event []Event) []Event {
+	for _, e := range event {
+		str := e.MapStringValue(f.Name, f.Key)
+		val, _ := strconv.ParseBool(str)
+		e.Record["cast("+f.Name+":"+f.Key+")"] = val
 	}
 
 	return event

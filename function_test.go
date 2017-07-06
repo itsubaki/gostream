@@ -301,3 +301,36 @@ func TestMedianFloatOdd(t *testing.T) {
 		}
 	}
 }
+
+func TestCastStringToInt(t *testing.T) {
+	event := []Event{NewEvent(IntEvent{"123", 10}).New()}
+
+	f := CastStringToInt{"Name"}
+	result := f.Apply(event)
+
+	if result[0].RecordIntValue("cast(Name)") != 123 {
+		t.Error(result)
+	}
+}
+
+func TestCastStringToFloat(t *testing.T) {
+	event := []Event{NewEvent(IntEvent{"12.3", 10}).New()}
+
+	f := CastStringToFloat{"Name"}
+	result := f.Apply(event)
+
+	if result[0].RecordFloatValue("cast(Name)") != 12.3 {
+		t.Error(result)
+	}
+}
+
+func TestCastStringToBool(t *testing.T) {
+	event := []Event{NewEvent(IntEvent{"false", 10}).New()}
+
+	f := CastStringToBool{"Name"}
+	result := f.Apply(event)
+
+	if result[0].RecordBoolValue("cast(Name)") {
+		t.Error(result)
+	}
+}

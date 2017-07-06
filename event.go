@@ -78,3 +78,7 @@ func (e Event) RecordIntValue(name string) int {
 func (e Event) RecordFloatValue(name string) float64 {
 	return e.Record[name].(float64)
 }
+
+func (e Event) RecordBoolValue(name string) bool {
+	return e.Record[name].(bool)
+}
