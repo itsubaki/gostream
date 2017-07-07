@@ -10,7 +10,7 @@ func TestSumMapInt(t *testing.T) {
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 
-	f := SumMapInt{"Map", "piyo"}
+	f := SumMapInt{"Map", "piyo", "sum(Map:piyo)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -36,7 +36,7 @@ func TestSumMapFloat(t *testing.T) {
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 
-	f := SumMapFloat{"Map", "piyo"}
+	f := SumMapFloat{"Map", "piyo", "sum(Map:piyo)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -62,7 +62,7 @@ func TestAverageMapInt(t *testing.T) {
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 
-	f := AverageMapInt{"Map", "piyo"}
+	f := AverageMapInt{"Map", "piyo", "avg(Map:piyo)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -88,7 +88,7 @@ func TestAverageMapFloat(t *testing.T) {
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 
-	f := AverageMapFloat{"Map", "piyo"}
+	f := AverageMapFloat{"Map", "piyo", "avg(Map:piyo)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -113,7 +113,7 @@ func TestCastMapStringToInt(t *testing.T) {
 	event := []Event{}
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 
-	cast := CastMapStringToInt{"Map", "piyo"}
+	cast := CastMapStringToInt{"Map", "piyo", "cast(Map:piyo)"}
 	casted := cast.Apply(event)
 	if casted[0].RecordIntValue("cast(Map:piyo)") != 123 {
 		t.Error(casted)
@@ -123,7 +123,7 @@ func TestCastMapStringToInt(t *testing.T) {
 	event = append(event, NewEvent(MapEvent{"new", casted[0].Record}).New())
 	event = append(event, NewEvent(MapEvent{"new", casted[0].Record}).New())
 
-	sum := SumMapInt{"Map", "cast(Map:piyo)"}
+	sum := SumMapInt{"Map", "cast(Map:piyo)", "sum(Map:cast(Map:piyo))"}
 	result := sum.Apply(event)
 	if result[0].RecordIntValue("sum(Map:cast(Map:piyo))") != 246 {
 		t.Error(result)
@@ -137,7 +137,7 @@ func TestCastMapStringToFloat(t *testing.T) {
 	event := []Event{}
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 
-	cast := CastMapStringToFloat{"Map", "piyo"}
+	cast := CastMapStringToFloat{"Map", "piyo", "cast(Map:piyo)"}
 	casted := cast.Apply(event)
 	if casted[0].RecordFloatValue("cast(Map:piyo)") != 12.3 {
 		t.Error(event)
@@ -151,7 +151,7 @@ func TestCastMapStringToBool(t *testing.T) {
 	event := []Event{}
 	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
 
-	cast := CastMapStringToBool{"Map", "piyo"}
+	cast := CastMapStringToBool{"Map", "piyo", "cast(Map:piyo)"}
 	casted := cast.Apply(event)
 	if casted[0].RecordBoolValue("cast(Map:piyo)") {
 		t.Error(event)

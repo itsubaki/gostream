@@ -10,7 +10,7 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{MapEvent{}})
-	w.Function(AverageMapInt{"Map", "Value"})
+	w.Function(AverageMapInt{"Map", "Value", "avg(Value)"})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -25,7 +25,7 @@ func BenchmarkLengthWindowAverageInt(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{IntEvent{}})
-	w.Function(AverageInt{"Value"})
+	w.Function(AverageInt{"Value", "avg(Value)"})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -124,7 +124,7 @@ func TestLengthWindow(t *testing.T) {
 
 	w.Selector(EqualsType{IntEvent{}})
 	w.Selector(LargerThanInt{"Value", 1})
-	w.Function(Count{})
+	w.Function(Count{"count"})
 	w.View(SortInt{"Value", true})
 
 	event := []Event{}
@@ -158,8 +158,8 @@ func TestLengthWindowMap(t *testing.T) {
 
 	w.Selector(EqualsType{MapEvent{}})
 	w.Selector(LargerThanMapInt{"Map", "Value", 1})
-	w.Function(Count{})
-	w.Function(AverageMapInt{"Map", "Value"})
+	w.Function(Count{"count"})
+	w.Function(AverageMapInt{"Map", "Value", "avg(Map:Value)"})
 	w.View(SortMapInt{"Map", "Value", true})
 
 	event := []Event{}
@@ -272,28 +272,52 @@ func TestLengthWindowPanic(t *testing.T) {
 	defer w.Close()
 
 	w.Selector(EqualsType{IntEvent{}})
-	w.Function(AverageMapInt{"Map", "Value"})
+	w.Function(AverageMapInt{"Map", "Value", "avg(Map:Value)"})
 	event := w.Update(NewEvent(IntEvent{"foobar", 10}))
 	if len(event) != 0 {
 		t.Error(event)
 	}
 }
 
-func TestInsertInto(t *testing.T) {
+func TestInsertIntoIntEvent(t *testing.T) {
 	w := NewLengthWindow(16, 32)
 	defer w.Close()
-	w.Function(CastMapStringToInt{"Map", "piyo"})
-
-	m := make(map[string]interface{})
-	m["piyo"] = "123"
-	e := w.Update(NewEvent(MapEvent{"foobar", m}))
+	w.Function(CastStringToInt{"Name", "c(name)"})
+	e := w.Update(NewEvent(IntEvent{"123", 123}))
+	cname := e[0].RecordIntValue("c(name)")
 
 	w2 := NewLengthWindow(16, 32)
 	defer w2.Close()
-	w2.Function(SumMapInt{"Map", "cast(Map:piyo)"})
-	e2 := w2.Update(NewEvent(MapEvent{"foobar", e[0].Record}))
+	w2.Function(SumInt{"Value", "sum(name)"})
+	e2 := w2.Update(NewEvent(IntEvent{"foobar", cname}))
 
-	if e2[0].RecordIntValue("sum(Map:cast(Map:piyo))") != 123 {
+	if e2[0].RecordIntValue("sum(name)") != 123 {
 		t.Error(e2)
+	}
+}
+
+func TestInsertIntoMapEvent(t *testing.T) {
+	w := NewLengthWindow(16, 32)
+	defer w.Close()
+	w.Function(CastMapStringToInt{"Map", "str", "cast(str)"})
+
+	m := make(map[string]interface{})
+	m["str"] = "123"
+	me := MapEvent{"foo", m}
+	cast := w.Update(NewEvent(me))
+
+	w2 := NewLengthWindow(16, 32)
+	defer w2.Close()
+	w2.Function(SumMapInt{"Map", "cast(str)", "sum(str)"})
+
+	for _, e := range cast {
+		m := MapEvent{"foo", e.Record}
+		e := w2.Update(NewEvent(m))
+
+		for _, r := range e {
+			if r.RecordIntValue("sum(str)") != 123 {
+				t.Error(e)
+			}
+		}
 	}
 }

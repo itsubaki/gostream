@@ -29,7 +29,7 @@ func TestSumInt(t *testing.T) {
 	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
 	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
 
-	f := SumInt{"Value"}
+	f := SumInt{"Value", "sum(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -52,7 +52,7 @@ func TestSumFloat(t *testing.T) {
 	event = append(event, NewEvent(FloatEvent{"foo", 10.0}).New())
 	event = append(event, NewEvent(FloatEvent{"foo", 20.0}).New())
 
-	f := SumFloat{"Value"}
+	f := SumFloat{"Value", "sum(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -75,7 +75,7 @@ func TestAverageInt(t *testing.T) {
 	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
 	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
 
-	f := AverageInt{"Value"}
+	f := AverageInt{"Value", "avg(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -98,7 +98,7 @@ func TestAverageFloat(t *testing.T) {
 	event = append(event, NewEvent(FloatEvent{"foo", 10.0}).New())
 	event = append(event, NewEvent(FloatEvent{"foo", 20.0}).New())
 
-	f := AverageFloat{"Value"}
+	f := AverageFloat{"Value", "avg(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -121,7 +121,7 @@ func TestMaxInt(t *testing.T) {
 	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
 	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
 
-	f := MaxInt{"Value"}
+	f := MaxInt{"Value", "max(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -144,7 +144,7 @@ func TestMaxFloat(t *testing.T) {
 	event = append(event, NewEvent(FloatEvent{"foo", 10}).New())
 	event = append(event, NewEvent(FloatEvent{"foo", 20}).New())
 
-	f := MaxFloat{"Value"}
+	f := MaxFloat{"Value", "max(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -167,7 +167,7 @@ func TestMinInt(t *testing.T) {
 	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
 	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
 
-	f := MinInt{"Value"}
+	f := MinInt{"Value", "min(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -190,7 +190,7 @@ func TestMinFloat(t *testing.T) {
 	event = append(event, NewEvent(FloatEvent{"foo", 10}).New())
 	event = append(event, NewEvent(FloatEvent{"foo", 20}).New())
 
-	f := MinFloat{"Value"}
+	f := MinFloat{"Value", "min(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -213,7 +213,7 @@ func TestMedianIntEven(t *testing.T) {
 	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
 	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
 
-	f := MedianInt{"Value"}
+	f := MedianInt{"Value", "median(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -237,7 +237,7 @@ func TestMedianIntOdd(t *testing.T) {
 	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
 	event = append(event, NewEvent(IntEvent{"foo", 30}).New())
 
-	f := MedianInt{"Value"}
+	f := MedianInt{"Value", "median(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -260,7 +260,7 @@ func TestMedianFloatEven(t *testing.T) {
 	event = append(event, NewEvent(FloatEvent{"foo", 10}).New())
 	event = append(event, NewEvent(FloatEvent{"foo", 20}).New())
 
-	f := MedianFloat{"Value"}
+	f := MedianFloat{"Value", "median(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -284,7 +284,7 @@ func TestMedianFloatOdd(t *testing.T) {
 	event = append(event, NewEvent(FloatEvent{"foo", 20}).New())
 	event = append(event, NewEvent(FloatEvent{"foo", 30}).New())
 
-	f := MedianFloat{"Value"}
+	f := MedianFloat{"Value", "median(Value)"}
 	result := f.Apply(event)
 
 	var test = []struct {
@@ -305,7 +305,7 @@ func TestMedianFloatOdd(t *testing.T) {
 func TestCastStringToInt(t *testing.T) {
 	event := []Event{NewEvent(IntEvent{"123", 10}).New()}
 
-	f := CastStringToInt{"Name"}
+	f := CastStringToInt{"Name", "cast(Name)"}
 	result := f.Apply(event)
 
 	if result[0].RecordIntValue("cast(Name)") != 123 {
@@ -316,7 +316,7 @@ func TestCastStringToInt(t *testing.T) {
 func TestCastStringToFloat(t *testing.T) {
 	event := []Event{NewEvent(IntEvent{"12.3", 10}).New()}
 
-	f := CastStringToFloat{"Name"}
+	f := CastStringToFloat{"Name", "cast(Name)"}
 	result := f.Apply(event)
 
 	if result[0].RecordFloatValue("cast(Name)") != 12.3 {
@@ -327,7 +327,7 @@ func TestCastStringToFloat(t *testing.T) {
 func TestCastStringToBool(t *testing.T) {
 	event := []Event{NewEvent(IntEvent{"false", 10}).New()}
 
-	f := CastStringToBool{"Name"}
+	f := CastStringToBool{"Name", "cast(Name)"}
 	result := f.Apply(event)
 
 	if result[0].RecordBoolValue("cast(Name)") {

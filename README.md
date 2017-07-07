@@ -19,6 +19,7 @@ The Stream Processing API for Go
     + [x] Max, Min, Median
     + [x] Count, Sum, Average
     + [x] Cast
+    + [x] As
  - [ ] View
     + [x] Sort, Limit
     + [x] First, Last
@@ -44,14 +45,14 @@ type IntEvent struct {
 ```
 
 ```go
-// select avg(Value) from IntEvent.time(10msec) where Value > 97
+// select avg(Value) as val from IntEvent.time(10msec) where Value > 97
 // 1024 is capacity of input/output queue
 w := NewTimeWindow(10 * time.Millisecond, 1024)
 defer w.Close()
 
 w.Selector(EqualsType{IntEvent{}})
 w.Selector(LargerThanInt{"Value", 97})
-w.Function(AverageInt{"Value"})
+w.Function(AverageInt{"Value", "val"})
 w.View(SortInt{"Value"})
 
 go func() {
