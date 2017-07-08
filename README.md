@@ -22,6 +22,7 @@ The Stream Processing API for Go
     + [x] Count, Sum, Average
     + [x] Cast
     + [x] As
+    + [ ] SelectAll, Select
  - [x] View
     + [x] OrderBy, Limit
     + [x] First, Last
@@ -45,7 +46,8 @@ type MyEvent struct {
 ```
 
 ```go
-// select * from MyEvent.time(10msec)
+// select Name, Value
+//  from MyEvent.time(10msec)
 //  where Value > 97
 //  orderby Value DESC
 //  limit 10 offset 5
@@ -56,6 +58,8 @@ defer w.Close()
 
 w.Selector(EqualsType{MyEvent{}})
 w.Selector(LargerThanInt{"Value", 97})
+w.Selector(SelectString{"Name", "Name"})
+w.Selector(SelectInt{"Value", "Value"})
 w.View(OrderByInt{"Value", true})
 w.View(Limit{5, 10})
 
@@ -73,13 +77,13 @@ for i := 0; i < 100; i++ {
 
 
 ```go
-// select avg(Value) as avgval, sum(Value) as sumval from MyEvent.length(10)
+// select avg(Value) as avgv, sum(Value) as sumv from MyEvent.length(10)
 w := NewLengthWindow(10, 1024)
 defer w.Close()
 
 w.Selector(EqualsType{MyEvent{}})
-w.Function(AverageInt{"Value", "avgval"})
-w.Function(SumInt{"Value", "sumval"})
+w.Function(AverageInt{"Value", "avgv"})
+w.Function(SumInt{"Value", "sumv"})
 ```
 
 ## Stream
@@ -121,6 +125,7 @@ defer is.Close()
 iw := NewLengthWindow(10, 1024)
 iw.Selector(EqualsType{RecordEvent{}})
 iw.Selector(LargerThanMapInt{"Record", "sum(Value)", 10})
+iw.Selector(SelectAll{})
 is.Window(iw)
 
 // insert into RecordEvent select sum(Value) from MyEvent.length(10)

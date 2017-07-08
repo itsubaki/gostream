@@ -2,6 +2,54 @@ package gocep
 
 import "testing"
 
+func TestSelectMapString(t *testing.T) {
+	m := make(map[string]interface{})
+	m["Name"] = "foo"
+	event := []Event{NewEvent(MapEvent{"foo", m})}
+	f := SelectMapString{"Map", "Name", "Name"}
+
+	result := f.Apply(event)
+	if result[0].RecordString("Name") != "foo" {
+		t.Error(result)
+	}
+}
+
+func TestSelectMapBool(t *testing.T) {
+	m := make(map[string]interface{})
+	m["Name"] = false
+	event := []Event{NewEvent(MapEvent{"foo", m})}
+	f := SelectMapBool{"Map", "Name", "Name"}
+
+	result := f.Apply(event)
+	if result[0].RecordBool("Name") {
+		t.Error(result)
+	}
+}
+
+func TestSelectMapInt(t *testing.T) {
+	m := make(map[string]interface{})
+	m["Name"] = 10
+	event := []Event{NewEvent(MapEvent{"foo", m})}
+	f := SelectMapInt{"Map", "Name", "Name"}
+
+	result := f.Apply(event)
+	if result[0].RecordInt("Name") != 10 {
+		t.Error(result)
+	}
+}
+
+func TestSelectMapFloat(t *testing.T) {
+	m := make(map[string]interface{})
+	m["Name"] = 10.0
+	event := []Event{NewEvent(MapEvent{"foo", m})}
+	f := SelectMapFloat{"Map", "Name", "Name"}
+
+	result := f.Apply(event)
+	if result[0].RecordFloat("Name") != 10.0 {
+		t.Error(result)
+	}
+}
+
 func TestSumMapInt(t *testing.T) {
 	m := make(map[string]interface{})
 	m["piyo"] = 123

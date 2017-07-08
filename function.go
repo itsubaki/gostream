@@ -71,6 +71,61 @@ func (f *TimeDurationBatch) Apply(event []Event) (stream []Event) {
 	return stream
 }
 
+type SelectAll struct {
+}
+
+func (f SelectAll) Apply(event []Event) []Event {
+	return event
+}
+
+type SelectString struct {
+	Name string
+	As   string
+}
+
+func (f SelectString) Apply(event []Event) []Event {
+	for _, e := range event {
+		e.Record[f.As] = e.String(f.Name)
+	}
+	return event
+}
+
+type SelectBool struct {
+	Name string
+	As   string
+}
+
+func (f SelectBool) Apply(event []Event) []Event {
+	for _, e := range event {
+		e.Record[f.As] = e.Bool(f.Name)
+	}
+	return event
+}
+
+type SelectInt struct {
+	Name string
+	As   string
+}
+
+func (f SelectInt) Apply(event []Event) []Event {
+	for _, e := range event {
+		e.Record[f.As] = e.Int(f.Name)
+	}
+	return event
+}
+
+type SelectFloat struct {
+	Name string
+	As   string
+}
+
+func (f SelectFloat) Apply(event []Event) []Event {
+	for _, e := range event {
+		e.Record[f.As] = e.Float(f.Name)
+	}
+	return event
+}
+
 type Count struct {
 	As string
 }

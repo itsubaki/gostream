@@ -2,6 +2,58 @@ package gocep
 
 import "strconv"
 
+type SelectMapString struct {
+	Name string
+	Key  string
+	As   string
+}
+
+func (f SelectMapString) Apply(event []Event) []Event {
+	for _, e := range event {
+		e.Record[f.As] = e.MapString(f.Name, f.Key)
+	}
+	return event
+}
+
+type SelectMapBool struct {
+	Name string
+	Key  string
+	As   string
+}
+
+func (f SelectMapBool) Apply(event []Event) []Event {
+	for _, e := range event {
+		e.Record[f.As] = e.MapBool(f.Name, f.Key)
+	}
+	return event
+}
+
+type SelectMapInt struct {
+	Name string
+	Key  string
+	As   string
+}
+
+func (f SelectMapInt) Apply(event []Event) []Event {
+	for _, e := range event {
+		e.Record[f.As] = e.MapInt(f.Name, f.Key)
+	}
+	return event
+}
+
+type SelectMapFloat struct {
+	Name string
+	Key  string
+	As   string
+}
+
+func (f SelectMapFloat) Apply(event []Event) []Event {
+	for _, e := range event {
+		e.Record[f.As] = e.MapFloat(f.Name, f.Key)
+	}
+	return event
+}
+
 type SumMapInt struct {
 	Name string
 	Key  string

@@ -24,6 +24,46 @@ func TestTimeDurationBatch(t *testing.T) {
 	}
 }
 
+func TestSelectString(t *testing.T) {
+	event := []Event{NewEvent(IntEvent{"foo", 10})}
+	f := SelectString{"Name", "Name"}
+
+	result := f.Apply(event)
+	if result[0].RecordString("Name") != "foo" {
+		t.Error(result)
+	}
+}
+
+func TestSelectBool(t *testing.T) {
+	event := []Event{NewEvent(BoolEvent{false})}
+	f := SelectBool{"Value", "Value"}
+
+	result := f.Apply(event)
+	if result[0].RecordBool("Value") {
+		t.Error(result)
+	}
+}
+
+func TestSelectInt(t *testing.T) {
+	event := []Event{NewEvent(IntEvent{"Name", 10})}
+	f := SelectInt{"Value", "Value"}
+
+	result := f.Apply(event)
+	if result[0].RecordInt("Value") != 10 {
+		t.Error(result)
+	}
+}
+
+func TestSelectFloat(t *testing.T) {
+	event := []Event{NewEvent(FloatEvent{"Name", 10.0})}
+	f := SelectFloat{"Value", "Value"}
+
+	result := f.Apply(event)
+	if result[0].RecordFloat("Value") != 10.0 {
+		t.Error(result)
+	}
+}
+
 func TestSumInt(t *testing.T) {
 	event := []Event{}
 	event = append(event, NewEvent(IntEvent{"foo", 10}))
