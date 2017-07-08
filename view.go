@@ -53,12 +53,12 @@ func (s SortableInt) Swap(i, j int) {
 	s.event[i], s.event[j] = s.event[j], s.event[i]
 }
 
-type SortInt struct {
+type OrderByInt struct {
 	Name    string
 	Reverse bool
 }
 
-func (f SortInt) Apply(event []Event) []Event {
+func (f OrderByInt) Apply(event []Event) []Event {
 	data := SortableInt{event, f.Name}
 	if f.Reverse {
 		sort.Sort(sort.Reverse(data))
@@ -85,12 +85,12 @@ func (s SortableFloat) Swap(i, j int) {
 	s.event[i], s.event[j] = s.event[j], s.event[i]
 }
 
-type SortFloat struct {
+type OrderByFloat struct {
 	Name    string
 	Reverse bool
 }
 
-func (f SortFloat) Apply(event []Event) []Event {
+func (f OrderByFloat) Apply(event []Event) []Event {
 	data := SortableFloat{event, f.Name}
 	if f.Reverse {
 		sort.Sort(sort.Reverse(data))

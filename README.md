@@ -23,7 +23,7 @@ The Stream Processing API for Go
     + [x] Cast
     + [x] As
  - [x] View
-    + [x] Sort, Limit
+    + [x] OrderBy, Limit
     + [x] First, Last
  - [x] Insert
 
@@ -45,14 +45,19 @@ type MyEvent struct {
 ```
 
 ```go
-// select * from MyEvent.time(10msec).sort(Value, DESC) where Value > 97
+// select * from MyEvent.time(10msec)
+//  where Value > 97
+//  orderby Value DESC
+//  limit 10 offset 5
+
 // 1024 is capacity of input/output queue
 w := NewTimeWindow(10 * time.Millisecond, 1024)
 defer w.Close()
 
 w.Selector(EqualsType{MyEvent{}})
 w.Selector(LargerThanInt{"Value", 97})
-w.View(SortInt{"Value", true})
+w.View(OrderByInt{"Value", true})
+w.View(Limit{5, 10})
 
 go func() {
   for {

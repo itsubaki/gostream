@@ -81,7 +81,7 @@ func BenchmarkLengthWindowSortInt(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{IntEvent{}})
-	w.View(SortInt{"Value", false})
+	w.View(OrderByInt{"Value", false})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -109,7 +109,7 @@ func BenchmarkLengthWindowSortReverseInt(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{IntEvent{}})
-	w.View(SortInt{"Value", true})
+	w.View(OrderByInt{"Value", true})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -125,7 +125,7 @@ func TestLengthWindow(t *testing.T) {
 	w.Selector(EqualsType{IntEvent{}})
 	w.Selector(LargerThanInt{"Value", 1})
 	w.Function(Count{"count"})
-	w.View(SortInt{"Value", true})
+	w.View(OrderByInt{"Value", true})
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {

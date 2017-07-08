@@ -77,8 +77,8 @@ func TestLimit(t *testing.T) {
 	}
 }
 
-func TestSortInt(t *testing.T) {
-	v := SortInt{"Value", false}
+func TestOrderByInt(t *testing.T) {
+	v := OrderByInt{"Value", false}
 
 	event := []Event{}
 
@@ -109,8 +109,8 @@ func TestSortInt(t *testing.T) {
 	}
 }
 
-func TestSortIntReverse(t *testing.T) {
-	v := SortInt{"Value", true}
+func TestOrderByIntReverse(t *testing.T) {
+	v := OrderByInt{"Value", true}
 
 	event := []Event{}
 
@@ -141,8 +141,8 @@ func TestSortIntReverse(t *testing.T) {
 	}
 }
 
-func TestSortFloat(t *testing.T) {
-	v := SortFloat{"Value", false}
+func TestOrderByFloat(t *testing.T) {
+	v := OrderByFloat{"Value", false}
 
 	event := []Event{}
 
@@ -173,8 +173,8 @@ func TestSortFloat(t *testing.T) {
 	}
 }
 
-func TestSortFloatReverse(t *testing.T) {
-	v := SortFloat{"Value", true}
+func TestOrderByFloatReverse(t *testing.T) {
+	v := OrderByFloat{"Value", true}
 
 	event := []Event{}
 	event = append(event, NewEvent(FloatEvent{"foo", 10.0}))
