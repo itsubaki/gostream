@@ -22,7 +22,7 @@ func NewStream(capacity int) *Stream {
 		ctx,
 		cancel,
 		[]Window{},
-		&Stream{},
+		nil,
 	}
 
 	go s.dispatch(s.ctx)
@@ -34,6 +34,11 @@ func (s *Stream) Close() {
 	for _, w := range s.window {
 		w.Close()
 	}
+
+	if s.insert != nil {
+		s.insert.Close()
+	}
+
 }
 
 func (s *Stream) Add(w Window) {
@@ -85,7 +90,7 @@ func (s *Stream) chain(ctx context.Context) {
 			return
 		case input := <-s.Output():
 			for _, e := range input {
-				s.insert.Input() <- InsertEvent{e.Record}
+				s.insert.Input() <- RecordEvent{e.Record}
 			}
 		}
 	}

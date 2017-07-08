@@ -15,17 +15,17 @@ The Stream Processing API for Go
     + [x] EqualsType, NotEqualsType
     + [x] Equals, NotEquals
     + [x] LargerThan, LessThan
+    + [ ] Having
+    + [ ] GroupBy
  - [x] Function
     + [x] Max, Min, Median
     + [x] Count, Sum, Average
     + [x] Cast
     + [x] As
- - [ ] View
+ - [x] View
     + [x] Sort, Limit
     + [x] First, Last
-    + [ ] Having
-    + [ ] GroupBy
- - [ ] Insert into
+ - [x] Insert
 
 ## Install
 
@@ -33,9 +33,9 @@ The Stream Processing API for Go
 go get github.com/itsubaki/gocep
 ```
 
-## Example
+# Example
 
-### Window
+## Window
 
 ```go
 type MyEvent struct {
@@ -62,7 +62,7 @@ go func() {
 }()
 
 for i := 0; i < 100; i++ {
-  w.Input() <- MyEvent{"name", i}
+  w.Input() <-MyEvent{"name", i}
 }
 ```
 
@@ -77,7 +77,7 @@ w.Function(AverageInt{"Value", "avgval"})
 w.Function(SumInt{"Value", "sumval"})
 ```
 
-### Stream
+## Stream
 
  - Stream is Event Dispatcher and Collector
 
@@ -96,7 +96,31 @@ go func() {
   }
 }()
 
-s.Input() <- MyEvent{"name", 100}
-s.Input() <- MapEvent{"name", map}
+s.Input() <-MyEvent{"name", 100}
+s.Input() <-MapEvent{"name", map}
 ...
+```
+
+```go
+// select sum(Value) from MyEvent.length(10)
+s := NewStream(1024)
+defer s.Close()
+w := NewLengthWindow(10, 1024)
+w.Selector(EqualsType{MyEvent{}})
+w.Function(SumInt{"Value", "sum(Value)"})
+s.Add(w)
+
+// select * from RecordEvent.length(10) where sum(Value) > 10
+istream := NewStream(1024)
+iw := NewLengthWindow(10, 1024)
+iw.Selector(EqualsType{RecordEvent{}})
+iw.Selector(LargerThanMapInt{"Record", "sum(Value)", 10})
+istream.Add(iw)
+
+// insert into RecordEvent select sum(Value) from MyEvent.length(10)
+// select * from RecordEvent.length(10) where sum(Value) > 10
+s.Insert(istream)
+
+s.Input() <-MyEvent{"name", 100}
+fmt.Println(<-istream.Output())
 ```
