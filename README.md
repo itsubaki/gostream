@@ -45,14 +45,14 @@ type MyEvent struct {
 ```
 
 ```go
-// select * from MyEvent.time(10msec).sort(Value) where Value > 97
+// select * from MyEvent.time(10msec).sort(Value, reverse) where Value > 97
 // 1024 is capacity of input/output queue
 w := NewTimeWindow(10 * time.Millisecond, 1024)
 defer w.Close()
 
 w.Selector(EqualsType{MyEvent{}})
 w.Selector(LargerThanInt{"Value", 97})
-w.View(SortInt{"Value"})
+w.View(SortInt{"Value", true})
 
 go func() {
   for {
@@ -62,7 +62,7 @@ go func() {
 }()
 
 for i := 0; i < 100; i++ {
-  w.Input() <- NewEvent(MyEvent{"name", i})
+  w.Input() <- MyEvent{"name", i}
 }
 ```
 
@@ -79,7 +79,7 @@ w.Function(SumInt{"Value", "sumval"})
 
 ### Stream
 
- - Stream is Event Dispatcher
+ - Stream is Event Dispatcher and Collector
 
 ```go
 s := NewStream(1024)

@@ -13,8 +13,8 @@ func TestFirst(t *testing.T) {
 		t.Error(empty)
 	}
 
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
 	result := v.Apply(event)
 
 	if len(result) != 1 {
@@ -35,8 +35,8 @@ func TestLast(t *testing.T) {
 		t.Error(empty)
 	}
 
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
 	result := v.Apply(event)
 
 	if len(result) != 1 {
@@ -57,12 +57,12 @@ func TestLimit(t *testing.T) {
 		t.Error(empty)
 	}
 
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 30}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 40}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 50}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 60}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
+	event = append(event, NewEvent(IntEvent{"foo", 30}))
+	event = append(event, NewEvent(IntEvent{"foo", 40}))
+	event = append(event, NewEvent(IntEvent{"foo", 50}))
+	event = append(event, NewEvent(IntEvent{"foo", 60}))
 	result := v.Apply(event)
 
 	if len(result) != 4 {
@@ -82,12 +82,12 @@ func TestSortInt(t *testing.T) {
 
 	event := []Event{}
 
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 30}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 40}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 60}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 50}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 30}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
+	event = append(event, NewEvent(IntEvent{"foo", 40}))
+	event = append(event, NewEvent(IntEvent{"foo", 60}))
+	event = append(event, NewEvent(IntEvent{"foo", 50}))
 	result := v.Apply(event)
 
 	var test = []struct {
@@ -114,12 +114,12 @@ func TestSortIntReverse(t *testing.T) {
 
 	event := []Event{}
 
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 30}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 40}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 60}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 50}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 30}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
+	event = append(event, NewEvent(IntEvent{"foo", 40}))
+	event = append(event, NewEvent(IntEvent{"foo", 60}))
+	event = append(event, NewEvent(IntEvent{"foo", 50}))
 	result := v.Apply(event)
 
 	var test = []struct {
@@ -146,12 +146,12 @@ func TestSortFloat(t *testing.T) {
 
 	event := []Event{}
 
-	event = append(event, NewEvent(FloatEvent{"foo", 10.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 30.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 20.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 40.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 60.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 50.0}).New())
+	event = append(event, NewEvent(FloatEvent{"foo", 10.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 30.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 20.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 40.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 60.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 50.0}))
 	result := v.Apply(event)
 
 	var test = []struct {
@@ -177,12 +177,12 @@ func TestSortFloatReverse(t *testing.T) {
 	v := SortFloat{"Value", true}
 
 	event := []Event{}
-	event = append(event, NewEvent(FloatEvent{"foo", 10.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 30.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 20.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 40.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 60.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 50.0}).New())
+	event = append(event, NewEvent(FloatEvent{"foo", 10.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 30.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 20.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 40.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 60.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 50.0}))
 	result := v.Apply(event)
 
 	var test = []struct {

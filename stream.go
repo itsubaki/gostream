@@ -41,9 +41,9 @@ func (s *Stream) dispatch() {
 			if c {
 				return
 			}
-		case e := <-s.in:
+		case input := <-s.in:
 			for _, w := range s.window {
-				w.Input() <- NewEvent(e)
+				w.Input() <- input
 			}
 		}
 	}
@@ -56,8 +56,8 @@ func (s *Stream) collect(w Window) {
 			if c {
 				return
 			}
-		case e := <-w.Output():
-			s.out <- e
+		case event := <-w.Output():
+			s.out <- event
 		}
 	}
 }

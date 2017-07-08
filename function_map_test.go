@@ -7,8 +7,8 @@ func TestSumMapInt(t *testing.T) {
 	m["piyo"] = 123
 
 	event := []Event{}
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
 
 	f := SumMapInt{"Map", "piyo", "sum(Map:piyo)"}
 	result := f.Apply(event)
@@ -33,8 +33,8 @@ func TestSumMapFloat(t *testing.T) {
 	m["piyo"] = 12.3
 
 	event := []Event{}
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
 
 	f := SumMapFloat{"Map", "piyo", "sum(Map:piyo)"}
 	result := f.Apply(event)
@@ -59,8 +59,8 @@ func TestAverageMapInt(t *testing.T) {
 	m["piyo"] = 15
 
 	event := []Event{}
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
 
 	f := AverageMapInt{"Map", "piyo", "avg(Map:piyo)"}
 	result := f.Apply(event)
@@ -85,8 +85,8 @@ func TestAverageMapFloat(t *testing.T) {
 	m["piyo"] = 15.0
 
 	event := []Event{}
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
 
 	f := AverageMapFloat{"Map", "piyo", "avg(Map:piyo)"}
 	result := f.Apply(event)
@@ -111,7 +111,7 @@ func TestCastMapStringToInt(t *testing.T) {
 	m["piyo"] = "123"
 
 	event := []Event{}
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
 
 	cast := CastMapStringToInt{"Map", "piyo", "cast(Map:piyo)"}
 	casted := cast.Apply(event)
@@ -120,8 +120,8 @@ func TestCastMapStringToInt(t *testing.T) {
 	}
 
 	event = []Event{}
-	event = append(event, NewEvent(MapEvent{"new", casted[0].Record}).New())
-	event = append(event, NewEvent(MapEvent{"new", casted[0].Record}).New())
+	event = append(event, NewEvent(MapEvent{"new", casted[0].Record}))
+	event = append(event, NewEvent(MapEvent{"new", casted[0].Record}))
 
 	sum := SumMapInt{"Map", "cast(Map:piyo)", "sum(Map:cast(Map:piyo))"}
 	result := sum.Apply(event)
@@ -135,7 +135,7 @@ func TestCastMapStringToFloat(t *testing.T) {
 	m["piyo"] = "12.3"
 
 	event := []Event{}
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
 
 	cast := CastMapStringToFloat{"Map", "piyo", "cast(Map:piyo)"}
 	casted := cast.Apply(event)
@@ -149,7 +149,7 @@ func TestCastMapStringToBool(t *testing.T) {
 	m["piyo"] = "false"
 
 	event := []Event{}
-	event = append(event, NewEvent(MapEvent{"foobar", m}).New())
+	event = append(event, NewEvent(MapEvent{"foobar", m}))
 
 	cast := CastMapStringToBool{"Map", "piyo", "cast(Map:piyo)"}
 	casted := cast.Apply(event)

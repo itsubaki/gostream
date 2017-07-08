@@ -16,7 +16,7 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		w.Update(NewEvent(MapEvent{"foobar", m}))
+		w.Update(MapEvent{"foobar", m})
 	}
 }
 
@@ -29,7 +29,7 @@ func BenchmarkLengthWindowAverageInt(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		w.Update(NewEvent(IntEvent{"foobar", i}))
+		w.Update(IntEvent{"foobar", i})
 	}
 }
 
@@ -44,7 +44,7 @@ func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		w.Update(NewEvent(MapEvent{"foobar", m}))
+		w.Update(MapEvent{"foobar", m})
 	}
 }
 
@@ -57,7 +57,7 @@ func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		w.Update(NewEvent(IntEvent{"foobar", i}))
+		w.Update(IntEvent{"foobar", i})
 	}
 }
 
@@ -72,7 +72,7 @@ func BenchmarkLengthWindowSortMap(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		w.Update(NewEvent(MapEvent{"foobar", m}))
+		w.Update(MapEvent{"foobar", m})
 	}
 }
 
@@ -85,7 +85,7 @@ func BenchmarkLengthWindowSortInt(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		w.Update(NewEvent(IntEvent{"foobar", i}))
+		w.Update(IntEvent{"foobar", i})
 	}
 }
 
@@ -100,7 +100,7 @@ func BenchmarkLengthWindowSortReverseMap(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		w.Update(NewEvent(MapEvent{"foobar", m}))
+		w.Update(MapEvent{"foobar", m})
 	}
 }
 
@@ -113,7 +113,7 @@ func BenchmarkLengthWindowSortReverseInt(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		w.Update(NewEvent(IntEvent{"foobar", i}))
+		w.Update(IntEvent{"foobar", i})
 	}
 }
 
@@ -129,7 +129,7 @@ func TestLengthWindow(t *testing.T) {
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {
-		event = w.Update(NewEvent(IntEvent{"foo", i}))
+		event = w.Update(IntEvent{"foo", i})
 	}
 
 	var test = []struct {
@@ -166,7 +166,7 @@ func TestLengthWindowMap(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		event = w.Update(NewEvent(MapEvent{"name", m}))
+		event = w.Update(MapEvent{"name", m})
 	}
 
 	var test = []struct {
@@ -198,7 +198,7 @@ func TestLengthWindowListen(t *testing.T) {
 	defer w.Close()
 
 	w.Selector(EqualsType{IntEvent{}})
-	w.Listen(NewEvent("").New())
+	w.Listen("")
 
 }
 
@@ -211,7 +211,7 @@ func TestLengthBatchWindow(t *testing.T) {
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {
-		event = w.Update(NewEvent(IntEvent{"foo", i}))
+		event = w.Update(IntEvent{"foo", i})
 	}
 
 	if event[0].IntValue("Value") != 8 {
@@ -230,7 +230,7 @@ func TestTimeWindow0ms(t *testing.T) {
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {
-		event = w.Update(NewEvent(IntEvent{"foo", i}))
+		event = w.Update(IntEvent{"foo", i})
 	}
 
 	if len(event) != 0 {
@@ -244,7 +244,7 @@ func TestTimeWindow10ms(t *testing.T) {
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {
-		event = w.Update(NewEvent(IntEvent{"foo", i}))
+		event = w.Update(IntEvent{"foo", i})
 	}
 
 	if len(event) == 0 {
@@ -257,7 +257,7 @@ func TestTimeBatchWindow10ms(t *testing.T) {
 	defer w.Close()
 
 	for i := 0; i < 10; i++ {
-		w.Update(NewEvent(IntEvent{"foo", i}))
+		w.Update(IntEvent{"foo", i})
 	}
 }
 
@@ -273,7 +273,7 @@ func TestLengthWindowPanic(t *testing.T) {
 
 	w.Selector(EqualsType{IntEvent{}})
 	w.Function(AverageMapInt{"Map", "Value", "avg(Map:Value)"})
-	event := w.Update(NewEvent(IntEvent{"foobar", 10}))
+	event := w.Update(IntEvent{"foobar", 10})
 	if len(event) != 0 {
 		t.Error(event)
 	}
@@ -283,13 +283,13 @@ func TestInsertIntoIntEvent(t *testing.T) {
 	w := NewLengthWindow(16, 32)
 	defer w.Close()
 	w.Function(CastStringToInt{"Name", "c(name)"})
-	e := w.Update(NewEvent(IntEvent{"123", 123}))
+	e := w.Update(IntEvent{"123", 123})
 	cname := e[0].RecordIntValue("c(name)")
 
 	w2 := NewLengthWindow(16, 32)
 	defer w2.Close()
 	w2.Function(SumInt{"Value", "sum(name)"})
-	e2 := w2.Update(NewEvent(IntEvent{"foobar", cname}))
+	e2 := w2.Update(IntEvent{"foobar", cname})
 
 	if e2[0].RecordIntValue("sum(name)") != 123 {
 		t.Error(e2)
@@ -303,16 +303,14 @@ func TestInsertIntoMapEvent(t *testing.T) {
 
 	m := make(map[string]interface{})
 	m["str"] = "123"
-	me := MapEvent{"foo", m}
-	cast := w.Update(NewEvent(me))
+	cast := w.Update(MapEvent{"foo", m})
 
 	w2 := NewLengthWindow(16, 32)
 	defer w2.Close()
 	w2.Function(SumMapInt{"Map", "cast(str)", "sum(str)"})
 
 	for _, e := range cast {
-		m := MapEvent{"foo", e.Record}
-		e := w2.Update(NewEvent(m))
+		e := w2.Update(MapEvent{"foo", e.Record})
 
 		for _, r := range e {
 			if r.RecordIntValue("sum(str)") != 123 {

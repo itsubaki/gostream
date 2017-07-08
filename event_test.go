@@ -70,7 +70,7 @@ func TestMapValue(t *testing.T) {
 }
 
 func TestRecordStringValue(t *testing.T) {
-	event := NewEvent(IntEvent{"foobar", 123}).New()
+	event := NewEvent(IntEvent{"foobar", 123})
 	event.Record["Name"] = "foobar"
 
 	if event.RecordStringValue("Name") != "foobar" {

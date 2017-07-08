@@ -10,7 +10,7 @@ func TestSortMapInt(t *testing.T) {
 	for i := 10; i < 70; i = i + 10 {
 		m := make(map[string]interface{})
 		m["foo"] = i
-		event = append(event, NewEvent(MapEvent{"name", m}).New())
+		event = append(event, NewEvent(MapEvent{"name", m}))
 	}
 	result := v.Apply(event)
 
@@ -41,7 +41,7 @@ func TestSortMapIntReverse(t *testing.T) {
 	for i := 10; i < 70; i = i + 10 {
 		m := make(map[string]interface{})
 		m["foo"] = i
-		event = append(event, NewEvent(MapEvent{"name", m}).New())
+		event = append(event, NewEvent(MapEvent{"name", m}))
 	}
 	result := v.Apply(event)
 
@@ -72,7 +72,7 @@ func TestSortMapFloat(t *testing.T) {
 	for i := 10; i < 70; i = i + 10 {
 		m := make(map[string]interface{})
 		m["foo"] = float64(i)
-		event = append(event, NewEvent(MapEvent{"name", m}).New())
+		event = append(event, NewEvent(MapEvent{"name", m}))
 	}
 	result := v.Apply(event)
 
@@ -103,7 +103,7 @@ func TestSortMapFloatReverse(t *testing.T) {
 	for i := 10; i < 70; i = i + 10 {
 		m := make(map[string]interface{})
 		m["foo"] = float64(i)
-		event = append(event, NewEvent(MapEvent{"name", m}).New())
+		event = append(event, NewEvent(MapEvent{"name", m}))
 	}
 	result := v.Apply(event)
 

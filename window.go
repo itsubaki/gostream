@@ -7,14 +7,14 @@ import (
 )
 
 type Window interface {
-	Input() chan Event
+	Input() chan interface{}
 	Output() chan []Event
 	Close()
 }
 
 type SimpleWindow struct {
 	capacity int
-	in       chan Event
+	in       chan interface{}
 	out      chan []Event
 	close    chan bool
 	event    []Event
@@ -26,7 +26,7 @@ type SimpleWindow struct {
 func NewSimpleWindow(capacity int) *SimpleWindow {
 	w := &SimpleWindow{
 		capacity,
-		make(chan Event, capacity),
+		make(chan interface{}, capacity),
 		make(chan []Event, capacity),
 		make(chan bool, 1),
 		[]Event{},
@@ -55,7 +55,7 @@ func (w *SimpleWindow) View(v View) {
 	w.view = append(w.view, v)
 }
 
-func (w *SimpleWindow) Input() chan Event {
+func (w *SimpleWindow) Input() chan interface{} {
 	return w.in
 }
 
@@ -70,33 +70,34 @@ func (w *SimpleWindow) work() {
 			if c {
 				return
 			}
-		case e := <-w.in:
-			w.Listen(e)
+		case input := <-w.in:
+			w.Listen(input)
 		}
 	}
 }
 
-func (w *SimpleWindow) Listen(e Event) {
-	event := w.Update(e)
+func (w *SimpleWindow) Listen(input interface{}) {
+	event := w.Update(input)
 	if len(event) == 0 {
 		return
 	}
 	w.Output() <- event
 }
 
-func (w *SimpleWindow) Update(e Event) (event []Event) {
+func (w *SimpleWindow) Update(input interface{}) (event []Event) {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Println(err, reflect.TypeOf(e.Underlying))
+			log.Println(err, reflect.TypeOf(input))
 		}
 	}()
 
+	e := NewEvent(input)
 	for _, s := range w.selector {
 		if !s.Select(e) {
 			return event
 		}
 	}
-	w.event = append(w.event, e.New())
+	w.event = append(w.event, e)
 
 	for _, f := range w.function {
 		w.event = f.Apply(w.event)
@@ -120,7 +121,7 @@ type LengthWindow struct {
 func NewLengthWindow(length, capacity int) *SimpleWindow {
 	w := &SimpleWindow{
 		capacity,
-		make(chan Event, capacity),
+		make(chan interface{}, capacity),
 		make(chan []Event, capacity),
 		make(chan bool, 1),
 		[]Event{},
@@ -142,7 +143,7 @@ func NewLengthBatchWindow(length, capacity int) *LengthBatchWindow {
 	w := &LengthBatchWindow{
 		SimpleWindow{
 			capacity,
-			make(chan Event, capacity),
+			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
 			make(chan bool, 1),
 			[]Event{},
@@ -165,7 +166,7 @@ func NewTimeWindow(expire time.Duration, capacity int) *TimeWindow {
 	w := &TimeWindow{
 		SimpleWindow{
 			capacity,
-			make(chan Event, capacity),
+			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
 			make(chan bool, 1),
 			[]Event{},
@@ -188,7 +189,7 @@ func NewTimeBatchWindow(expire time.Duration, capacity int) *TimeBatchWindow {
 	w := &TimeBatchWindow{
 		SimpleWindow{
 			capacity,
-			make(chan Event, capacity),
+			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
 			make(chan bool, 1),
 			[]Event{},

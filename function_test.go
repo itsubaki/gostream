@@ -26,8 +26,8 @@ func TestTimeDurationBatch(t *testing.T) {
 
 func TestSumInt(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
 
 	f := SumInt{"Value", "sum(Value)"}
 	result := f.Apply(event)
@@ -49,8 +49,8 @@ func TestSumInt(t *testing.T) {
 
 func TestSumFloat(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(FloatEvent{"foo", 10.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 20.0}).New())
+	event = append(event, NewEvent(FloatEvent{"foo", 10.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 20.0}))
 
 	f := SumFloat{"Value", "sum(Value)"}
 	result := f.Apply(event)
@@ -72,8 +72,8 @@ func TestSumFloat(t *testing.T) {
 
 func TestAverageInt(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
 
 	f := AverageInt{"Value", "avg(Value)"}
 	result := f.Apply(event)
@@ -95,8 +95,8 @@ func TestAverageInt(t *testing.T) {
 
 func TestAverageFloat(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(FloatEvent{"foo", 10.0}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 20.0}).New())
+	event = append(event, NewEvent(FloatEvent{"foo", 10.0}))
+	event = append(event, NewEvent(FloatEvent{"foo", 20.0}))
 
 	f := AverageFloat{"Value", "avg(Value)"}
 	result := f.Apply(event)
@@ -118,8 +118,8 @@ func TestAverageFloat(t *testing.T) {
 
 func TestMaxInt(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
 
 	f := MaxInt{"Value", "max(Value)"}
 	result := f.Apply(event)
@@ -141,8 +141,8 @@ func TestMaxInt(t *testing.T) {
 
 func TestMaxFloat(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(FloatEvent{"foo", 10}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 20}).New())
+	event = append(event, NewEvent(FloatEvent{"foo", 10}))
+	event = append(event, NewEvent(FloatEvent{"foo", 20}))
 
 	f := MaxFloat{"Value", "max(Value)"}
 	result := f.Apply(event)
@@ -164,8 +164,8 @@ func TestMaxFloat(t *testing.T) {
 
 func TestMinInt(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
 
 	f := MinInt{"Value", "min(Value)"}
 	result := f.Apply(event)
@@ -187,8 +187,8 @@ func TestMinInt(t *testing.T) {
 
 func TestMinFloat(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(FloatEvent{"foo", 10}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 20}).New())
+	event = append(event, NewEvent(FloatEvent{"foo", 10}))
+	event = append(event, NewEvent(FloatEvent{"foo", 20}))
 
 	f := MinFloat{"Value", "min(Value)"}
 	result := f.Apply(event)
@@ -210,8 +210,8 @@ func TestMinFloat(t *testing.T) {
 
 func TestMedianIntEven(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
 
 	f := MedianInt{"Value", "median(Value)"}
 	result := f.Apply(event)
@@ -233,9 +233,9 @@ func TestMedianIntEven(t *testing.T) {
 
 func TestMedianIntOdd(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(IntEvent{"foo", 10}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 20}).New())
-	event = append(event, NewEvent(IntEvent{"foo", 30}).New())
+	event = append(event, NewEvent(IntEvent{"foo", 10}))
+	event = append(event, NewEvent(IntEvent{"foo", 20}))
+	event = append(event, NewEvent(IntEvent{"foo", 30}))
 
 	f := MedianInt{"Value", "median(Value)"}
 	result := f.Apply(event)
@@ -257,8 +257,8 @@ func TestMedianIntOdd(t *testing.T) {
 
 func TestMedianFloatEven(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(FloatEvent{"foo", 10}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 20}).New())
+	event = append(event, NewEvent(FloatEvent{"foo", 10}))
+	event = append(event, NewEvent(FloatEvent{"foo", 20}))
 
 	f := MedianFloat{"Value", "median(Value)"}
 	result := f.Apply(event)
@@ -280,9 +280,9 @@ func TestMedianFloatEven(t *testing.T) {
 
 func TestMedianFloatOdd(t *testing.T) {
 	event := []Event{}
-	event = append(event, NewEvent(FloatEvent{"foo", 10}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 20}).New())
-	event = append(event, NewEvent(FloatEvent{"foo", 30}).New())
+	event = append(event, NewEvent(FloatEvent{"foo", 10}))
+	event = append(event, NewEvent(FloatEvent{"foo", 20}))
+	event = append(event, NewEvent(FloatEvent{"foo", 30}))
 
 	f := MedianFloat{"Value", "median(Value)"}
 	result := f.Apply(event)
@@ -303,7 +303,7 @@ func TestMedianFloatOdd(t *testing.T) {
 }
 
 func TestCastStringToInt(t *testing.T) {
-	event := []Event{NewEvent(IntEvent{"123", 10}).New()}
+	event := []Event{NewEvent(IntEvent{"123", 10})}
 
 	f := CastStringToInt{"Name", "cast(Name)"}
 	result := f.Apply(event)
@@ -314,7 +314,7 @@ func TestCastStringToInt(t *testing.T) {
 }
 
 func TestCastStringToFloat(t *testing.T) {
-	event := []Event{NewEvent(IntEvent{"12.3", 10}).New()}
+	event := []Event{NewEvent(IntEvent{"12.3", 10})}
 
 	f := CastStringToFloat{"Name", "cast(Name)"}
 	result := f.Apply(event)
@@ -325,7 +325,7 @@ func TestCastStringToFloat(t *testing.T) {
 }
 
 func TestCastStringToBool(t *testing.T) {
-	event := []Event{NewEvent(IntEvent{"false", 10}).New()}
+	event := []Event{NewEvent(IntEvent{"false", 10})}
 
 	f := CastStringToBool{"Name", "cast(Name)"}
 	result := f.Apply(event)

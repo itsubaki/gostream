@@ -12,15 +12,7 @@ type Event struct {
 }
 
 func NewEvent(underlying interface{}) Event {
-	return Event{time.Now(), underlying, nil}
-}
-
-func (e Event) New() Event {
-	return Event{
-		e.Time,
-		e.Underlying,
-		make(map[string]interface{}),
-	}
+	return Event{time.Now(), underlying, make(map[string]interface{})}
 }
 
 func (e Event) Type() reflect.Type {
