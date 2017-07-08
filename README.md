@@ -111,16 +111,16 @@ w.Function(SumInt{"Value", "sum(Value)"})
 s.Add(w)
 
 // select * from RecordEvent.length(10) where sum(Value) > 10
-istream := NewStream(1024)
+is := NewStream(1024)
 iw := NewLengthWindow(10, 1024)
 iw.Selector(EqualsType{RecordEvent{}})
 iw.Selector(LargerThanMapInt{"Record", "sum(Value)", 10})
-istream.Add(iw)
+is.Add(iw)
 
 // insert into RecordEvent select sum(Value) from MyEvent.length(10)
 // select * from RecordEvent.length(10) where sum(Value) > 10
-s.Insert(istream)
+s.Insert(is)
 
 s.Input() <-MyEvent{"name", 100}
-fmt.Println(<-istream.Output())
+fmt.Println(<-is.Output())
 ```
