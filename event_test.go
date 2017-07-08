@@ -23,31 +23,31 @@ type MapEvent struct {
 	Map  map[string]interface{}
 }
 
-func TestFloatValue(t *testing.T) {
+func TestFloat(t *testing.T) {
 	event := NewEvent(FloatEvent{"foobar", 12.3})
 
-	if event.FloatValue("Value") != 12.3 {
+	if event.Float("Value") != 12.3 {
 		t.Errorf("failed.")
 	}
 }
 
-func TestBoolValue(t *testing.T) {
+func TestBool(t *testing.T) {
 	event := NewEvent(BoolEvent{true})
 
-	if !event.BoolValue("Value") {
+	if !event.Bool("Value") {
 		t.Errorf("failed.")
 	}
 }
 
-func TestStringValue(t *testing.T) {
+func TestString(t *testing.T) {
 	event := NewEvent(IntEvent{"foobar", 123})
 
-	if event.StringValue("Name") != "foobar" {
+	if event.String("Name") != "foobar" {
 		t.Errorf("failed.")
 	}
 }
 
-func TestMapValue(t *testing.T) {
+func TestMap(t *testing.T) {
 	m := make(map[string]interface{})
 	m["foo"] = "bar"
 	m["piyo"] = 123
@@ -55,25 +55,25 @@ func TestMapValue(t *testing.T) {
 	m["fuga"] = false
 	e := NewEvent(MapEvent{"foobar", m})
 
-	if e.MapStringValue("Map", "foo") != "bar" {
+	if e.MapString("Map", "foo") != "bar" {
 		t.Error(e)
 	}
-	if e.MapIntValue("Map", "piyo") != 123 {
+	if e.MapInt("Map", "piyo") != 123 {
 		t.Error(e)
 	}
-	if e.MapFloatValue("Map", "hoge") != 12.3 {
+	if e.MapFloat("Map", "hoge") != 12.3 {
 		t.Error(e)
 	}
-	if e.MapBoolValue("Map", "fuga") {
+	if e.MapBool("Map", "fuga") {
 		t.Error(e)
 	}
 }
 
-func TestRecordStringValue(t *testing.T) {
+func TestRecordString(t *testing.T) {
 	event := NewEvent(IntEvent{"foobar", 123})
 	event.Record["Name"] = "foobar"
 
-	if event.RecordStringValue("Name") != "foobar" {
+	if event.RecordString("Name") != "foobar" {
 		t.Errorf("failed.")
 	}
 }

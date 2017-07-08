@@ -46,7 +46,7 @@ func (s SortableInt) Len() int {
 }
 
 func (s SortableInt) Less(i, j int) bool {
-	return s.event[i].IntValue(s.name) < s.event[j].IntValue(s.name)
+	return s.event[i].Int(s.name) < s.event[j].Int(s.name)
 }
 
 func (s SortableInt) Swap(i, j int) {
@@ -78,7 +78,7 @@ func (s SortableFloat) Len() int {
 }
 
 func (s SortableFloat) Less(i, j int) bool {
-	return s.event[i].FloatValue(s.name) < s.event[j].FloatValue(s.name)
+	return s.event[i].Float(s.name) < s.event[j].Float(s.name)
 }
 
 func (s SortableFloat) Swap(i, j int) {

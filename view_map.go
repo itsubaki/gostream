@@ -13,7 +13,7 @@ func (s SortableMapInt) Len() int {
 }
 
 func (s SortableMapInt) Less(i, j int) bool {
-	return s.event[i].MapIntValue(s.name, s.key) < s.event[j].MapIntValue(s.name, s.key)
+	return s.event[i].MapInt(s.name, s.key) < s.event[j].MapInt(s.name, s.key)
 }
 
 func (s SortableMapInt) Swap(i, j int) {
@@ -47,7 +47,7 @@ func (s SortableMapFloat) Len() int {
 }
 
 func (s SortableMapFloat) Less(i, j int) bool {
-	return s.event[i].MapFloatValue(s.name, s.key) < s.event[j].MapFloatValue(s.name, s.key)
+	return s.event[i].MapFloat(s.name, s.key) < s.event[j].MapFloat(s.name, s.key)
 }
 
 func (s SortableMapFloat) Swap(i, j int) {

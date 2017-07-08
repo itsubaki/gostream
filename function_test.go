@@ -308,7 +308,7 @@ func TestCastStringToInt(t *testing.T) {
 	f := CastStringToInt{"Name", "cast(Name)"}
 	result := f.Apply(event)
 
-	if result[0].RecordIntValue("cast(Name)") != 123 {
+	if result[0].RecordInt("cast(Name)") != 123 {
 		t.Error(result)
 	}
 }
@@ -319,7 +319,7 @@ func TestCastStringToFloat(t *testing.T) {
 	f := CastStringToFloat{"Name", "cast(Name)"}
 	result := f.Apply(event)
 
-	if result[0].RecordFloatValue("cast(Name)") != 12.3 {
+	if result[0].RecordFloat("cast(Name)") != 12.3 {
 		t.Error(result)
 	}
 }
@@ -330,7 +330,7 @@ func TestCastStringToBool(t *testing.T) {
 	f := CastStringToBool{"Name", "cast(Name)"}
 	result := f.Apply(event)
 
-	if result[0].RecordBoolValue("cast(Name)") {
+	if result[0].RecordBool("cast(Name)") {
 		t.Error(result)
 	}
 }

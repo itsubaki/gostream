@@ -27,7 +27,7 @@ func TestSortMapInt(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].MapIntValue("Map", "foo") != tt.value {
+		if result[tt.index].MapInt("Map", "foo") != tt.value {
 			t.Error(result)
 		}
 	}
@@ -58,7 +58,7 @@ func TestSortMapIntReverse(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].MapIntValue("Map", "foo") != tt.value {
+		if result[tt.index].MapInt("Map", "foo") != tt.value {
 			t.Error(result)
 		}
 	}
@@ -89,7 +89,7 @@ func TestSortMapFloat(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].MapFloatValue("Map", "foo") != tt.value {
+		if result[tt.index].MapFloat("Map", "foo") != tt.value {
 			t.Error(result)
 		}
 	}
@@ -120,7 +120,7 @@ func TestSortMapFloatReverse(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].MapFloatValue("Map", "foo") != tt.value {
+		if result[tt.index].MapFloat("Map", "foo") != tt.value {
 			t.Error(result)
 		}
 	}

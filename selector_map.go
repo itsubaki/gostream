@@ -7,7 +7,7 @@ type EqualsMapString struct {
 }
 
 func (f EqualsMapString) Select(e Event) bool {
-	return e.MapStringValue(f.Name, f.Key) == f.Value
+	return e.MapString(f.Name, f.Key) == f.Value
 }
 
 type EqualsMapBool struct {
@@ -17,7 +17,7 @@ type EqualsMapBool struct {
 }
 
 func (f EqualsMapBool) Select(e Event) bool {
-	return e.MapBoolValue(f.Name, f.Key) == f.Value
+	return e.MapBool(f.Name, f.Key) == f.Value
 }
 
 type EqualsMapInt struct {
@@ -27,7 +27,7 @@ type EqualsMapInt struct {
 }
 
 func (f EqualsMapInt) Select(e Event) bool {
-	return e.MapIntValue(f.Name, f.Key) == f.Value
+	return e.MapInt(f.Name, f.Key) == f.Value
 }
 
 type EqualsMapFloat struct {
@@ -37,7 +37,7 @@ type EqualsMapFloat struct {
 }
 
 func (f EqualsMapFloat) Select(e Event) bool {
-	return e.MapFloatValue(f.Name, f.Key) == f.Value
+	return e.MapFloat(f.Name, f.Key) == f.Value
 }
 
 type NotEqualsMapString struct {
@@ -47,7 +47,7 @@ type NotEqualsMapString struct {
 }
 
 func (f NotEqualsMapString) Select(e Event) bool {
-	return e.MapStringValue(f.Name, f.Key) != f.Value
+	return e.MapString(f.Name, f.Key) != f.Value
 }
 
 type NotEqualsMapBool struct {
@@ -57,7 +57,7 @@ type NotEqualsMapBool struct {
 }
 
 func (f NotEqualsMapBool) Select(e Event) bool {
-	return e.MapBoolValue(f.Name, f.Key) != f.Value
+	return e.MapBool(f.Name, f.Key) != f.Value
 }
 
 type NotEqualsMapInt struct {
@@ -67,7 +67,7 @@ type NotEqualsMapInt struct {
 }
 
 func (f NotEqualsMapInt) Select(e Event) bool {
-	return e.MapIntValue(f.Name, f.Key) != f.Value
+	return e.MapInt(f.Name, f.Key) != f.Value
 }
 
 type NotEqualsMapFloat struct {
@@ -77,7 +77,7 @@ type NotEqualsMapFloat struct {
 }
 
 func (f NotEqualsMapFloat) Select(e Event) bool {
-	return e.MapFloatValue(f.Name, f.Key) != f.Value
+	return e.MapFloat(f.Name, f.Key) != f.Value
 }
 
 type LargerThanMapInt struct {
@@ -87,7 +87,7 @@ type LargerThanMapInt struct {
 }
 
 func (f LargerThanMapInt) Select(e Event) bool {
-	return e.MapIntValue(f.Name, f.Key) > f.Value
+	return e.MapInt(f.Name, f.Key) > f.Value
 }
 
 type LargerThanMapFloat struct {
@@ -97,7 +97,7 @@ type LargerThanMapFloat struct {
 }
 
 func (f LargerThanMapFloat) Select(e Event) bool {
-	return e.MapFloatValue(f.Name, f.Key) > f.Value
+	return e.MapFloat(f.Name, f.Key) > f.Value
 }
 
 type LessThanMapInt struct {
@@ -107,7 +107,7 @@ type LessThanMapInt struct {
 }
 
 func (f LessThanMapInt) Select(e Event) bool {
-	return e.MapIntValue(f.Name, f.Key) < f.Value
+	return e.MapInt(f.Name, f.Key) < f.Value
 }
 
 type LessThanMapFloat struct {
@@ -117,5 +117,5 @@ type LessThanMapFloat struct {
 }
 
 func (f LessThanMapFloat) Select(e Event) bool {
-	return e.MapFloatValue(f.Name, f.Key) < f.Value
+	return e.MapFloat(f.Name, f.Key) < f.Value
 }

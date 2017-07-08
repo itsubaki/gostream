@@ -28,7 +28,7 @@ type EqualsString struct {
 }
 
 func (f EqualsString) Select(e Event) bool {
-	return e.StringValue(f.Name) == f.Value
+	return e.String(f.Name) == f.Value
 }
 
 type EqualsBool struct {
@@ -37,7 +37,7 @@ type EqualsBool struct {
 }
 
 func (f EqualsBool) Select(e Event) bool {
-	return e.BoolValue(f.Name) == f.Value
+	return e.Bool(f.Name) == f.Value
 }
 
 type EqualsInt struct {
@@ -46,7 +46,7 @@ type EqualsInt struct {
 }
 
 func (f EqualsInt) Select(e Event) bool {
-	return e.IntValue(f.Name) == f.Value
+	return e.Int(f.Name) == f.Value
 }
 
 type EqualsFloat struct {
@@ -55,7 +55,7 @@ type EqualsFloat struct {
 }
 
 func (f EqualsFloat) Select(e Event) bool {
-	return e.FloatValue(f.Name) == f.Value
+	return e.Float(f.Name) == f.Value
 }
 
 type NotEqualsString struct {
@@ -64,7 +64,7 @@ type NotEqualsString struct {
 }
 
 func (f NotEqualsString) Select(e Event) bool {
-	return e.StringValue(f.Name) != f.Value
+	return e.String(f.Name) != f.Value
 }
 
 type NotEqualsBool struct {
@@ -73,7 +73,7 @@ type NotEqualsBool struct {
 }
 
 func (f NotEqualsBool) Select(e Event) bool {
-	return e.BoolValue(f.Name) != f.Value
+	return e.Bool(f.Name) != f.Value
 }
 
 type NotEqualsInt struct {
@@ -82,7 +82,7 @@ type NotEqualsInt struct {
 }
 
 func (f NotEqualsInt) Select(e Event) bool {
-	return e.IntValue(f.Name) != f.Value
+	return e.Int(f.Name) != f.Value
 }
 
 type NotEqualsFloat struct {
@@ -91,7 +91,7 @@ type NotEqualsFloat struct {
 }
 
 func (f NotEqualsFloat) Select(e Event) bool {
-	return e.FloatValue(f.Name) != f.Value
+	return e.Float(f.Name) != f.Value
 }
 
 type LargerThanInt struct {
@@ -100,7 +100,7 @@ type LargerThanInt struct {
 }
 
 func (f LargerThanInt) Select(e Event) bool {
-	return e.IntValue(f.Name) > f.Value
+	return e.Int(f.Name) > f.Value
 }
 
 type LargerThanFloat struct {
@@ -109,7 +109,7 @@ type LargerThanFloat struct {
 }
 
 func (f LargerThanFloat) Select(e Event) bool {
-	return e.FloatValue(f.Name) > f.Value
+	return e.Float(f.Name) > f.Value
 }
 
 type LessThanInt struct {
@@ -118,7 +118,7 @@ type LessThanInt struct {
 }
 
 func (f LessThanInt) Select(e Event) bool {
-	return e.IntValue(f.Name) < f.Value
+	return e.Int(f.Name) < f.Value
 }
 
 type LessThanFloat struct {
@@ -127,5 +127,5 @@ type LessThanFloat struct {
 }
 
 func (f LessThanFloat) Select(e Event) bool {
-	return e.FloatValue(f.Name) < f.Value
+	return e.Float(f.Name) < f.Value
 }

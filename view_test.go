@@ -21,7 +21,7 @@ func TestFirst(t *testing.T) {
 		t.Error(result)
 	}
 
-	if result[0].IntValue("Value") != 10 {
+	if result[0].Int("Value") != 10 {
 		t.Error(result)
 	}
 }
@@ -43,7 +43,7 @@ func TestLast(t *testing.T) {
 		t.Error(result)
 	}
 
-	if result[0].IntValue("Value") != 20 {
+	if result[0].Int("Value") != 20 {
 		t.Error(result)
 	}
 }
@@ -69,10 +69,10 @@ func TestLimit(t *testing.T) {
 		t.Error(result)
 	}
 
-	if result[0].IntValue("Value") != 30 {
+	if result[0].Int("Value") != 30 {
 		t.Error(result)
 	}
-	if result[3].IntValue("Value") != 60 {
+	if result[3].Int("Value") != 60 {
 		t.Error(result)
 	}
 }
@@ -103,7 +103,7 @@ func TestSortInt(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].IntValue("Value") != tt.value {
+		if result[tt.index].Int("Value") != tt.value {
 			t.Error(result)
 		}
 	}
@@ -135,7 +135,7 @@ func TestSortIntReverse(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].IntValue("Value") != tt.value {
+		if result[tt.index].Int("Value") != tt.value {
 			t.Error(result)
 		}
 	}
@@ -167,7 +167,7 @@ func TestSortFloat(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].FloatValue("Value") != tt.value {
+		if result[tt.index].Float("Value") != tt.value {
 			t.Error(result)
 		}
 	}
@@ -198,7 +198,7 @@ func TestSortFloatReverse(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].FloatValue("Value") != tt.value {
+		if result[tt.index].Float("Value") != tt.value {
 			t.Error(result)
 		}
 	}

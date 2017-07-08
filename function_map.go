@@ -11,7 +11,7 @@ type SumMapInt struct {
 func (f SumMapInt) Apply(event []Event) []Event {
 	sum := 0
 	for _, e := range event {
-		sum = sum + e.MapIntValue(f.Name, f.Key)
+		sum = sum + e.MapInt(f.Name, f.Key)
 	}
 
 	for _, e := range event {
@@ -30,7 +30,7 @@ type SumMapFloat struct {
 func (f SumMapFloat) Apply(event []Event) []Event {
 	var sum float64
 	for _, e := range event {
-		sum = sum + e.MapFloatValue(f.Name, f.Key)
+		sum = sum + e.MapFloat(f.Name, f.Key)
 	}
 
 	for _, e := range event {
@@ -49,7 +49,7 @@ type AverageMapInt struct {
 func (f AverageMapInt) Apply(event []Event) []Event {
 	sum := 0
 	for _, e := range event {
-		sum = sum + e.MapIntValue(f.Name, f.Key)
+		sum = sum + e.MapInt(f.Name, f.Key)
 	}
 	length := len(event)
 	avg := float64(sum) / float64(length)
@@ -70,7 +70,7 @@ type AverageMapFloat struct {
 func (f AverageMapFloat) Apply(event []Event) []Event {
 	var sum float64
 	for _, e := range event {
-		sum = sum + e.MapFloatValue(f.Name, f.Key)
+		sum = sum + e.MapFloat(f.Name, f.Key)
 	}
 	length := len(event)
 	avg := float64(sum) / float64(length)
@@ -90,7 +90,7 @@ type CastMapStringToInt struct {
 
 func (f CastMapStringToInt) Apply(event []Event) []Event {
 	for _, e := range event {
-		str := e.MapStringValue(f.Name, f.Key)
+		str := e.MapString(f.Name, f.Key)
 		val, _ := strconv.Atoi(str)
 		e.Record[f.As] = val
 	}
@@ -106,7 +106,7 @@ type CastMapStringToFloat struct {
 
 func (f CastMapStringToFloat) Apply(event []Event) []Event {
 	for _, e := range event {
-		str := e.MapStringValue(f.Name, f.Key)
+		str := e.MapString(f.Name, f.Key)
 		val, _ := strconv.ParseFloat(str, 64)
 		e.Record[f.As] = val
 	}
@@ -122,7 +122,7 @@ type CastMapStringToBool struct {
 
 func (f CastMapStringToBool) Apply(event []Event) []Event {
 	for _, e := range event {
-		str := e.MapStringValue(f.Name, f.Key)
+		str := e.MapString(f.Name, f.Key)
 		val, _ := strconv.ParseBool(str)
 		e.Record[f.As] = val
 	}

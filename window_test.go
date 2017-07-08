@@ -145,7 +145,7 @@ func TestLengthWindow(t *testing.T) {
 		if event[tt.index].Record["count"] != tt.count {
 			t.Error(event)
 		}
-		if event[tt.index].IntValue("Value") != tt.value {
+		if event[tt.index].Int("Value") != tt.value {
 			t.Error(event)
 		}
 	}
@@ -183,7 +183,7 @@ func TestLengthWindowMap(t *testing.T) {
 		if event[tt.index].Record["count"] != tt.count {
 			t.Error(event)
 		}
-		if event[tt.index].MapIntValue("Map", "Value") != tt.value {
+		if event[tt.index].MapInt("Map", "Value") != tt.value {
 			t.Error(event)
 		}
 		if event[tt.index].Record["avg(Map:Value)"] != tt.avg {
@@ -214,11 +214,11 @@ func TestLengthBatchWindow(t *testing.T) {
 		event = w.Update(IntEvent{"foo", i})
 	}
 
-	if event[0].IntValue("Value") != 8 {
+	if event[0].Int("Value") != 8 {
 		t.Error(event)
 	}
 
-	if event[1].IntValue("Value") != 9 {
+	if event[1].Int("Value") != 9 {
 		t.Error(event)
 	}
 
@@ -284,14 +284,14 @@ func TestInsertIntoIntEvent(t *testing.T) {
 	defer w.Close()
 	w.Function(CastStringToInt{"Name", "c(name)"})
 	e := w.Update(IntEvent{"123", 123})
-	cname := e[0].RecordIntValue("c(name)")
+	cname := e[0].RecordInt("c(name)")
 
 	w2 := NewLengthWindow(16, 32)
 	defer w2.Close()
 	w2.Function(SumInt{"Value", "sum(name)"})
 	e2 := w2.Update(IntEvent{"foobar", cname})
 
-	if e2[0].RecordIntValue("sum(name)") != 123 {
+	if e2[0].RecordInt("sum(name)") != 123 {
 		t.Error(e2)
 	}
 }
@@ -313,7 +313,7 @@ func TestInsertIntoMapEvent(t *testing.T) {
 		e := w2.Update(MapEvent{"foo", e.Record})
 
 		for _, r := range e {
-			if r.RecordIntValue("sum(str)") != 123 {
+			if r.RecordInt("sum(str)") != 123 {
 				t.Error(e)
 			}
 		}
