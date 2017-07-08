@@ -45,7 +45,7 @@ type MyEvent struct {
 ```
 
 ```go
-// select * from MyEvent.time(10msec).sort(Value, reverse) where Value > 97
+// select * from MyEvent.time(10msec).sort(Value, DESC) where Value > 97
 // 1024 is capacity of input/output queue
 w := NewTimeWindow(10 * time.Millisecond, 1024)
 defer w.Close()

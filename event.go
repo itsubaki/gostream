@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+type InsertEvent struct {
+	Record map[string]interface{}
+}
+
 type Event struct {
 	Time       time.Time
 	Underlying interface{}

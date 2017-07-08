@@ -1,9 +1,12 @@
 package gocep
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestStream(t *testing.T) {
-	s := NewStream(10)
+	s := NewStream(32)
 	defer s.Close()
 
 	wnum := 2
@@ -20,4 +23,20 @@ func TestStream(t *testing.T) {
 		}
 	}
 
+}
+
+func TestInsert(t *testing.T) {
+	stream := NewStream(32)
+	defer stream.Close()
+	stream.Add(NewSimpleWindow(16))
+
+	insert := NewStream(32)
+	defer insert.Close()
+	insert.Add(NewSimpleWindow(16))
+
+	stream.Insert(insert)
+
+	stream.Input() <- "test"
+	e := <-insert.Output()
+	fmt.Println(e)
 }

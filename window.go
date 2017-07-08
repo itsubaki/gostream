@@ -1,6 +1,7 @@
 package gocep
 
 import (
+	"context"
 	"log"
 	"reflect"
 	"time"
@@ -16,7 +17,8 @@ type SimpleWindow struct {
 	capacity int
 	in       chan interface{}
 	out      chan []Event
-	close    chan bool
+	ctx      context.Context
+	cancel   func()
 	event    []Event
 	selector []Selector
 	function []Function
@@ -24,11 +26,13 @@ type SimpleWindow struct {
 }
 
 func NewSimpleWindow(capacity int) *SimpleWindow {
+	ctx, cancel := context.WithCancel(context.Background())
 	w := &SimpleWindow{
 		capacity,
 		make(chan interface{}, capacity),
 		make(chan []Event, capacity),
-		make(chan bool, 1),
+		ctx,
+		cancel,
 		[]Event{},
 		[]Selector{},
 		[]Function{},
@@ -40,7 +44,7 @@ func NewSimpleWindow(capacity int) *SimpleWindow {
 }
 
 func (w *SimpleWindow) Close() {
-	w.close <- true
+	w.cancel()
 }
 
 func (w *SimpleWindow) Selector(s Selector) {
@@ -66,10 +70,8 @@ func (w *SimpleWindow) Output() chan []Event {
 func (w *SimpleWindow) work() {
 	for {
 		select {
-		case c := <-w.close:
-			if c {
-				return
-			}
+		case <-w.ctx.Done():
+			return
 		case input := <-w.in:
 			w.Listen(input)
 		}
@@ -118,19 +120,23 @@ type LengthWindow struct {
 	SimpleWindow
 }
 
-func NewLengthWindow(length, capacity int) *SimpleWindow {
-	w := &SimpleWindow{
-		capacity,
-		make(chan interface{}, capacity),
-		make(chan []Event, capacity),
-		make(chan bool, 1),
-		[]Event{},
-		[]Selector{},
-		[]Function{},
-		[]View{},
+func NewLengthWindow(length, capacity int) *LengthWindow {
+	ctx, cancel := context.WithCancel(context.Background())
+	w := &LengthWindow{
+		SimpleWindow{
+			capacity,
+			make(chan interface{}, capacity),
+			make(chan []Event, capacity),
+			ctx,
+			cancel,
+			[]Event{},
+			[]Selector{},
+			[]Function{},
+			[]View{},
+		},
 	}
-	w.Function(Length{length})
 
+	w.Function(Length{length})
 	go w.work()
 	return w
 }
@@ -140,20 +146,22 @@ type LengthBatchWindow struct {
 }
 
 func NewLengthBatchWindow(length, capacity int) *LengthBatchWindow {
+	ctx, cancel := context.WithCancel(context.Background())
 	w := &LengthBatchWindow{
 		SimpleWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
-			make(chan bool, 1),
+			ctx,
+			cancel,
 			[]Event{},
 			[]Selector{},
 			[]Function{},
 			[]View{},
 		},
 	}
-	w.Function(&LengthBatch{length, []Event{}})
 
+	w.Function(&LengthBatch{length, []Event{}})
 	go w.work()
 	return w
 }
@@ -163,12 +171,14 @@ type TimeWindow struct {
 }
 
 func NewTimeWindow(expire time.Duration, capacity int) *TimeWindow {
+	ctx, cancel := context.WithCancel(context.Background())
 	w := &TimeWindow{
 		SimpleWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
-			make(chan bool, 1),
+			ctx,
+			cancel,
 			[]Event{},
 			[]Selector{},
 			[]Function{},
@@ -186,22 +196,24 @@ type TimeBatchWindow struct {
 }
 
 func NewTimeBatchWindow(expire time.Duration, capacity int) *TimeBatchWindow {
+	ctx, cancel := context.WithCancel(context.Background())
 	w := &TimeBatchWindow{
 		SimpleWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
-			make(chan bool, 1),
+			ctx,
+			cancel,
 			[]Event{},
 			[]Selector{},
 			[]Function{},
 			[]View{},
 		},
 	}
+
 	start := time.Now()
 	end := start.Add(expire)
 	w.Function(&TimeDurationBatch{start, end, expire})
-
 	go w.work()
 	return w
 }
