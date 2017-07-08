@@ -38,21 +38,20 @@ go get github.com/itsubaki/gocep
 ### Window
 
 ```go
-type IntEvent struct {
+type MyEvent struct {
   Name  string
   Value int
 }
 ```
 
 ```go
-// select avg(Value) as val from IntEvent.time(10msec) where Value > 97
+// select * from MyEvent.time(10msec).sort(Value) where Value > 97
 // 1024 is capacity of input/output queue
 w := NewTimeWindow(10 * time.Millisecond, 1024)
 defer w.Close()
 
-w.Selector(EqualsType{IntEvent{}})
+w.Selector(EqualsType{MyEvent{}})
 w.Selector(LargerThanInt{"Value", 97})
-w.Function(AverageInt{"Value", "val"})
 w.View(SortInt{"Value"})
 
 go func() {
@@ -63,8 +62,19 @@ go func() {
 }()
 
 for i := 0; i < 100; i++ {
-  w.Input() <- NewEvent(IntEvent{"name", i})
+  w.Input() <- NewEvent(MyEvent{"name", i})
 }
+```
+
+
+```go
+// select avg(Value) as avgval, sum(Value) as sumval from MyEvent.length(10)
+w := NewLengthWindow(10, 1024)
+defer w.Close()
+
+w.Selector(EqualsType{MyEvent{}})
+w.Function(AverageInt{"Value", "avgval"})
+w.Function(SumInt{"Value", "sumval"})
 ```
 
 ### Stream
@@ -79,7 +89,14 @@ s.Add(NewTimeWindow(10 * time.Millisecond, 1024))
 s.Add(NewLengthWindow(10, 1024))
 s.Add(...)
 
-s.Push(IntEvent{"name", i})
-s.Push(MapEvent{"name", m})
-s.Push(...)
+go func() {
+  for {
+    event := <-s.Output()
+    fmt.Println(event)
+  }
+}()
+
+s.Input() <- MyEvent{"name", 100}
+s.Input() <- MapEvent{"name", map}
+...
 ```

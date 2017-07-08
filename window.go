@@ -39,6 +39,10 @@ func NewSimpleWindow(capacity int) *SimpleWindow {
 	return w
 }
 
+func (w *SimpleWindow) Close() {
+	w.close <- true
+}
+
 func (w *SimpleWindow) Selector(s Selector) {
 	w.selector = append(w.selector, s)
 }
@@ -59,15 +63,11 @@ func (w *SimpleWindow) Output() chan []Event {
 	return w.out
 }
 
-func (w *SimpleWindow) Close() {
-	w.close <- true
-}
-
 func (w *SimpleWindow) work() {
 	for {
 		select {
-		case close := <-w.close:
-			if close {
+		case c := <-w.close:
+			if c {
 				return
 			}
 		case e := <-w.in:
