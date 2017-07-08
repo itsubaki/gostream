@@ -34,14 +34,9 @@ func (s *Stream) Close() {
 	for _, w := range s.window {
 		w.Close()
 	}
-
-	if s.insert != nil {
-		s.insert.Close()
-	}
-
 }
 
-func (s *Stream) Add(w Window) {
+func (s *Stream) Window(w Window) {
 	s.window = append(s.window, w)
 	go s.collect(s.ctx, w)
 }

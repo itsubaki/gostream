@@ -90,9 +90,9 @@ w.Function(SumInt{"Value", "sumval"})
 s := NewStream(1024)
 defer s.Close()
 
-s.Add(NewTimeWindow(10 * time.Millisecond, 1024))
-s.Add(NewLengthWindow(10, 1024))
-s.Add(...)
+s.Window(NewTimeWindow(10 * time.Millisecond, 1024))
+s.Window(NewLengthWindow(10, 1024))
+s.Window(...)
 
 go func() {
   for {
@@ -113,14 +113,15 @@ defer s.Close()
 w := NewLengthWindow(10, 1024)
 w.Selector(EqualsType{MyEvent{}})
 w.Function(SumInt{"Value", "sum(Value)"})
-s.Add(w)
+s.Window(w)
 
 // select * from RecordEvent.length(10) where sum(Value) > 10
 is := NewStream(1024)
+defer is.Close()
 iw := NewLengthWindow(10, 1024)
 iw.Selector(EqualsType{RecordEvent{}})
 iw.Selector(LargerThanMapInt{"Record", "sum(Value)", 10})
-is.Add(iw)
+is.Window(iw)
 
 // insert into RecordEvent select sum(Value) from MyEvent.length(10)
 // select * from RecordEvent.length(10) where sum(Value) > 10

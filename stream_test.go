@@ -11,7 +11,7 @@ func TestStream(t *testing.T) {
 
 	wnum := 2
 	for i := 0; i < wnum; i++ {
-		s.Add(NewSimpleWindow(16))
+		s.Window(NewSimpleWindow(16))
 	}
 
 	s.Input() <- "test"
@@ -28,11 +28,11 @@ func TestStream(t *testing.T) {
 func TestInsert(t *testing.T) {
 	stream := NewStream(32)
 	defer stream.Close()
-	stream.Add(NewSimpleWindow(16))
+	stream.Window(NewSimpleWindow(16))
 
 	insert := NewStream(32)
 	defer insert.Close()
-	insert.Add(NewSimpleWindow(16))
+	insert.Window(NewSimpleWindow(16))
 
 	stream.Insert(insert)
 
