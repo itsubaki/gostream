@@ -14,7 +14,6 @@ type Stream struct {
 
 func NewStream(capacity int) *Stream {
 	ctx, cancel := context.WithCancel(context.Background())
-
 	s := &Stream{
 		capacity,
 		make(chan interface{}, capacity),

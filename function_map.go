@@ -2,6 +2,13 @@ package gocep
 
 import "strconv"
 
+type SelectMapAll struct {
+}
+
+func (f SelectMapAll) Apply(event []Event) []Event {
+	return event
+}
+
 type SelectMapString struct {
 	Name string
 	Key  string
