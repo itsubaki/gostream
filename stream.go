@@ -84,7 +84,7 @@ func (s *Stream) chain(ctx context.Context) {
 			return
 		case input := <-s.Output():
 			for _, e := range input {
-				s.insert.Input() <- RecordEvent{e.Record}
+				s.insert.Input() <- MapEvent{e.Record}
 			}
 		}
 	}

@@ -46,7 +46,7 @@ type MyEvent struct {
 ```
 
 ```go
-// select Name, Value
+// select Name as n, Value as v
 //  from MyEvent.time(10msec)
 //  where Value > 97
 //  orderby Value DESC
@@ -58,8 +58,8 @@ defer w.Close()
 
 w.Selector(EqualsType{MyEvent{}})
 w.Selector(LargerThanInt{"Value", 97})
-w.Selector(SelectString{"Name", "Name"})
-w.Selector(SelectInt{"Value", "Value"})
+w.Selector(SelectString{"Name", "n"})
+w.Selector(SelectInt{"Value", "v"})
 w.View(OrderByInt{"Value", true})
 w.View(Limit{5, 10})
 
@@ -77,13 +77,13 @@ for i := 0; i < 100; i++ {
 
 
 ```go
-// select avg(Value) as avgv, sum(Value) as sumv from MyEvent.length(10)
+// select avg(Value), sum(Value) from MyEvent.length(10)
 w := NewLengthWindow(10, 1024)
 defer w.Close()
 
 w.Selector(EqualsType{MyEvent{}})
-w.Function(AverageInt{"Value", "avgv"})
-w.Function(SumInt{"Value", "sumv"})
+w.Function(AverageInt{"Value", "avg(Value)"})
+w.Function(SumInt{"Value", "sum(Value)"})
 ```
 
 ## Stream

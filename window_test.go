@@ -10,13 +10,13 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{MapEvent{}})
-	w.Function(AverageMapInt{"Map", "Value", "avg(Value)"})
+	w.Function(AverageMapInt{"Record", "Value", "avg(Value)"})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		w.Update(MapEvent{"foobar", m})
+		w.Update(MapEvent{m})
 	}
 }
 
@@ -38,13 +38,13 @@ func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{MapEvent{}})
-	w.Selector(LargerThanMapInt{"Map", "Value", 100})
+	w.Selector(LargerThanMapInt{"Record", "Value", 100})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		w.Update(MapEvent{"foobar", m})
+		w.Update(MapEvent{m})
 	}
 }
 
@@ -66,13 +66,13 @@ func BenchmarkLengthWindowSortMap(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{MapEvent{}})
-	w.View(SortMapInt{"Map", "Value", false})
+	w.View(SortMapInt{"Record", "Value", false})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		w.Update(MapEvent{"foobar", m})
+		w.Update(MapEvent{m})
 	}
 }
 
@@ -94,13 +94,13 @@ func BenchmarkLengthWindowSortReverseMap(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{MapEvent{}})
-	w.View(SortMapInt{"Map", "Value", true})
+	w.View(SortMapInt{"Record", "Value", true})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		w.Update(MapEvent{"foobar", m})
+		w.Update(MapEvent{m})
 	}
 }
 
@@ -157,16 +157,16 @@ func TestLengthWindowMap(t *testing.T) {
 	defer w.Close()
 
 	w.Selector(EqualsType{MapEvent{}})
-	w.Selector(LargerThanMapInt{"Map", "Value", 1})
+	w.Selector(LargerThanMapInt{"Record", "Value", 1})
 	w.Function(Count{"count"})
-	w.Function(AverageMapInt{"Map", "Value", "avg(Map:Value)"})
-	w.View(SortMapInt{"Map", "Value", true})
+	w.Function(AverageMapInt{"Record", "Value", "avg(Record:Value)"})
+	w.View(SortMapInt{"Record", "Value", true})
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
-		event = w.Update(MapEvent{"name", m})
+		event = w.Update(MapEvent{m})
 	}
 
 	var test = []struct {
@@ -183,10 +183,10 @@ func TestLengthWindowMap(t *testing.T) {
 		if event[tt.index].Record["count"] != tt.count {
 			t.Error(event)
 		}
-		if event[tt.index].MapInt("Map", "Value") != tt.value {
+		if event[tt.index].MapInt("Record", "Value") != tt.value {
 			t.Error(event)
 		}
-		if event[tt.index].Record["avg(Map:Value)"] != tt.avg {
+		if event[tt.index].Record["avg(Record:Value)"] != tt.avg {
 			t.Error(event)
 		}
 	}
@@ -272,50 +272,10 @@ func TestLengthWindowPanic(t *testing.T) {
 	defer w.Close()
 
 	w.Selector(EqualsType{IntEvent{}})
-	w.Function(AverageMapInt{"Map", "Value", "avg(Map:Value)"})
+	// IntEvent and Map Function -> panic!!
+	w.Function(AverageMapInt{"Record", "Value", "avg(Record:Value)"})
 	event := w.Update(IntEvent{"foobar", 10})
 	if len(event) != 0 {
 		t.Error(event)
-	}
-}
-
-func TestInsertIntoIntEvent(t *testing.T) {
-	w := NewLengthWindow(16, 32)
-	defer w.Close()
-	w.Function(CastStringToInt{"Name", "c(name)"})
-	e := w.Update(IntEvent{"123", 123})
-	cname := e[0].RecordInt("c(name)")
-
-	w2 := NewLengthWindow(16, 32)
-	defer w2.Close()
-	w2.Function(SumInt{"Value", "sum(name)"})
-	e2 := w2.Update(IntEvent{"foobar", cname})
-
-	if e2[0].RecordInt("sum(name)") != 123 {
-		t.Error(e2)
-	}
-}
-
-func TestInsertIntoMapEvent(t *testing.T) {
-	w := NewLengthWindow(16, 32)
-	defer w.Close()
-	w.Function(CastMapStringToInt{"Map", "str", "cast(str)"})
-
-	m := make(map[string]interface{})
-	m["str"] = "123"
-	cast := w.Update(MapEvent{"foo", m})
-
-	w2 := NewLengthWindow(16, 32)
-	defer w2.Close()
-	w2.Function(SumMapInt{"Map", "cast(str)", "sum(str)"})
-
-	for _, e := range cast {
-		e := w2.Update(MapEvent{"foo", e.Record})
-
-		for _, r := range e {
-			if r.RecordInt("sum(str)") != 123 {
-				t.Error(e)
-			}
-		}
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type RecordEvent struct {
+type MapEvent struct {
 	Record map[string]interface{}
 }
 

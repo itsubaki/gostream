@@ -3,14 +3,14 @@ package gocep
 import "testing"
 
 func TestSortMapInt(t *testing.T) {
-	v := SortMapInt{"Map", "foo", false}
+	v := SortMapInt{"Record", "foo", false}
 
 	event := []Event{}
 
 	for i := 10; i < 70; i = i + 10 {
 		m := make(map[string]interface{})
 		m["foo"] = i
-		event = append(event, NewEvent(MapEvent{"name", m}))
+		event = append(event, NewEvent(MapEvent{m}))
 	}
 	result := v.Apply(event)
 
@@ -27,21 +27,21 @@ func TestSortMapInt(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].MapInt("Map", "foo") != tt.value {
+		if result[tt.index].MapInt("Record", "foo") != tt.value {
 			t.Error(result)
 		}
 	}
 }
 
 func TestSortMapIntReverse(t *testing.T) {
-	v := SortMapInt{"Map", "foo", true}
+	v := SortMapInt{"Record", "foo", true}
 
 	event := []Event{}
 
 	for i := 10; i < 70; i = i + 10 {
 		m := make(map[string]interface{})
 		m["foo"] = i
-		event = append(event, NewEvent(MapEvent{"name", m}))
+		event = append(event, NewEvent(MapEvent{m}))
 	}
 	result := v.Apply(event)
 
@@ -58,21 +58,21 @@ func TestSortMapIntReverse(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].MapInt("Map", "foo") != tt.value {
+		if result[tt.index].MapInt("Record", "foo") != tt.value {
 			t.Error(result)
 		}
 	}
 }
 
 func TestSortMapFloat(t *testing.T) {
-	v := SortMapFloat{"Map", "foo", false}
+	v := SortMapFloat{"Record", "foo", false}
 
 	event := []Event{}
 
 	for i := 10; i < 70; i = i + 10 {
 		m := make(map[string]interface{})
 		m["foo"] = float64(i)
-		event = append(event, NewEvent(MapEvent{"name", m}))
+		event = append(event, NewEvent(MapEvent{m}))
 	}
 	result := v.Apply(event)
 
@@ -89,21 +89,21 @@ func TestSortMapFloat(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].MapFloat("Map", "foo") != tt.value {
+		if result[tt.index].MapFloat("Record", "foo") != tt.value {
 			t.Error(result)
 		}
 	}
 }
 
 func TestSortMapFloatReverse(t *testing.T) {
-	v := SortMapFloat{"Map", "foo", true}
+	v := SortMapFloat{"Record", "foo", true}
 
 	event := []Event{}
 
 	for i := 10; i < 70; i = i + 10 {
 		m := make(map[string]interface{})
 		m["foo"] = float64(i)
-		event = append(event, NewEvent(MapEvent{"name", m}))
+		event = append(event, NewEvent(MapEvent{m}))
 	}
 	result := v.Apply(event)
 
@@ -120,7 +120,7 @@ func TestSortMapFloatReverse(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if result[tt.index].MapFloat("Map", "foo") != tt.value {
+		if result[tt.index].MapFloat("Record", "foo") != tt.value {
 			t.Error(result)
 		}
 	}

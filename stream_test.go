@@ -25,7 +25,7 @@ func TestStream(t *testing.T) {
 
 }
 
-func TestInsert(t *testing.T) {
+func TestStreamInsert(t *testing.T) {
 	stream := NewStream(32)
 	defer stream.Close()
 	stream.Window(NewSimpleWindow(16))
