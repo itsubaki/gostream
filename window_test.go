@@ -66,7 +66,7 @@ func BenchmarkLengthWindowSortMap(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{MapEvent{}})
-	w.View(SortMapInt{"Record", "Value", false})
+	w.View(OrderByMapInt{"Record", "Value", false})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -94,7 +94,7 @@ func BenchmarkLengthWindowSortReverseMap(b *testing.B) {
 	defer w.Close()
 
 	w.Selector(EqualsType{MapEvent{}})
-	w.View(SortMapInt{"Record", "Value", true})
+	w.View(OrderByMapInt{"Record", "Value", true})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -160,7 +160,7 @@ func TestLengthWindowMap(t *testing.T) {
 	w.Selector(LargerThanMapInt{"Record", "Value", 1})
 	w.Function(Count{"count"})
 	w.Function(AverageMapInt{"Record", "Value", "avg(Record:Value)"})
-	w.View(SortMapInt{"Record", "Value", true})
+	w.View(OrderByMapInt{"Record", "Value", true})
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {

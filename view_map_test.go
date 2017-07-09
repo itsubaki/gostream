@@ -3,7 +3,7 @@ package gocep
 import "testing"
 
 func TestSortMapInt(t *testing.T) {
-	v := SortMapInt{"Record", "foo", false}
+	v := OrderByMapInt{"Record", "foo", false}
 
 	event := []Event{}
 
@@ -34,7 +34,7 @@ func TestSortMapInt(t *testing.T) {
 }
 
 func TestSortMapIntReverse(t *testing.T) {
-	v := SortMapInt{"Record", "foo", true}
+	v := OrderByMapInt{"Record", "foo", true}
 
 	event := []Event{}
 
@@ -65,7 +65,7 @@ func TestSortMapIntReverse(t *testing.T) {
 }
 
 func TestSortMapFloat(t *testing.T) {
-	v := SortMapFloat{"Record", "foo", false}
+	v := OrderByMapFloat{"Record", "foo", false}
 
 	event := []Event{}
 
@@ -96,7 +96,7 @@ func TestSortMapFloat(t *testing.T) {
 }
 
 func TestSortMapFloatReverse(t *testing.T) {
-	v := SortMapFloat{"Record", "foo", true}
+	v := OrderByMapFloat{"Record", "foo", true}
 
 	event := []Event{}
 
