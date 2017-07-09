@@ -1,7 +1,6 @@
 package gocep
 
 import (
-	"context"
 	"log"
 	"reflect"
 	"time"
@@ -17,26 +16,23 @@ type SimpleWindow struct {
 	capacity int
 	in       chan interface{}
 	out      chan []Event
-	ctx      context.Context
-	cancel   func()
 	event    []Event
 	selector []Selector
 	function []Function
 	view     []View
+	Canceller
 }
 
 func NewSimpleWindow(capacity int) *SimpleWindow {
-	ctx, cancel := context.WithCancel(context.Background())
 	w := &SimpleWindow{
 		capacity,
 		make(chan interface{}, capacity),
 		make(chan []Event, capacity),
-		ctx,
-		cancel,
 		[]Event{},
 		[]Selector{},
 		[]Function{},
 		[]View{},
+		NewCanceller(),
 	}
 
 	go w.work()
@@ -121,18 +117,16 @@ type LengthWindow struct {
 }
 
 func NewLengthWindow(length, capacity int) *LengthWindow {
-	ctx, cancel := context.WithCancel(context.Background())
 	w := &LengthWindow{
 		SimpleWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
-			ctx,
-			cancel,
 			[]Event{},
 			[]Selector{},
 			[]Function{},
 			[]View{},
+			NewCanceller(),
 		},
 	}
 
@@ -146,18 +140,16 @@ type LengthBatchWindow struct {
 }
 
 func NewLengthBatchWindow(length, capacity int) *LengthBatchWindow {
-	ctx, cancel := context.WithCancel(context.Background())
 	w := &LengthBatchWindow{
 		SimpleWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
-			ctx,
-			cancel,
 			[]Event{},
 			[]Selector{},
 			[]Function{},
 			[]View{},
+			NewCanceller(),
 		},
 	}
 
@@ -171,18 +163,16 @@ type TimeWindow struct {
 }
 
 func NewTimeWindow(expire time.Duration, capacity int) *TimeWindow {
-	ctx, cancel := context.WithCancel(context.Background())
 	w := &TimeWindow{
 		SimpleWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
-			ctx,
-			cancel,
 			[]Event{},
 			[]Selector{},
 			[]Function{},
 			[]View{},
+			NewCanceller(),
 		},
 	}
 	w.Function(TimeDuration{expire})
@@ -196,18 +186,16 @@ type TimeBatchWindow struct {
 }
 
 func NewTimeBatchWindow(expire time.Duration, capacity int) *TimeBatchWindow {
-	ctx, cancel := context.WithCancel(context.Background())
 	w := &TimeBatchWindow{
 		SimpleWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
-			ctx,
-			cancel,
 			[]Event{},
 			[]Selector{},
 			[]Function{},
 			[]View{},
+			NewCanceller(),
 		},
 	}
 

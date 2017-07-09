@@ -1,30 +1,25 @@
 package gocep
 
-import "context"
-
 type Stream struct {
 	capacity int
 	in       chan interface{}
 	out      chan []Event
-	ctx      context.Context
-	cancel   func()
 	window   []Window
 	insert   *Stream
+	Canceller
 }
 
 func NewStream(capacity int) *Stream {
-	ctx, cancel := context.WithCancel(context.Background())
 	s := &Stream{
 		capacity,
 		make(chan interface{}, capacity),
 		make(chan []Event, capacity),
-		ctx,
-		cancel,
 		[]Window{},
 		nil,
+		NewCanceller(),
 	}
 
-	go s.dispatch(s.ctx)
+	go s.dispatch()
 	return s
 }
 
@@ -37,12 +32,12 @@ func (s *Stream) Close() {
 
 func (s *Stream) Window(w Window) {
 	s.window = append(s.window, w)
-	go s.collect(s.ctx, w)
+	go s.collect(w)
 }
 
 func (s *Stream) InsertInto(stream *Stream) {
 	s.insert = stream
-	go s.transfer(s.ctx)
+	go s.transfer()
 }
 
 func (s *Stream) Input() chan interface{} {
@@ -53,7 +48,7 @@ func (s *Stream) Output() chan []Event {
 	return s.out
 }
 
-func (s *Stream) dispatch(ctx context.Context) {
+func (s *Stream) dispatch() {
 	for {
 		select {
 		case <-s.ctx.Done():
@@ -66,7 +61,7 @@ func (s *Stream) dispatch(ctx context.Context) {
 	}
 }
 
-func (s *Stream) collect(ctx context.Context, w Window) {
+func (s *Stream) collect(w Window) {
 	for {
 		select {
 		case <-s.ctx.Done():
@@ -77,7 +72,7 @@ func (s *Stream) collect(ctx context.Context, w Window) {
 	}
 }
 
-func (s *Stream) transfer(ctx context.Context) {
+func (s *Stream) transfer() {
 	for {
 		select {
 		case <-s.ctx.Done():
