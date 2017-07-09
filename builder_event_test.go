@@ -1,7 +1,6 @@
 package gocep
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 )
@@ -16,8 +15,19 @@ func TestEventBuilder(t *testing.T) {
 	rf.Field(1).SetMapIndex(reflect.ValueOf("foo"), reflect.ValueOf("bar"))
 	rf.Field(1).SetMapIndex(reflect.ValueOf("val"), reflect.ValueOf(123))
 
-	fmt.Println(reflect.TypeOf(&MapEvent{}))
-	fmt.Printf("%+v\n", &MapEvent{})
-	fmt.Println(rf.Addr().Interface())
-	fmt.Printf("%+v\n", rf.Addr().Interface())
+	//	fmt.Printf("%+v\n", &MapEvent{})
+	//	fmt.Println(rf.Addr().Interface())
+	//	fmt.Printf("%+v\n", rf.Addr().Interface())
+	//	fmt.Println("-------")
+
+	e := NewEvent(rf.Interface())
+	if e.String("Name") != "foobar" {
+		t.Error(e)
+	}
+	if e.MapString("Record", "foo") != "bar" {
+		t.Error(e)
+	}
+	if e.MapInt("Record", "val") != 123 {
+		t.Error(e)
+	}
 }
