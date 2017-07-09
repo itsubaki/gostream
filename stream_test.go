@@ -34,7 +34,7 @@ func TestStreamInsert(t *testing.T) {
 	defer insert.Close()
 	insert.Window(NewSimpleWindow(16))
 
-	stream.Insert(insert)
+	stream.InsertInto(insert)
 
 	stream.Input() <- "test"
 	e := <-insert.Output()

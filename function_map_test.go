@@ -2,6 +2,19 @@ package gocep
 
 import "testing"
 
+func TestSelectMapAll(t *testing.T) {
+	m := make(map[string]interface{})
+	m["Name"] = "foo"
+	event := []Event{NewEvent(MapEvent{m})}
+	f := SelectMapAll{"Record"}
+
+	result := f.Apply(event)
+	if result[0].RecordString("Name") != "foo" {
+		t.Error(result)
+	}
+
+}
+
 func TestSelectMapString(t *testing.T) {
 	m := make(map[string]interface{})
 	m["Name"] = "foo"

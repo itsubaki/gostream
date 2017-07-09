@@ -40,9 +40,9 @@ func (s *Stream) Window(w Window) {
 	go s.collect(s.ctx, w)
 }
 
-func (s *Stream) Insert(stream *Stream) {
+func (s *Stream) InsertInto(stream *Stream) {
 	s.insert = stream
-	go s.chain(s.ctx)
+	go s.transfer(s.ctx)
 }
 
 func (s *Stream) Input() chan interface{} {
@@ -77,7 +77,7 @@ func (s *Stream) collect(ctx context.Context, w Window) {
 	}
 }
 
-func (s *Stream) chain(ctx context.Context) {
+func (s *Stream) transfer(ctx context.Context) {
 	for {
 		select {
 		case <-s.ctx.Done():

@@ -22,7 +22,7 @@ The Stream Processing API for Go
     + [x] Count, Sum, Average
     + [x] Cast
     + [x] As
-    + [ ] SelectAll, Select
+    + [x] SelectAll, Select
  - [x] View
     + [x] OrderBy, Limit
     + [x] First, Last
@@ -109,6 +109,14 @@ s.Input() <-MapEvent{"name", map}
 ...
 ```
 
+## InsertInto
+
+```go
+type MapEvent struct {
+  Record map[string]interface{}
+}
+```
+
 ```go
 // select sum(Value) from MyEvent.length(10)
 s := NewStream(1024)
@@ -124,12 +132,12 @@ defer is.Close()
 iw := NewLengthWindow(10, 1024)
 iw.Selector(EqualsType{MapEvent{}})
 iw.Selector(LargerThanMapInt{"Record", "sum(Value)", 10})
-iw.Function(SelectAll{})
+iw.Function(SelectAll{"Record"})
 is.Window(iw)
 
 // insert into MapEvent select sum(Value) from MyEvent.length(10)
 // select * from MapEvent.length(10) where sum(Value) > 10
-s.Insert(is)
+s.InsertInto(is)
 
 s.Input() <-MyEvent{"name", 100}
 fmt.Println(<-is.Output())

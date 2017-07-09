@@ -2,6 +2,7 @@ package gocep
 
 import (
 	"math"
+	"reflect"
 	"strconv"
 )
 
@@ -13,6 +14,14 @@ type SelectAll struct {
 }
 
 func (f SelectAll) Apply(event []Event) []Event {
+	for _, e := range event {
+		t := reflect.ValueOf(e.Underlying).Type()
+		for i := 0; i < t.NumField(); i++ {
+			f := t.Field(i)
+			v := e.Value(f.Name)
+			e.Record[f.Name] = v.Interface()
+		}
+	}
 	return event
 }
 

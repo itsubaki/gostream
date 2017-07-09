@@ -2,6 +2,19 @@ package gocep
 
 import "testing"
 
+func TestSelectAll(t *testing.T) {
+	event := []Event{NewEvent(IntEvent{"foo", 10})}
+	f := SelectAll{}
+
+	result := f.Apply(event)
+	if result[0].RecordString("Name") != "foo" {
+		t.Error(result)
+	}
+	if result[0].RecordInt("Value") != 10 {
+		t.Error(result)
+	}
+}
+
 func TestSelectString(t *testing.T) {
 	event := []Event{NewEvent(IntEvent{"foo", 10})}
 	f := SelectString{"Name", "Name"}

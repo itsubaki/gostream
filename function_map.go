@@ -1,11 +1,23 @@
 package gocep
 
-import "strconv"
+import (
+	"reflect"
+	"strconv"
+)
 
 type SelectMapAll struct {
+	Name string
 }
 
 func (f SelectMapAll) Apply(event []Event) []Event {
+	for _, e := range event {
+		ref := reflect.ValueOf(e.Underlying).FieldByName(f.Name)
+		for _, k := range ref.MapKeys() {
+			key := k.Interface().(string)
+			val := ref.MapIndex(k)
+			e.Record[key] = val.Interface()
+		}
+	}
 	return event
 }
 
