@@ -2,18 +2,18 @@ package gocep
 
 import "reflect"
 
-type StructBuilder struct {
+type InstanceBuilder struct {
 	field []reflect.StructField
 	strct reflect.Type
 	index map[string]int
 	imap  []int
 }
 
-func NewStructBuilder() *StructBuilder {
-	return &StructBuilder{}
+func NewInstanceBuilder() *InstanceBuilder {
+	return &InstanceBuilder{}
 }
 
-func (b *StructBuilder) Field(fname string, ftype reflect.Type) {
+func (b *InstanceBuilder) Field(fname string, ftype reflect.Type) {
 	b.field = append(
 		b.field,
 		reflect.StructField{
@@ -22,7 +22,7 @@ func (b *StructBuilder) Field(fname string, ftype reflect.Type) {
 		})
 }
 
-func (b *StructBuilder) Build() {
+func (b *InstanceBuilder) Build() {
 	b.strct = reflect.StructOf(b.field)
 	b.index = make(map[string]int)
 	for i := 0; i < b.strct.NumField(); i++ {
@@ -34,7 +34,7 @@ func (b *StructBuilder) Build() {
 	}
 }
 
-func (b *StructBuilder) NewInstance() *Instance {
+func (b *InstanceBuilder) NewInstance() *Instance {
 	instance := reflect.New(b.strct).Elem()
 	mtype := reflect.TypeOf(make(map[string]interface{}))
 	for _, i := range b.imap {
@@ -75,10 +75,10 @@ func (i *Instance) SetMapIndex(name, key string, value interface{}) {
 	i.Field(name).SetMapIndex(refkey, refval)
 }
 
-func (inst *Instance) Build() interface{} {
-	return inst.internal.Interface()
+func (i *Instance) Interface() interface{} {
+	return i.internal.Interface()
 }
 
-//func (inst *Instance) Pointer() interface{} {
-//	return inst.internal.Addr().Interface()
-//}
+func (i *Instance) Pointer() interface{} {
+	return i.internal.Addr().Interface()
+}

@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func TestNewStructBuilder(t *testing.T) {
-	b := NewStructBuilder()
+func TestNewInstanceBuilder(t *testing.T) {
+	b := NewInstanceBuilder()
 	b.Field("Name", reflect.TypeOf(""))
 	b.Field("Bool", reflect.TypeOf(true))
 	b.Field("Int", reflect.TypeOf(123))
@@ -24,7 +24,7 @@ func TestNewStructBuilder(t *testing.T) {
 	i.SetMapIndex("Record", "val", 123)
 	i.SetMapIndex("Record2", "val", 123)
 
-	e := NewEvent(i.Build())
+	e := NewEvent(i.Interface())
 	if e.String("Name") != "foobar" {
 		t.Error(e)
 	}
@@ -51,6 +51,10 @@ func TestNewStructBuilder(t *testing.T) {
 
 	if e.MapInt("Record2", "val") != 123 {
 		t.Error(e)
+	}
+
+	if reflect.TypeOf(i.Pointer()).Kind() != reflect.Ptr {
+		t.Error(i.Pointer())
 	}
 
 }
