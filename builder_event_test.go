@@ -16,10 +16,8 @@ func TestEventBuilder(t *testing.T) {
 	rf.Field(1).SetMapIndex(reflect.ValueOf("foo"), reflect.ValueOf("bar"))
 	rf.Field(1).SetMapIndex(reflect.ValueOf("val"), reflect.ValueOf(123))
 
-	fmt.Println(reflect.TypeOf(MapEvent{}))
-	fmt.Println(reflect.TypeOf(rf))
-	fmt.Println(rf.FieldByName("Name"))
-	fmt.Println(rf.FieldByName("Record"))
-	fmt.Println(rf.FieldByName("Record").MapIndex(reflect.ValueOf("foo")))
-	fmt.Println(rf.FieldByName("Record").MapIndex(reflect.ValueOf("val")))
+	fmt.Println(reflect.TypeOf(&MapEvent{}))
+	fmt.Printf("%+v\n", &MapEvent{})
+	fmt.Println(rf.Addr().Interface())
+	fmt.Printf("%+v\n", rf.Addr().Interface())
 }
