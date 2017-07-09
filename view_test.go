@@ -49,7 +49,7 @@ func TestLast(t *testing.T) {
 }
 
 func TestLimit(t *testing.T) {
-	v := Limit{2, 4}
+	v := Limit{4, 2}
 
 	event := []Event{}
 	empty := v.Apply(event)

@@ -25,8 +25,8 @@ func (f Last) Apply(event []Event) (stream []Event) {
 }
 
 type Limit struct {
-	Offset int
 	Limit  int
+	Offset int
 }
 
 func (f Limit) Apply(event []Event) []Event {

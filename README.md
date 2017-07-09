@@ -61,7 +61,7 @@ w.Selector(LargerThanInt{"Value", 97})
 w.Function(SelectString{"Name", "n"})
 w.Function(SelectInt{"Value", "v"})
 w.View(OrderByInt{"Value", true})
-w.View(Limit{5, 10})
+w.View(Limit{10, 5})
 
 go func() {
   for {
@@ -100,8 +100,7 @@ s.Window(...)
 
 go func() {
   for {
-    event := <-s.Output()
-    fmt.Println(event)
+    fmt.Println(<-s.Output())
   }
 }()
 
