@@ -26,7 +26,7 @@ The Stream Processing API for Go
  - [x] View
     + [x] OrderBy, Limit
     + [x] First, Last
- - [x] Insert
+ - [x] InsertInto
 
 ## Install
 
