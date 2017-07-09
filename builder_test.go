@@ -9,15 +9,15 @@ func TestNewStructBuilder(t *testing.T) {
 	b := NewStructBuilder()
 	b.Field("Name", reflect.TypeOf(""))
 	b.Field("Record", reflect.TypeOf(make(map[string]interface{})))
-	tpe := b.Build()
+	s := b.Build()
 
-	rf := reflect.New(tpe).Elem()
-	rf.Field(0).SetString("foobar")
-	rf.Field(1).Set(reflect.MakeMap(reflect.TypeOf(make(map[string]interface{}))))
-	rf.Field(1).SetMapIndex(reflect.ValueOf("foo"), reflect.ValueOf("bar"))
-	rf.Field(1).SetMapIndex(reflect.ValueOf("val"), reflect.ValueOf(123))
+	i := reflect.New(s).Elem()
+	i.Field(0).SetString("foobar")
+	i.Field(1).Set(reflect.MakeMap(reflect.TypeOf(make(map[string]interface{}))))
+	i.Field(1).SetMapIndex(reflect.ValueOf("foo"), reflect.ValueOf("bar"))
+	i.Field(1).SetMapIndex(reflect.ValueOf("val"), reflect.ValueOf(123))
 
-	e := NewEvent(rf.Interface())
+	e := NewEvent(i.Interface())
 	if e.String("Name") != "foobar" {
 		t.Error(e)
 	}
@@ -29,8 +29,8 @@ func TestNewStructBuilder(t *testing.T) {
 	}
 
 	//	fmt.Printf("%+v\n", &MapEvent{})
-	//	fmt.Println(rf.Addr().Interface())
-	//	fmt.Printf("%+v\n", rf.Addr().Interface())
+	//	fmt.Println(i.Addr().Interface())
+	//	fmt.Printf("%+v\n", i.Addr().Interface())
 	//	fmt.Println("-------")
 
 }
