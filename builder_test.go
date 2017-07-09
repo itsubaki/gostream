@@ -8,29 +8,49 @@ import (
 func TestNewStructBuilder(t *testing.T) {
 	b := NewStructBuilder()
 	b.Field("Name", reflect.TypeOf(""))
+	b.Field("Bool", reflect.TypeOf(true))
+	b.Field("Int", reflect.TypeOf(123))
+	b.Field("Float", reflect.TypeOf(float64(12.3)))
 	b.Field("Record", reflect.TypeOf(make(map[string]interface{})))
-	s := b.Build()
+	b.Field("Record2", reflect.TypeOf(make(map[string]interface{})))
+	b.Build()
 
-	i := reflect.New(s).Elem()
-	i.Field(0).SetString("foobar")
-	i.Field(1).Set(reflect.MakeMap(reflect.TypeOf(make(map[string]interface{}))))
-	i.Field(1).SetMapIndex(reflect.ValueOf("foo"), reflect.ValueOf("bar"))
-	i.Field(1).SetMapIndex(reflect.ValueOf("val"), reflect.ValueOf(123))
+	i := b.NewInstance()
+	i.SetString("Name", "foobar")
+	i.SetBool("Bool", false)
+	i.SetInt("Int", 456)
+	i.SetFloat("Float", 45.6)
+	i.SetMapIndex("Record", "foo", "bar")
+	i.SetMapIndex("Record", "val", 123)
+	i.SetMapIndex("Record2", "val", 123)
 
-	e := NewEvent(i.Interface())
+	e := NewEvent(i.Build())
 	if e.String("Name") != "foobar" {
 		t.Error(e)
 	}
+
+	if e.Bool("Bool") {
+		t.Error(e)
+	}
+
+	if e.Int("Int") != 456 {
+		t.Error(e)
+	}
+
+	if e.Float("Float") != 45.6 {
+		t.Error(e)
+	}
+
 	if e.MapString("Record", "foo") != "bar" {
 		t.Error(e)
 	}
+
 	if e.MapInt("Record", "val") != 123 {
 		t.Error(e)
 	}
 
-	//	fmt.Printf("%+v\n", &MapEvent{})
-	//	fmt.Println(i.Addr().Interface())
-	//	fmt.Printf("%+v\n", i.Addr().Interface())
-	//	fmt.Println("-------")
+	if e.MapInt("Record2", "val") != 123 {
+		t.Error(e)
+	}
 
 }

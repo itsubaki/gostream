@@ -61,7 +61,7 @@ func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
 	}
 }
 
-func BenchmarkLengthWindowSortMap(b *testing.B) {
+func BenchmarkLengthWindowOrderByMap(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
@@ -76,7 +76,7 @@ func BenchmarkLengthWindowSortMap(b *testing.B) {
 	}
 }
 
-func BenchmarkLengthWindowSortInt(b *testing.B) {
+func BenchmarkLengthWindowOrderByInt(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
@@ -89,7 +89,7 @@ func BenchmarkLengthWindowSortInt(b *testing.B) {
 	}
 }
 
-func BenchmarkLengthWindowSortReverseMap(b *testing.B) {
+func BenchmarkLengthWindowOrderByReverseMap(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
@@ -104,7 +104,7 @@ func BenchmarkLengthWindowSortReverseMap(b *testing.B) {
 	}
 }
 
-func BenchmarkLengthWindowSortReverseInt(b *testing.B) {
+func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
