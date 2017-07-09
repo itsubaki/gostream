@@ -65,8 +65,7 @@ w.View(Limit{10, 5})
 
 go func() {
   for {
-    event := <-w.Output()
-    fmt.Println(event)
+    fmt.Println(<-w.Output())
   }
 }()
 
