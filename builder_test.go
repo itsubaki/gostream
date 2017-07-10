@@ -5,17 +5,17 @@ import (
 	"testing"
 )
 
-func TestNewInstanceBuilder(t *testing.T) {
-	b := NewInstanceBuilder()
+func TestNewStructBuilder(t *testing.T) {
+	b := NewStructBuilder()
 	b.Field("Name", reflect.TypeOf(""))
 	b.Field("Bool", reflect.TypeOf(true))
 	b.Field("Int", reflect.TypeOf(123))
 	b.Field("Float", reflect.TypeOf(float64(12.3)))
 	b.Field("Record", reflect.TypeOf(make(map[string]interface{})))
 	b.Field("Record2", reflect.TypeOf(make(map[string]interface{})))
-	b.Build()
+	strct := b.Build()
 
-	i := b.NewInstance()
+	i := strct.NewInstance()
 	i.SetString("Name", "foobar")
 	i.SetBool("Bool", false)
 	i.SetInt("Int", 456)

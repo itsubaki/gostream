@@ -2,18 +2,15 @@ package gocep
 
 import "reflect"
 
-type InstanceBuilder struct {
+type StructBuilder struct {
 	field []reflect.StructField
-	strct reflect.Type
-	index map[string]int
-	imap  []int
 }
 
-func NewInstanceBuilder() *InstanceBuilder {
-	return &InstanceBuilder{}
+func NewStructBuilder() *StructBuilder {
+	return &StructBuilder{}
 }
 
-func (b *InstanceBuilder) Field(fname string, ftype reflect.Type) {
+func (b *StructBuilder) Field(fname string, ftype reflect.Type) {
 	b.field = append(
 		b.field,
 		reflect.StructField{
@@ -22,26 +19,34 @@ func (b *InstanceBuilder) Field(fname string, ftype reflect.Type) {
 		})
 }
 
-func (b *InstanceBuilder) Build() {
-	b.strct = reflect.StructOf(b.field)
-	b.index = make(map[string]int)
-	for i := 0; i < b.strct.NumField(); i++ {
-		f := b.strct.Field(i)
-		b.index[f.Name] = i
+func (b *StructBuilder) Build() Struct {
+	strct := reflect.StructOf(b.field)
+	index := make(map[string]int)
+	imap := []int{}
+	for i := 0; i < strct.NumField(); i++ {
+		f := strct.Field(i)
+		index[f.Name] = i
 		if f.Type.Kind() == reflect.Map {
-			b.imap = append(b.imap, i)
+			imap = append(imap, i)
 		}
 	}
+	return Struct{strct, index, imap}
 }
 
-func (b *InstanceBuilder) NewInstance() *Instance {
-	instance := reflect.New(b.strct).Elem()
+type Struct struct {
+	strct reflect.Type
+	index map[string]int
+	imap  []int
+}
+
+func (s *Struct) NewInstance() *Instance {
+	instance := reflect.New(s.strct).Elem()
 	mtype := reflect.TypeOf(make(map[string]interface{}))
-	for _, i := range b.imap {
+	for _, i := range s.imap {
 		mval := reflect.MakeMap(mtype)
 		instance.Field(i).Set(mval)
 	}
-	return &Instance{instance, b.index}
+	return &Instance{instance, s.index}
 }
 
 type Instance struct {
