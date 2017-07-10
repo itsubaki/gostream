@@ -24,7 +24,13 @@ func TestNewStructBuilder(t *testing.T) {
 	i.SetMapIndex("Record", "val", 123)
 	i.SetMapIndex("Record2", "val", 123)
 
-	e := NewEvent(i.Interface())
+	ptr := i.Pointer()
+	if reflect.TypeOf(ptr).Kind() != reflect.Ptr {
+		t.Error(i.Pointer())
+	}
+
+	ival := i.Interface()
+	e := NewEvent(ival)
 	if e.String("Name") != "foobar" {
 		t.Error(e)
 	}
@@ -51,10 +57,6 @@ func TestNewStructBuilder(t *testing.T) {
 
 	if e.MapInt("Record2", "val") != 123 {
 		t.Error(e)
-	}
-
-	if reflect.TypeOf(i.Pointer()).Kind() != reflect.Ptr {
-		t.Error(i.Pointer())
 	}
 
 }
