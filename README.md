@@ -28,10 +28,7 @@ The Stream Processing API for Go
     + [x] First, Last
  - [x] InsertInto
  - [x] Builder
- - [ ] Lexer
-    + [ ] Event
-    + [ ] Window
-    + [ ] Stream
+ - [ ] Lexer/Parser
 
 ## Install
 
