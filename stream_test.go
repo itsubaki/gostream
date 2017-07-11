@@ -1,7 +1,6 @@
 package gocep
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -38,5 +37,7 @@ func TestStreamInsert(t *testing.T) {
 
 	stream.Input() <- "test"
 	e := <-insert.Output()
-	fmt.Println(e)
+	if len(e) != 1 {
+		t.Error(e)
+	}
 }

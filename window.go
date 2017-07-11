@@ -10,6 +10,11 @@ type Window interface {
 	Input() chan interface{}
 	Output() chan []Event
 	Close()
+	Selector(s Selector)
+	Function(f Function)
+	View(v View)
+	Listen(input interface{})
+	Update(input interface{}) []Event
 }
 
 type SimpleWindow struct {
@@ -23,7 +28,7 @@ type SimpleWindow struct {
 	Canceller
 }
 
-func NewSimpleWindow(capacity int) *SimpleWindow {
+func NewSimpleWindow(capacity int) Window {
 	w := &SimpleWindow{
 		capacity,
 		make(chan interface{}, capacity),
@@ -116,7 +121,7 @@ type LengthWindow struct {
 	SimpleWindow
 }
 
-func NewLengthWindow(length, capacity int) *LengthWindow {
+func NewLengthWindow(length, capacity int) Window {
 	w := &LengthWindow{
 		SimpleWindow{
 			capacity,
@@ -139,7 +144,7 @@ type LengthBatchWindow struct {
 	SimpleWindow
 }
 
-func NewLengthBatchWindow(length, capacity int) *LengthBatchWindow {
+func NewLengthBatchWindow(length, capacity int) Window {
 	w := &LengthBatchWindow{
 		SimpleWindow{
 			capacity,
@@ -162,7 +167,7 @@ type TimeWindow struct {
 	SimpleWindow
 }
 
-func NewTimeWindow(expire time.Duration, capacity int) *TimeWindow {
+func NewTimeWindow(expire time.Duration, capacity int) Window {
 	w := &TimeWindow{
 		SimpleWindow{
 			capacity,
@@ -185,7 +190,7 @@ type TimeBatchWindow struct {
 	SimpleWindow
 }
 
-func NewTimeBatchWindow(expire time.Duration, capacity int) *TimeBatchWindow {
+func NewTimeBatchWindow(expire time.Duration, capacity int) Window {
 	w := &TimeBatchWindow{
 		SimpleWindow{
 			capacity,
