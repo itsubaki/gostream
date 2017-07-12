@@ -18,6 +18,9 @@ const (
 	DOT
 	COMMA
 	SELECT
+	COUNT
+	SUM
+	AVG
 	FROM
 	TIME
 	SEC
@@ -43,9 +46,14 @@ func (l *Lexer) Tokenize() (tok Token, lit string) {
 
 	if l.isLetter(ch) || l.isDigit(ch) {
 		l.unread()
-		return l.scan()
+		word := l.scan()
+		return l.literal(word)
 	}
 
+	return l.symbol(ch)
+}
+
+func (l *Lexer) symbol(ch rune) (Token, string) {
 	switch ch {
 	case l.eof:
 		return EOF, ""
@@ -62,7 +70,31 @@ func (l *Lexer) Tokenize() (tok Token, lit string) {
 	return ILLEGAL, string(ch)
 }
 
-func (l *Lexer) scan() (tok Token, lit string) {
+func (l *Lexer) literal(literal string) (Token, string) {
+
+	switch strings.ToUpper(literal) {
+	case "SELECT":
+		return SELECT, literal
+	case "COUNT":
+		return COUNT, literal
+	case "SUM":
+		return SUM, literal
+	case "AVG":
+		return AVG, literal
+	case "FROM":
+		return FROM, literal
+	case "WHERE":
+		return WHERE, literal
+	case "TIME":
+		return TIME, literal
+	case "SEC":
+		return SEC, literal
+	}
+
+	return LITERAL, literal
+}
+
+func (l *Lexer) scan() string {
 	var buf bytes.Buffer
 	buf.WriteRune(l.read())
 
@@ -78,23 +110,10 @@ func (l *Lexer) scan() (tok Token, lit string) {
 		_, _ = buf.WriteRune(ch)
 	}
 
-	switch strings.ToUpper(buf.String()) {
-	case "SELECT":
-		return SELECT, buf.String()
-	case "FROM":
-		return FROM, buf.String()
-	case "WHERE":
-		return WHERE, buf.String()
-	case "TIME":
-		return TIME, buf.String()
-	case "SEC":
-		return SEC, buf.String()
-	}
-
-	return LITERAL, buf.String()
+	return buf.String()
 }
 
-func (l *Lexer) whitespace() (tok Token, lit string) {
+func (l *Lexer) whitespace() (Token, string) {
 	var buf bytes.Buffer
 	buf.WriteRune(l.read())
 
@@ -103,12 +122,11 @@ func (l *Lexer) whitespace() (tok Token, lit string) {
 		if ch == l.eof {
 			break
 		}
-		if l.isWhitespace(ch) {
-			buf.WriteRune(ch)
-			continue
+		if !l.isWhitespace(ch) {
+			l.unread()
+			break
 		}
-		l.unread()
-		break
+		buf.WriteRune(ch)
 	}
 
 	return WHITESPACE, buf.String()
@@ -127,13 +145,31 @@ func (l *Lexer) unread() {
 }
 
 func (l *Lexer) isWhitespace(ch rune) bool {
-	return ch == ' ' || ch == '\t' || ch == '\n'
+	if ch == ' ' {
+		return true
+	}
+	if ch == '\t' {
+		return true
+	}
+	if ch == '\n' {
+		return true
+	}
+	return false
 }
 
 func (l *Lexer) isLetter(ch rune) bool {
-	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
+	if ch >= 'a' && ch <= 'z' {
+		return true
+	}
+	if ch >= 'A' && ch <= 'Z' {
+		return true
+	}
+	return false
 }
 
 func (l *Lexer) isDigit(ch rune) bool {
-	return (ch >= '0' && ch <= '9')
+	if ch >= '0' && ch <= '9' {
+		return true
+	}
+	return false
 }
