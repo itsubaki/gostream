@@ -133,7 +133,7 @@ defer is.Close()
 iw := NewLengthWindow(10, 1024)
 iw.Selector(EqualsType{MapEvent{}})
 iw.Selector(LargerThanMapInt{"Record", "sum(Value)", 10})
-iw.Function(SelectAll{"Record"})
+iw.Function(SelectMapAll{"Record"})
 is.Window(iw)
 
 // insert into MapEvent select sum(Value) from MyEvent.length(10)

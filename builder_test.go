@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestNewStructBuilder(t *testing.T) {
+func TestStructBuilder(t *testing.T) {
 	b := NewStructBuilder()
 	b.Field("Name", reflect.TypeOf(""))
 	b.Field("Bool", reflect.TypeOf(true))

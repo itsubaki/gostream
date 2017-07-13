@@ -1,6 +1,8 @@
 package gocep
 
-import "reflect"
+import (
+	"reflect"
+)
 
 type StructBuilder struct {
 	field []reflect.StructField

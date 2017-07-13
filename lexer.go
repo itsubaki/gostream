@@ -23,6 +23,7 @@ const (
 	AVG
 	FROM
 	TIME
+	LENGTH
 	SEC
 	WHERE
 	LARGER
@@ -37,7 +38,7 @@ func NewLexer(r io.Reader) *Lexer {
 	return &Lexer{rune(0), bufio.NewReader(r)}
 }
 
-func (l *Lexer) Tokenize() (tok Token, lit string) {
+func (l *Lexer) Tokenize() (Token, string) {
 	ch := l.read()
 	if l.isWhitespace(ch) {
 		l.unread()
@@ -87,6 +88,8 @@ func (l *Lexer) literal(literal string) (Token, string) {
 		return WHERE, literal
 	case "TIME":
 		return TIME, literal
+	case "LENGTH":
+		return LENGTH, literal
 	case "SEC":
 		return SEC, literal
 	}
