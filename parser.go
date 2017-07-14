@@ -7,12 +7,6 @@ import (
 	"strings"
 )
 
-type Parser struct {
-	query    string
-	capacity int
-	lexer    *Lexer
-}
-
 type Statement struct {
 	window   Window
 	selector []Selector
@@ -20,31 +14,76 @@ type Statement struct {
 	view     []View
 }
 
+func NewStatement() *Statement {
+	return &Statement{nil, []Selector{}, []Function{}, []View{}}
+}
+
+func (stmt *Statement) Window(w Window) {
+	stmt.window = w
+}
+
+func (stmt *Statement) Selector(s Selector) {
+	stmt.selector = append(stmt.selector, s)
+}
+
+func (stmt *Statement) Function(s Function) {
+	stmt.function = append(stmt.function, s)
+}
+
+func (stmt *Statement) View(v View) {
+	stmt.view = append(stmt.view, v)
+}
+
+func (stmt *Statement) Build() *Statement {
+	for _, s := range stmt.selector {
+		stmt.window.Selector(s)
+	}
+
+	for _, f := range stmt.function {
+		stmt.window.Function(f)
+	}
+
+	for _, v := range stmt.view {
+		stmt.window.View(v)
+	}
+	return stmt
+}
+
+type Parser struct {
+	query    string
+	capacity int
+	lexer    *Lexer
+}
+
 func NewParser(query string, capacity int) *Parser {
-	return &Parser{query, capacity, NewLexer(strings.NewReader(query))}
+	return &Parser{
+		query,
+		capacity,
+		NewLexer(strings.NewReader(query)),
+	}
 }
 
 func (p *Parser) Parse() (*Statement, error) {
-	stmt := &Statement{nil, []Selector{}, []Function{}, []View{}}
+	stmt := NewStatement()
 
 	// Select or InsertInto
 	token, literal := p.lexer.Tokenize()
 	if token != SELECT {
-		return nil, errors.New("invalid token. token: " + literal)
+		return nil, errors.New("invalid token. literal: " + literal)
 	}
 
 	// Function
 	for {
 		token, literal := p.lexer.Tokenize()
 		if token == EOF {
-			break
+			return nil, errors.New("invalid token. literal: " + literal)
 		}
 		if token == FROM {
 			break
 		}
-		if token == LITERAL {
-			stmt.function = append(stmt.function, SelectMapString{"Record", literal, literal})
-			fmt.Println("add", token, literal)
+		if token == ASTERISK {
+			stmt.Function(SelectMapAll{"Record"})
+			fmt.Println("add Function", token, literal)
 		}
 	}
 
@@ -52,14 +91,14 @@ func (p *Parser) Parse() (*Statement, error) {
 	for {
 		token, literal := p.lexer.Tokenize()
 		if token == EOF {
-			break
+			return nil, errors.New("invalid token. literal: " + literal)
 		}
 		if token == DOT {
 			break
 		}
-		if token == LITERAL {
-			stmt.selector = append(stmt.selector, EqualsType{MapEvent{}})
-			fmt.Println("add", token, literal)
+		if token == IDENTIFIER {
+			stmt.Selector(EqualsType{MapEvent{}})
+			fmt.Println("add Selector", token, literal)
 		}
 	}
 
@@ -67,19 +106,19 @@ func (p *Parser) Parse() (*Statement, error) {
 	for {
 		token, literal := p.lexer.Tokenize()
 		if token == EOF {
-			break
+			return nil, errors.New("invalid token. literal: " + literal)
 		}
 		if token == LENGTH {
 			length := 0
 			for {
 				t, l := p.lexer.Tokenize()
-				if t == LITERAL {
+				if t == IDENTIFIER {
 					length, _ = strconv.Atoi(l)
 					break
 				}
 			}
-			stmt.window = NewLengthWindow(length, p.capacity)
-			fmt.Println("add", token, literal)
+			stmt.Window(NewLengthWindow(length, p.capacity))
+			fmt.Println("add Window", token, literal)
 			break
 		}
 	}
@@ -87,24 +126,12 @@ func (p *Parser) Parse() (*Statement, error) {
 	for {
 		token, _ := p.lexer.Tokenize()
 		if token == EOF {
-			break
+			return stmt.Build(), nil
 		}
 		if token == WHERE {
 			break
 		}
 	}
 
-	// Selector
-	for {
-		token, literal := p.lexer.Tokenize()
-		if token == EOF {
-			break
-		}
-		if token == WHITESPACE {
-			continue
-		}
-		fmt.Println(token, literal)
-	}
-
-	return stmt, nil
+	return stmt.Build(), nil
 }

@@ -5,7 +5,7 @@ import (
 )
 
 func TestParser(t *testing.T) {
-	q := "select Value from MapEvent.length(10) where Value > 97"
+	q := "select * from MapEvent.length(10)"
 
 	p := NewParser(q, 1024)
 	stmt, _ := p.Parse()

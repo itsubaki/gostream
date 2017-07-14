@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestLexer(t *testing.T) {
+func TestLexerTokenize(t *testing.T) {
 	q := "select Value, count(*), avg(Value), sum(Value) from MyEvent.time(10 sec) where Value > 97"
 	lexer := NewLexer(strings.NewReader(q))
 
@@ -15,7 +15,7 @@ func TestLexer(t *testing.T) {
 	}{
 		{SELECT, "select"},
 		{WHITESPACE, " "},
-		{LITERAL, "Value"},
+		{IDENTIFIER, "Value"},
 		{COMMA, ","},
 		{WHITESPACE, " "},
 		{COUNT, "count"},
@@ -26,37 +26,84 @@ func TestLexer(t *testing.T) {
 		{WHITESPACE, " "},
 		{AVG, "avg"},
 		{ILLEGAL, "("},
-		{LITERAL, "Value"},
+		{IDENTIFIER, "Value"},
 		{ILLEGAL, ")"},
 		{COMMA, ","},
 		{WHITESPACE, " "},
 		{SUM, "sum"},
 		{ILLEGAL, "("},
-		{LITERAL, "Value"},
+		{IDENTIFIER, "Value"},
 		{ILLEGAL, ")"},
 		{WHITESPACE, " "},
 		{FROM, "from"},
 		{WHITESPACE, " "},
-		{LITERAL, "MyEvent"},
+		{IDENTIFIER, "MyEvent"},
 		{DOT, "."},
 		{TIME, "time"},
 		{ILLEGAL, "("},
-		{LITERAL, "10"},
+		{IDENTIFIER, "10"},
 		{WHITESPACE, " "},
 		{SEC, "sec"},
 		{ILLEGAL, ")"},
 		{WHITESPACE, " "},
 		{WHERE, "where"},
 		{WHITESPACE, " "},
-		{LITERAL, "Value"},
+		{IDENTIFIER, "Value"},
 		{WHITESPACE, " "},
 		{LARGER, ">"},
 		{WHITESPACE, " "},
-		{LITERAL, "97"},
+		{IDENTIFIER, "97"},
 	}
 
 	for _, tt := range test {
 		token, literal := lexer.Tokenize()
+		if token != tt.token || literal != tt.literal {
+			t.Error(token, literal)
+		}
+	}
+}
+
+func TestLexerTokenizeIgnoreSpace(t *testing.T) {
+	q := "select Value, count(*), avg(Value), sum(Value) from MyEvent.time(10 sec) where Value > 97"
+	lexer := NewLexer(strings.NewReader(q))
+
+	var test = []struct {
+		token   Token
+		literal string
+	}{
+		{SELECT, "select"},
+		{IDENTIFIER, "Value"},
+		{COMMA, ","},
+		{COUNT, "count"},
+		{ILLEGAL, "("},
+		{ASTERISK, "*"},
+		{ILLEGAL, ")"},
+		{COMMA, ","},
+		{AVG, "avg"},
+		{ILLEGAL, "("},
+		{IDENTIFIER, "Value"},
+		{ILLEGAL, ")"},
+		{COMMA, ","},
+		{SUM, "sum"},
+		{ILLEGAL, "("},
+		{IDENTIFIER, "Value"},
+		{ILLEGAL, ")"},
+		{FROM, "from"},
+		{IDENTIFIER, "MyEvent"},
+		{DOT, "."},
+		{TIME, "time"},
+		{ILLEGAL, "("},
+		{IDENTIFIER, "10"},
+		{SEC, "sec"},
+		{ILLEGAL, ")"},
+		{WHERE, "where"},
+		{IDENTIFIER, "Value"},
+		{LARGER, ">"},
+		{IDENTIFIER, "97"},
+	}
+
+	for _, tt := range test {
+		token, literal := lexer.TokenizeIgnoreWhiteSpace()
 		if token != tt.token || literal != tt.literal {
 			t.Error(token, literal)
 		}

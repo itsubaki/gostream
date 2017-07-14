@@ -12,8 +12,8 @@ type Token int
 const (
 	ILLEGAL Token = iota
 	EOF
-	LITERAL
 	WHITESPACE
+	IDENTIFIER
 	ASTERISK
 	DOT
 	COMMA
@@ -36,6 +36,16 @@ type Lexer struct {
 
 func NewLexer(r io.Reader) *Lexer {
 	return &Lexer{rune(0), bufio.NewReader(r)}
+}
+
+func (l *Lexer) TokenizeIgnoreWhiteSpace() (Token, string) {
+	for {
+		token, literal := l.Tokenize()
+		if token == WHITESPACE {
+			continue
+		}
+		return token, literal
+	}
 }
 
 func (l *Lexer) Tokenize() (Token, string) {
@@ -94,7 +104,7 @@ func (l *Lexer) literal(literal string) (Token, string) {
 		return SEC, literal
 	}
 
-	return LITERAL, literal
+	return IDENTIFIER, literal
 }
 
 func (l *Lexer) scan() string {
