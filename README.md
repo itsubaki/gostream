@@ -148,24 +148,24 @@ fmt.Println(<-is.Output())
 # Runtime EventBuilder
 
 ```go
-b := NewStructBuilder()
-b.Field("Name", reflect.TypeOf(""))
-b.Field("Value", reflect.TypeOf(0))
-strct := b.Build()
-// strct is
 // type RuntimeEvent struct {
 //  Name string
 //  Value int
 // }
+b := NewStructBuilder()
+b.Field("Name", reflect.TypeOf(""))
+b.Field("Value", reflect.TypeOf(0))
+strct := b.Build()
 
-i := strct.NewInstance()
-i.SetString("Name", "foobar")
-i.SetInt("Value", 123)
 
 // i.Value()
 // -> RuntimeEvent{Name: "foobar", Value: 123}
 // i.Pointer()
 // -> &RuntimeEvent{Name: "foobar", Value: 123}
+i := strct.NewInstance()
+i.SetString("Name", "foobar")
+i.SetInt("Value", 123)
+
 w.Input() <-i.Value()
 ```
 
