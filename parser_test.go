@@ -12,7 +12,7 @@ func TestParser(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	window := stmt.Build(1024)
+	window := stmt.New(1024)
 
 	m := make(map[string]interface{})
 	m["Value"] = "foobar"

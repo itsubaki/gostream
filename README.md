@@ -89,7 +89,8 @@ w.Function(SumInt{"Value", "sum(Value)"})
 
 ## Stream
 
- - Stream is Event Dispatcher and Collector
+ - Stream Dispatch Event to multi Window
+ - Stream Collect Event from multi Window
 
 ```go
 s := NewStream(1024)
@@ -148,13 +149,13 @@ fmt.Println(<-is.Output())
 
 ```go
 query := "select * from MapEvent.length(10)"
-statement, err := NewParser(q, 1024).Parse()
+statement, err := NewParser(q).Parse()
 if err != nil {
   log.Println("failed.")
   return
 }
 
-window := statement.Build()
+window := statement.New(1024)
 window.Input() <-MapEvent{map}
 fmt.Println(<-window.Output())
 ```

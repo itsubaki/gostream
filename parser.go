@@ -46,7 +46,7 @@ func (stmt *Statement) View(v View) {
 	stmt.view = append(stmt.view, v)
 }
 
-func (stmt *Statement) Build(capacity int) (w Window) {
+func (stmt *Statement) New(capacity int) (w Window) {
 	c := stmt.config
 	if c.token == LENGTH {
 		w = NewLengthWindow(c.length, capacity)
