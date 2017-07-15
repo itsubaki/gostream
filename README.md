@@ -28,7 +28,7 @@ The Stream Processing API for Go
     + [x] First, Last
  - [x] InsertInto
  - [x] Builder
- - [ ] Lexer/Parser
+ - [ ] Parser/Lexer
 
 ## Install
 
@@ -142,4 +142,19 @@ s.InsertInto(is)
 
 s.Input() <-MyEvent{"name", 100}
 fmt.Println(<-is.Output())
+```
+
+# (WIP) Query
+
+```go
+query := "select * from MapEvent.length(10)"
+statement, err := NewParser(q, 1024).Parse()
+if err != nil {
+  log.Println("failed.")
+  return
+}
+
+window := statement.Build()
+window.Input() <-MapEvent{map}
+fmt.Println(<-window.Output())
 ```

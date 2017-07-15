@@ -34,7 +34,7 @@ func (stmt *Statement) View(v View) {
 	stmt.view = append(stmt.view, v)
 }
 
-func (stmt *Statement) Build() *Statement {
+func (stmt *Statement) Build() Window {
 	for _, s := range stmt.selector {
 		stmt.window.Selector(s)
 	}
@@ -46,7 +46,7 @@ func (stmt *Statement) Build() *Statement {
 	for _, v := range stmt.view {
 		stmt.window.View(v)
 	}
-	return stmt
+	return stmt.window
 }
 
 type Parser struct {
@@ -126,12 +126,12 @@ func (p *Parser) Parse() (*Statement, error) {
 	for {
 		token, _ := p.lexer.Tokenize()
 		if token == EOF {
-			return stmt.Build(), nil
+			return stmt, nil
 		}
 		if token == WHERE {
 			break
 		}
 	}
 
-	return stmt.Build(), nil
+	return stmt, nil
 }

@@ -7,27 +7,18 @@ import (
 func TestParser(t *testing.T) {
 	q := "select * from MapEvent.length(10)"
 
-	p := NewParser(q, 1024)
-	stmt, _ := p.Parse()
-
-	w := stmt.window
-	for _, s := range stmt.selector {
-		w.Selector(s)
+	stmt, err := NewParser(q, 1024).Parse()
+	if err != nil {
+		t.Error(err)
+		return
 	}
-
-	for _, f := range stmt.function {
-		w.Function(f)
-	}
-
-	for _, v := range stmt.view {
-		w.View(v)
-	}
+	window := stmt.Build()
 
 	m := make(map[string]interface{})
 	m["Value"] = "foobar"
 
-	w.Input() <- MapEvent{m}
-	event := <-w.Output()
+	window.Input() <- MapEvent{m}
+	event := <-window.Output()
 	if event[0].RecordString("Value") != "foobar" {
 		t.Error(event)
 	}
