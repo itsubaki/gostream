@@ -145,6 +145,29 @@ s.Input() <-MyEvent{"name", 100}
 fmt.Println(<-is.Output())
 ```
 
+# Runtime EventBuilder
+
+```go
+// type RuntimeEvent struct {
+//  Name string
+//  Value int
+// }
+b := NewStructBuilder()
+b.Field("Name", reflect.TypeOf(""))
+b.Field("Value", reflect.TypeOf(0))
+strct := b.Build()
+
+i := strct.NewInstance()
+i.SetString("Name", "foobar")
+i.SetInt("Value", 123)
+
+// i.Value()
+// -> RuntimeEvent{Name: "foobar", Value: 123}
+// i.Pointer()
+// -> &RuntimeEvent{Name: "foobar", Value: 123}
+w.Input() <-i.Value()
+```
+
 # (WIP) Query
 
 ```go
@@ -158,27 +181,4 @@ if err != nil {
 window := statement.New(1024)
 window.Input() <-MapEvent{map}
 fmt.Println(<-window.Output())
-```
-
-# (WIP) Runtime EventBuilder
-
-```go
-// type RuntimeEvent struct {
-//  Name string
-//  Value int
-// }
-b := NewStructBuilder()
-b.Field("Name", reflect.TypeOf(""))
-b.Field("Value", reflect.TypeOf(0))
-strct := b.Build()
-
-// RuntimeEvent{Name: "foobar", Value: 123}
-i := strct.NewInstance()
-i.SetString("Name", "foobar")
-i.SetInt("Value", 123)
-
-w.Input() <-i.Interface()
-
-// &RuntimeEvent{Name: "foobar", Value: 123}
-// -> i.Pointer()
 ```
