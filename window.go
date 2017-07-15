@@ -2,7 +2,6 @@ package gocep
 
 import (
 	"log"
-	"reflect"
 	"time"
 )
 
@@ -90,7 +89,7 @@ func (w *SimpleWindow) Listen(input interface{}) {
 func (w *SimpleWindow) Update(input interface{}) (event []Event) {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Println(err, reflect.TypeOf(input))
+			log.Println(err, input)
 		}
 	}()
 
