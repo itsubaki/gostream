@@ -89,8 +89,8 @@ w.Function(SumInt{"Value", "sum(Value)"})
 
 ## Stream
 
- - Stream Dispatch Event to multi Window
- - Stream Collect Event from multi Window
+ - Dispatch Event to multi Window
+ - Collect Event from multi Window
 
 ```go
 s := NewStream(1024)
@@ -148,14 +148,15 @@ fmt.Println(<-is.Output())
 # Runtime EventBuilder
 
 ```go
-// type RuntimeEvent struct {
-//  Name string
-//  Value int
-// }
 b := NewStructBuilder()
 b.Field("Name", reflect.TypeOf(""))
 b.Field("Value", reflect.TypeOf(0))
 strct := b.Build()
+// strct is
+// type RuntimeEvent struct {
+//  Name string
+//  Value int
+// }
 
 i := strct.NewInstance()
 i.SetString("Name", "foobar")
