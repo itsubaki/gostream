@@ -5,21 +5,33 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
+type WindowConfig struct {
+	token  Token
+	length int
+	unit   time.Duration
+}
+
 type Statement struct {
-	window   Window
+	config   *WindowConfig
 	selector []Selector
 	function []Function
 	view     []View
 }
 
 func NewStatement() *Statement {
-	return &Statement{nil, []Selector{}, []Function{}, []View{}}
+	return &Statement{
+		&WindowConfig{},
+		[]Selector{},
+		[]Function{},
+		[]View{},
+	}
 }
 
-func (stmt *Statement) Window(w Window) {
-	stmt.window = w
+func (stmt *Statement) WindowConfig(c *WindowConfig) {
+	stmt.config = c
 }
 
 func (stmt *Statement) Selector(s Selector) {
@@ -34,31 +46,35 @@ func (stmt *Statement) View(v View) {
 	stmt.view = append(stmt.view, v)
 }
 
-func (stmt *Statement) Build() Window {
+func (stmt *Statement) Build(capacity int) (w Window) {
+	c := stmt.config
+	if c.token == LENGTH {
+		w = NewLengthWindow(c.length, capacity)
+	}
+
 	for _, s := range stmt.selector {
-		stmt.window.Selector(s)
+		w.Selector(s)
 	}
 
 	for _, f := range stmt.function {
-		stmt.window.Function(f)
+		w.Function(f)
 	}
 
 	for _, v := range stmt.view {
-		stmt.window.View(v)
+		w.View(v)
 	}
-	return stmt.window
+
+	return w
 }
 
 type Parser struct {
-	query    string
-	capacity int
-	lexer    *Lexer
+	query string
+	lexer *Lexer
 }
 
-func NewParser(query string, capacity int) *Parser {
+func NewParser(query string) *Parser {
 	return &Parser{
 		query,
-		capacity,
 		NewLexer(strings.NewReader(query)),
 	}
 }
@@ -117,7 +133,10 @@ func (p *Parser) Parse() (*Statement, error) {
 					break
 				}
 			}
-			stmt.Window(NewLengthWindow(length, p.capacity))
+			config := &WindowConfig{}
+			config.token = token
+			config.length = length
+			stmt.WindowConfig(config)
 			fmt.Println("add Window", token, literal)
 			break
 		}

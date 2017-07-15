@@ -7,12 +7,12 @@ import (
 func TestParser(t *testing.T) {
 	q := "select * from MapEvent.length(10)"
 
-	stmt, err := NewParser(q, 1024).Parse()
+	stmt, err := NewParser(q).Parse()
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	window := stmt.Build()
+	window := stmt.Build(1024)
 
 	m := make(map[string]interface{})
 	m["Value"] = "foobar"
