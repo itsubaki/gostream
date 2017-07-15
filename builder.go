@@ -82,7 +82,7 @@ func (i *Instance) SetMapIndex(name, key string, value interface{}) {
 	i.Field(name).SetMapIndex(refkey, refval)
 }
 
-func (i *Instance) Interface() interface{} {
+func (i *Instance) Value() interface{} {
 	return i.internal.Interface()
 }
 

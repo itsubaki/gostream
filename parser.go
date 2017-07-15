@@ -137,7 +137,7 @@ func (p *Parser) Parse() (*Statement, error) {
 			config.token = token
 			config.length = length
 			stmt.WindowConfig(config)
-			fmt.Println("add Window", token, literal)
+			fmt.Println("add Window", token, literal, length)
 			break
 		}
 	}

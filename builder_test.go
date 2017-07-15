@@ -29,8 +29,8 @@ func TestStructBuilder(t *testing.T) {
 		t.Error(i.Pointer())
 	}
 
-	ival := i.Interface()
-	e := NewEvent(ival)
+	val := i.Value()
+	e := NewEvent(val)
 	if e.String("Name") != "foobar" {
 		t.Error(e)
 	}
