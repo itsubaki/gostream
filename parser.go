@@ -8,14 +8,14 @@ import (
 	"time"
 )
 
-type WindowConfig struct {
+type WindowParam struct {
 	token  Token
 	length int
 	unit   time.Duration
 }
 
 type Statement struct {
-	config   *WindowConfig
+	config   *WindowParam
 	selector []Selector
 	function []Function
 	view     []View
@@ -23,14 +23,14 @@ type Statement struct {
 
 func NewStatement() *Statement {
 	return &Statement{
-		&WindowConfig{},
+		&WindowParam{},
 		[]Selector{},
 		[]Function{},
 		[]View{},
 	}
 }
 
-func (stmt *Statement) Window(c *WindowConfig) {
+func (stmt *Statement) Window(c *WindowParam) {
 	stmt.config = c
 }
 
@@ -133,10 +133,10 @@ func (p *Parser) Parse() (*Statement, error) {
 					break
 				}
 			}
-			config := &WindowConfig{}
-			config.token = token
-			config.length = length
-			stmt.Window(config)
+			param := &WindowParam{}
+			param.token = token
+			param.length = length
+			stmt.Window(param)
 			log.Println("add Window", token, literal, length)
 			break
 		}
