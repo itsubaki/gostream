@@ -2,7 +2,7 @@ package gocep
 
 import (
 	"errors"
-	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -30,7 +30,7 @@ func NewStatement() *Statement {
 	}
 }
 
-func (stmt *Statement) WindowConfig(c *WindowConfig) {
+func (stmt *Statement) Window(c *WindowConfig) {
 	stmt.config = c
 }
 
@@ -99,7 +99,7 @@ func (p *Parser) Parse() (*Statement, error) {
 		}
 		if token == ASTERISK {
 			stmt.Function(SelectMapAll{"Record"})
-			fmt.Println("add Function", token, literal)
+			log.Println("add Function", token, literal)
 		}
 	}
 
@@ -114,7 +114,7 @@ func (p *Parser) Parse() (*Statement, error) {
 		}
 		if token == IDENTIFIER {
 			stmt.Selector(EqualsType{MapEvent{}})
-			fmt.Println("add Selector", token, literal)
+			log.Println("add Selector", token, literal)
 		}
 	}
 
@@ -136,8 +136,8 @@ func (p *Parser) Parse() (*Statement, error) {
 			config := &WindowConfig{}
 			config.token = token
 			config.length = length
-			stmt.WindowConfig(config)
-			fmt.Println("add Window", token, literal, length)
+			stmt.Window(config)
+			log.Println("add Window", token, literal, length)
 			break
 		}
 	}
