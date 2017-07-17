@@ -23,6 +23,10 @@ func (e *Event) Type() reflect.Type {
 	return reflect.TypeOf(e.Underlying)
 }
 
+func (e *Event) ValueType() reflect.Type {
+	return reflect.ValueOf(e.Underlying).Type()
+}
+
 func (e *Event) EqualsType(t reflect.Type) bool {
 	return e.Type() == t
 }

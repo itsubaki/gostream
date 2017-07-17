@@ -16,7 +16,7 @@ type Window interface {
 	Update(input interface{}) []Event
 }
 
-type SimpleWindow struct {
+type IdentityWindow struct {
 	capacity int
 	in       chan interface{}
 	out      chan []Event
@@ -27,8 +27,8 @@ type SimpleWindow struct {
 	Canceller
 }
 
-func NewSimpleWindow(capacity int) Window {
-	w := &SimpleWindow{
+func NewIdentityWindow(capacity int) Window {
+	w := &IdentityWindow{
 		capacity,
 		make(chan interface{}, capacity),
 		make(chan []Event, capacity),
@@ -43,31 +43,31 @@ func NewSimpleWindow(capacity int) Window {
 	return w
 }
 
-func (w *SimpleWindow) Close() {
+func (w *IdentityWindow) Close() {
 	w.cancel()
 }
 
-func (w *SimpleWindow) Selector(s Selector) {
+func (w *IdentityWindow) Selector(s Selector) {
 	w.selector = append(w.selector, s)
 }
 
-func (w *SimpleWindow) Function(f Function) {
+func (w *IdentityWindow) Function(f Function) {
 	w.function = append(w.function, f)
 }
 
-func (w *SimpleWindow) View(v View) {
+func (w *IdentityWindow) View(v View) {
 	w.view = append(w.view, v)
 }
 
-func (w *SimpleWindow) Input() chan interface{} {
+func (w *IdentityWindow) Input() chan interface{} {
 	return w.in
 }
 
-func (w *SimpleWindow) Output() chan []Event {
+func (w *IdentityWindow) Output() chan []Event {
 	return w.out
 }
 
-func (w *SimpleWindow) work() {
+func (w *IdentityWindow) work() {
 	for {
 		select {
 		case <-w.ctx.Done():
@@ -78,7 +78,7 @@ func (w *SimpleWindow) work() {
 	}
 }
 
-func (w *SimpleWindow) Listen(input interface{}) {
+func (w *IdentityWindow) Listen(input interface{}) {
 	event := w.Update(input)
 	if len(event) == 0 {
 		return
@@ -86,7 +86,7 @@ func (w *SimpleWindow) Listen(input interface{}) {
 	w.Output() <- event
 }
 
-func (w *SimpleWindow) Update(input interface{}) (event []Event) {
+func (w *IdentityWindow) Update(input interface{}) (event []Event) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Println(err, input)
@@ -117,12 +117,12 @@ func (w *SimpleWindow) Update(input interface{}) (event []Event) {
 }
 
 type LengthWindow struct {
-	SimpleWindow
+	IdentityWindow
 }
 
 func NewLengthWindow(length, capacity int) Window {
 	w := &LengthWindow{
-		SimpleWindow{
+		IdentityWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
@@ -140,12 +140,12 @@ func NewLengthWindow(length, capacity int) Window {
 }
 
 type LengthBatchWindow struct {
-	SimpleWindow
+	IdentityWindow
 }
 
 func NewLengthBatchWindow(length, capacity int) Window {
 	w := &LengthBatchWindow{
-		SimpleWindow{
+		IdentityWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
@@ -163,12 +163,12 @@ func NewLengthBatchWindow(length, capacity int) Window {
 }
 
 type TimeWindow struct {
-	SimpleWindow
+	IdentityWindow
 }
 
 func NewTimeWindow(expire time.Duration, capacity int) Window {
 	w := &TimeWindow{
-		SimpleWindow{
+		IdentityWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
@@ -186,12 +186,12 @@ func NewTimeWindow(expire time.Duration, capacity int) Window {
 }
 
 type TimeBatchWindow struct {
-	SimpleWindow
+	IdentityWindow
 }
 
 func NewTimeBatchWindow(expire time.Duration, capacity int) Window {
 	w := &TimeBatchWindow{
-		SimpleWindow{
+		IdentityWindow{
 			capacity,
 			make(chan interface{}, capacity),
 			make(chan []Event, capacity),
