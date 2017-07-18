@@ -8,14 +8,10 @@ import (
 	"time"
 )
 
-type WindowParam struct {
-	token  Token
-	length int
-	unit   time.Duration
-}
-
 type Statement struct {
-	config   *WindowParam
+	token    Token
+	length   int
+	unit     time.Duration
 	selector []Selector
 	function []Function
 	view     []View
@@ -23,15 +19,10 @@ type Statement struct {
 
 func NewStatement() *Statement {
 	return &Statement{
-		&WindowParam{},
-		[]Selector{},
-		[]Function{},
-		[]View{},
+		selector: []Selector{},
+		function: []Function{},
+		view:     []View{},
 	}
-}
-
-func (stmt *Statement) Window(c *WindowParam) {
-	stmt.config = c
 }
 
 func (stmt *Statement) Selector(s Selector) {
@@ -47,9 +38,8 @@ func (stmt *Statement) View(v View) {
 }
 
 func (stmt *Statement) New(capacity int) (w Window) {
-	c := stmt.config
-	if c.token == LENGTH {
-		w = NewLengthWindow(c.length, capacity)
+	if stmt.token == LENGTH {
+		w = NewLengthWindow(stmt.length, capacity)
 	}
 
 	for _, s := range stmt.selector {
@@ -83,8 +73,7 @@ func (p *Parser) Parse() (*Statement, error) {
 	stmt := NewStatement()
 
 	// Select or InsertInto
-	token, literal := p.lexer.Tokenize()
-	if token != SELECT {
+	if token, literal := p.lexer.Tokenize(); token != SELECT {
 		return nil, errors.New("invalid token. literal: " + literal)
 	}
 
@@ -119,27 +108,22 @@ func (p *Parser) Parse() (*Statement, error) {
 	}
 
 	// Window
-	for {
-		token, literal := p.lexer.Tokenize()
-		if token == EOF {
-			return nil, errors.New("invalid token. literal: " + literal)
-		}
-		if token == LENGTH {
-			length := 0
-			for {
-				t, l := p.lexer.Tokenize()
-				if t == IDENTIFIER {
-					length, _ = strconv.Atoi(l)
-					break
-				}
+	token, literal := p.lexer.Tokenize()
+	if token == EOF {
+		return nil, errors.New("invalid token. literal: " + literal)
+	}
+	if token == LENGTH {
+		length := 0
+		for {
+			t, l := p.lexer.Tokenize()
+			if t == IDENTIFIER {
+				length, _ = strconv.Atoi(l)
+				break
 			}
-			param := &WindowParam{}
-			param.token = token
-			param.length = length
-			stmt.Window(param)
-			log.Println("add Window", token, literal, length)
-			break
 		}
+		stmt.token = token
+		stmt.length = length
+		log.Println("add Window", token, literal, length)
 	}
 
 	for {
