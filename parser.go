@@ -11,6 +11,7 @@ import (
 type Statement struct {
 	token    Token
 	length   int
+	time     time.Duration
 	unit     time.Duration
 	selector []Selector
 	function []Function
@@ -40,6 +41,10 @@ func (stmt *Statement) View(v View) {
 func (stmt *Statement) New(capacity int) (w Window) {
 	if stmt.token == LENGTH {
 		w = NewLengthWindow(stmt.length, capacity)
+	}
+	if stmt.token == TIME {
+		time := stmt.time * stmt.unit
+		w = NewTimeWindow(time, capacity)
 	}
 
 	for _, s := range stmt.selector {
