@@ -330,3 +330,35 @@ func (f CastStringToBool) Apply(event []Event) []Event {
 
 	return event
 }
+
+type HavingLargerThanInt struct {
+	Function Function
+	Name     string
+	Value    int
+}
+
+func (f HavingLargerThanInt) Apply(event []Event) []Event {
+	e := f.Function.Apply(event)
+	val := e[len(e)-1].RecordInt(f.Name)
+	if val > f.Value {
+		return event
+	}
+
+	return []Event{}
+}
+
+type HavingLessThanInt struct {
+	Function Function
+	Name     string
+	Value    int
+}
+
+func (f HavingLessThanInt) Apply(event []Event) []Event {
+	e := f.Function.Apply(event)
+	val := e[len(e)-1].RecordInt(f.Name)
+	if val < f.Value {
+		return event
+	}
+
+	return []Event{}
+}

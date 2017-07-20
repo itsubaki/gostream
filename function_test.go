@@ -1,6 +1,8 @@
 package gocep
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestSelectAll(t *testing.T) {
 	event := []Event{NewEvent(IntEvent{"foo", 10})}
@@ -363,5 +365,61 @@ func TestCastStringToBool(t *testing.T) {
 
 	if result[0].RecordBool("cast(Name)") {
 		t.Error(result)
+	}
+}
+
+func TestHavingLargerThanInt(t *testing.T) {
+	event := []Event{
+		NewEvent(IntEvent{"foo", 10}),
+		NewEvent(IntEvent{"foo", 10}),
+		NewEvent(IntEvent{"foo", 10}),
+	}
+
+	var test = []struct {
+		sum      int
+		expected int
+	}{
+		{30, 0},
+		{29, 3},
+	}
+
+	for _, tt := range test {
+		f := HavingLargerThanInt{
+			SumInt{"Value", "sum(Value)"},
+			"sum(Value)",
+			tt.sum,
+		}
+		result := f.Apply(event)
+		if len(result) != tt.expected {
+			t.Error(result)
+		}
+	}
+}
+
+func TestHavingLessThanInt(t *testing.T) {
+	event := []Event{
+		NewEvent(IntEvent{"foo", 10}),
+		NewEvent(IntEvent{"foo", 10}),
+		NewEvent(IntEvent{"foo", 10}),
+	}
+
+	var test = []struct {
+		sum      int
+		expected int
+	}{
+		{31, 3},
+		{30, 0},
+	}
+
+	for _, tt := range test {
+		f := HavingLessThanInt{
+			SumInt{"Value", "sum(Value)"},
+			"sum(Value)",
+			tt.sum,
+		}
+		result := f.Apply(event)
+		if len(result) != tt.expected {
+			t.Error(result)
+		}
 	}
 }

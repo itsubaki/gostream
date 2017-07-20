@@ -24,6 +24,8 @@ const (
 	FROM
 	TIME
 	LENGTH
+	TIME_BATCH
+	LENGTH_BATCH
 	SEC
 	WHERE
 	LARGER
@@ -100,6 +102,10 @@ func (l *Lexer) literal(literal string) (Token, string) {
 		return TIME, literal
 	case "LENGTH":
 		return LENGTH, literal
+	case "TIME_BATCH":
+		return TIME_BATCH, literal
+	case "LENGTH_BATCH":
+		return LENGTH_BATCH, literal
 	case "SEC":
 		return SEC, literal
 	}

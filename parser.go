@@ -126,6 +126,7 @@ func (p *Parser) Parse() (*Statement, error) {
 		log.Println("add Window", token, literal, length)
 	}
 
+	// Where
 	for {
 		token, _ := p.lexer.Tokenize()
 		if token == EOF {

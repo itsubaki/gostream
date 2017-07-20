@@ -15,14 +15,14 @@ The Stream Processing API for Go
     + [x] EqualsType, NotEqualsType
     + [x] Equals, NotEquals
     + [x] LargerThan, LessThan
-    + [ ] Having
-    + [ ] GroupBy
  - [x] Function
     + [x] Max, Min, Median
     + [x] Count, Sum, Average
     + [x] Cast
     + [x] As
     + [x] SelectAll, Select
+    + [ ] Having
+    + [ ] GroupBy
  - [x] View
     + [x] OrderBy, Limit
     + [x] First, Last
