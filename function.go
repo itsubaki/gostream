@@ -331,6 +331,22 @@ func (f CastStringToBool) Apply(event []Event) []Event {
 	return event
 }
 
+type HavingEqualsInt struct {
+	Function Function
+	Name     string
+	Value    int
+}
+
+func (f HavingEqualsInt) Apply(event []Event) []Event {
+	e := f.Function.Apply(event)
+	val := e[len(e)-1].RecordInt(f.Name)
+	if val == f.Value {
+		return event
+	}
+
+	return []Event{}
+}
+
 type HavingLargerThanInt struct {
 	Function Function
 	Name     string

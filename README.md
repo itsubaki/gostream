@@ -21,14 +21,16 @@ The Stream Processing API for Go
     + [x] Cast
     + [x] As
     + [x] SelectAll, Select
-    + [ ] Having
+    + [x] Having
     + [ ] GroupBy
  - [x] View
     + [x] OrderBy, Limit
     + [x] First, Last
  - [x] InsertInto
- - [x] Builder
- - [ ] Parser/Lexer
+ - [ ] Utility
+    + [x] Builder
+    + [x] Lexer
+    + [ ] Parser
 
 ## Install
 
@@ -145,7 +147,7 @@ s.Input() <-MyEvent{"name", 100}
 fmt.Println(<-is.Output())
 ```
 
-# Runtime EventBuilder
+# EventBuilder
 
 ```go
 // type RuntimeEvent struct {

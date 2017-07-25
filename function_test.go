@@ -368,6 +368,34 @@ func TestCastStringToBool(t *testing.T) {
 	}
 }
 
+func TestHavingEqualsInt(t *testing.T) {
+	event := []Event{
+		NewEvent(IntEvent{"foo", 10}),
+		NewEvent(IntEvent{"foo", 10}),
+		NewEvent(IntEvent{"foo", 10}),
+	}
+
+	var test = []struct {
+		sum      int
+		expected int
+	}{
+		{30, 3},
+		{31, 0},
+	}
+
+	for _, tt := range test {
+		f := HavingEqualsInt{
+			SumInt{"Value", "sum(Value)"},
+			"sum(Value)",
+			tt.sum,
+		}
+		result := f.Apply(event)
+		if len(result) != tt.expected {
+			t.Error(result)
+		}
+	}
+}
+
 func TestHavingLargerThanInt(t *testing.T) {
 	event := []Event{
 		NewEvent(IntEvent{"foo", 10}),
