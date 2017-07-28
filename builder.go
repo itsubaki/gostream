@@ -12,7 +12,7 @@ func NewStructBuilder() *StructBuilder {
 	return &StructBuilder{}
 }
 
-func (b *StructBuilder) Field(fname string, ftype reflect.Type) {
+func (b *StructBuilder) SetField(fname string, ftype reflect.Type) {
 	b.field = append(
 		b.field,
 		reflect.StructField{

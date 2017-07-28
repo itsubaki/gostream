@@ -9,8 +9,8 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{MapEvent{}})
-	w.Function(AverageMapInt{"Record", "Value", "avg(Value)"})
+	w.SetSelector(EqualsType{MapEvent{}})
+	w.SetFunction(AverageMapInt{"Record", "Value", "avg(Value)"})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -24,8 +24,8 @@ func BenchmarkLengthWindowAverageInt(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{IntEvent{}})
-	w.Function(AverageInt{"Value", "avg(Value)"})
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetFunction(AverageInt{"Value", "avg(Value)"})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -37,8 +37,8 @@ func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{MapEvent{}})
-	w.Selector(LargerThanMapInt{"Record", "Value", 100})
+	w.SetSelector(EqualsType{MapEvent{}})
+	w.SetSelector(LargerThanMapInt{"Record", "Value", 100})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -52,8 +52,8 @@ func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{IntEvent{}})
-	w.Selector(LargerThanInt{"Value", 100})
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetSelector(LargerThanInt{"Value", 100})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -65,8 +65,8 @@ func BenchmarkLengthWindowOrderByMap(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{MapEvent{}})
-	w.View(OrderByMapInt{"Record", "Value", false})
+	w.SetSelector(EqualsType{MapEvent{}})
+	w.SetView(OrderByMapInt{"Record", "Value", false})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -80,8 +80,8 @@ func BenchmarkLengthWindowOrderByInt(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{IntEvent{}})
-	w.View(OrderByInt{"Value", false})
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetView(OrderByInt{"Value", false})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -93,8 +93,8 @@ func BenchmarkLengthWindowOrderByReverseMap(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{MapEvent{}})
-	w.View(OrderByMapInt{"Record", "Value", true})
+	w.SetSelector(EqualsType{MapEvent{}})
+	w.SetView(OrderByMapInt{"Record", "Value", true})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -108,8 +108,8 @@ func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
 	w := NewLengthWindow(128, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{IntEvent{}})
-	w.View(OrderByInt{"Value", true})
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetView(OrderByInt{"Value", true})
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -122,10 +122,10 @@ func TestLengthWindow(t *testing.T) {
 	w := NewLengthWindow(2, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{IntEvent{}})
-	w.Selector(LargerThanInt{"Value", 1})
-	w.Function(Count{"count"})
-	w.View(OrderByInt{"Value", true})
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetSelector(LargerThanInt{"Value", 1})
+	w.SetFunction(Count{"count"})
+	w.SetView(OrderByInt{"Value", true})
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {
@@ -156,11 +156,11 @@ func TestLengthWindowMap(t *testing.T) {
 	w := NewLengthWindow(2, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{MapEvent{}})
-	w.Selector(LargerThanMapInt{"Record", "Value", 1})
-	w.Function(Count{"count"})
-	w.Function(AverageMapInt{"Record", "Value", "avg(Record:Value)"})
-	w.View(OrderByMapInt{"Record", "Value", true})
+	w.SetSelector(EqualsType{MapEvent{}})
+	w.SetSelector(LargerThanMapInt{"Record", "Value", 1})
+	w.SetFunction(Count{"count"})
+	w.SetFunction(AverageMapInt{"Record", "Value", "avg(Record:Value)"})
+	w.SetView(OrderByMapInt{"Record", "Value", true})
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {
@@ -197,7 +197,7 @@ func TestLengthWindowListen(t *testing.T) {
 	w := NewLengthWindow(2, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{IntEvent{}})
+	w.SetSelector(EqualsType{IntEvent{}})
 	w.Listen("")
 
 }
@@ -207,7 +207,7 @@ func TestLengthBatchWindow(t *testing.T) {
 	w := NewLengthBatchWindow(2, 1024)
 	defer w.Close()
 
-	w.Selector(EqualsType{IntEvent{}})
+	w.SetSelector(EqualsType{IntEvent{}})
 
 	event := []Event{}
 	for i := 0; i < 10; i++ {
@@ -271,9 +271,9 @@ func TestLengthWindowPanic(t *testing.T) {
 	w := NewLengthWindow(10, 16)
 	defer w.Close()
 
-	w.Selector(EqualsType{IntEvent{}})
+	w.SetSelector(EqualsType{IntEvent{}})
 	// IntEvent and Map Function -> panic!!
-	w.Function(AverageMapInt{"Record", "Value", "avg(Record:Value)"})
+	w.SetFunction(AverageMapInt{"Record", "Value", "avg(Record:Value)"})
 	event := w.Update(IntEvent{"foobar", 10})
 	if len(event) != 0 {
 		t.Error(event)

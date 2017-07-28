@@ -30,7 +30,7 @@ func (s *Stream) Close() {
 	}
 }
 
-func (s *Stream) Window(w Window) {
+func (s *Stream) SetWindow(w Window) {
 	s.window = append(s.window, w)
 	go s.collect(w)
 }

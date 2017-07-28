@@ -6,12 +6,12 @@ import (
 )
 
 type Window interface {
+	SetSelector(s Selector)
+	SetFunction(f Function)
+	SetView(v View)
 	Input() chan interface{}
 	Output() chan []Event
 	Close()
-	Selector(s Selector)
-	Function(f Function)
-	View(v View)
 	Listen(input interface{})
 	Update(input interface{}) []Event
 }
@@ -47,15 +47,15 @@ func (w *IdentityWindow) Close() {
 	w.cancel()
 }
 
-func (w *IdentityWindow) Selector(s Selector) {
+func (w *IdentityWindow) SetSelector(s Selector) {
 	w.selector = append(w.selector, s)
 }
 
-func (w *IdentityWindow) Function(f Function) {
+func (w *IdentityWindow) SetFunction(f Function) {
 	w.function = append(w.function, f)
 }
 
-func (w *IdentityWindow) View(v View) {
+func (w *IdentityWindow) SetView(v View) {
 	w.view = append(w.view, v)
 }
 
@@ -134,7 +134,7 @@ func NewLengthWindow(length, capacity int) Window {
 		},
 	}
 
-	w.Function(Length{length})
+	w.SetFunction(Length{length})
 	go w.work()
 	return w
 }
@@ -157,7 +157,7 @@ func NewLengthBatchWindow(length, capacity int) Window {
 		},
 	}
 
-	w.Function(&LengthBatch{length, []Event{}})
+	w.SetFunction(&LengthBatch{length, []Event{}})
 	go w.work()
 	return w
 }
@@ -179,7 +179,7 @@ func NewTimeWindow(expire time.Duration, capacity int) Window {
 			NewCanceller(),
 		},
 	}
-	w.Function(TimeDuration{expire})
+	w.SetFunction(TimeDuration{expire})
 
 	go w.work()
 	return w
@@ -205,7 +205,7 @@ func NewTimeBatchWindow(expire time.Duration, capacity int) Window {
 
 	start := time.Now()
 	end := start.Add(expire)
-	w.Function(&TimeDurationBatch{start, end, expire})
+	w.SetFunction(&TimeDurationBatch{start, end, expire})
 	go w.work()
 	return w
 }

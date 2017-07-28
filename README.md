@@ -60,12 +60,12 @@ type MyEvent struct {
 w := NewTimeWindow(10 * time.Millisecond, 1024)
 defer w.Close()
 
-w.Selector(EqualsType{MyEvent{}})
-w.Selector(LargerThanInt{"Value", 97})
-w.Function(SelectString{"Name", "n"})
-w.Function(SelectInt{"Value", "v"})
-w.View(OrderByInt{"Value", true})
-w.View(Limit{10, 5})
+w.SetSelector(EqualsType{MyEvent{}})
+w.SetSelector(LargerThanInt{"Value", 97})
+w.SetFunction(SelectString{"Name", "n"})
+w.SetFunction(SelectInt{"Value", "v"})
+w.SetView(OrderByInt{"Value", true})
+w.SetView(Limit{10, 5})
 
 go func() {
   for {
@@ -84,9 +84,9 @@ for i := 0; i < 100; i++ {
 w := NewLengthWindow(10, 1024)
 defer w.Close()
 
-w.Selector(EqualsType{MyEvent{}})
-w.Function(AverageInt{"Value", "avg(Value)"})
-w.Function(SumInt{"Value", "sum(Value)"})
+w.SetSelector(EqualsType{MyEvent{}})
+w.SetFunction(AverageInt{"Value", "avg(Value)"})
+w.SetFunction(SumInt{"Value", "sum(Value)"})
 ```
 
 ## Stream
@@ -98,9 +98,9 @@ w.Function(SumInt{"Value", "sum(Value)"})
 s := NewStream(1024)
 defer s.Close()
 
-s.Window(NewTimeWindow(10 * time.Millisecond, 1024))
-s.Window(NewLengthWindow(10, 1024))
-s.Window(...)
+s.SetWindow(NewTimeWindow(10 * time.Millisecond, 1024))
+s.SetWindow(NewLengthWindow(10, 1024))
+s.SetWindow(...)
 
 go func() {
   for {
@@ -126,18 +126,18 @@ type MapEvent struct {
 s := NewStream(1024)
 defer s.Close()
 w := NewLengthWindow(10, 1024)
-w.Selector(EqualsType{MyEvent{}})
-w.Function(SumInt{"Value", "sum(Value)"})
-s.Window(w)
+w.SetSelector(EqualsType{MyEvent{}})
+w.SetFunction(SumInt{"Value", "sum(Value)"})
+s.SetWindow(w)
 
 // select * from MapEvent.length(10) where sum(Value) > 10
 is := NewStream(1024)
 defer is.Close()
 iw := NewLengthWindow(10, 1024)
-iw.Selector(EqualsType{MapEvent{}})
-iw.Selector(LargerThanMapInt{"Record", "sum(Value)", 10})
-iw.Function(SelectMapAll{"Record"})
-is.Window(iw)
+iw.SetSelector(EqualsType{MapEvent{}})
+iw.SetSelector(LargerThanMapInt{"Record", "sum(Value)", 10})
+iw.SetFunction(SelectMapAll{"Record"})
+is.SetWindow(iw)
 
 // insert into MapEvent select sum(Value) from MyEvent.length(10)
 // select * from MapEvent.length(10) where sum(Value) > 10
@@ -155,8 +155,8 @@ fmt.Println(<-is.Output())
 //  Value int
 // }
 b := NewStructBuilder()
-b.Field("Name", reflect.TypeOf(""))
-b.Field("Value", reflect.TypeOf(0))
+b.SetField("Name", reflect.TypeOf(""))
+b.SetField("Value", reflect.TypeOf(0))
 strct := b.Build()
 
 

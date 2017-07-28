@@ -26,15 +26,15 @@ func NewStatement() *Statement {
 	}
 }
 
-func (stmt *Statement) Selector(s Selector) {
+func (stmt *Statement) SetSelector(s Selector) {
 	stmt.selector = append(stmt.selector, s)
 }
 
-func (stmt *Statement) Function(s Function) {
+func (stmt *Statement) SetFunction(s Function) {
 	stmt.function = append(stmt.function, s)
 }
 
-func (stmt *Statement) View(v View) {
+func (stmt *Statement) SetView(v View) {
 	stmt.view = append(stmt.view, v)
 }
 
@@ -48,15 +48,15 @@ func (stmt *Statement) New(capacity int) (w Window) {
 	}
 
 	for _, s := range stmt.selector {
-		w.Selector(s)
+		w.SetSelector(s)
 	}
 
 	for _, f := range stmt.function {
-		w.Function(f)
+		w.SetFunction(f)
 	}
 
 	for _, v := range stmt.view {
-		w.View(v)
+		w.SetView(v)
 	}
 
 	return w
@@ -92,7 +92,7 @@ func (p *Parser) Parse() (*Statement, error) {
 			break
 		}
 		if token == ASTERISK {
-			stmt.Function(SelectMapAll{"Record"})
+			stmt.SetFunction(SelectMapAll{"Record"})
 			log.Println("add Function", token, literal)
 		}
 	}
@@ -107,7 +107,7 @@ func (p *Parser) Parse() (*Statement, error) {
 			break
 		}
 		if token == IDENTIFIER {
-			stmt.Selector(EqualsType{MapEvent{}})
+			stmt.SetSelector(EqualsType{MapEvent{}})
 			log.Println("add Selector", token, literal)
 		}
 	}

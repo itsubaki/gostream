@@ -7,12 +7,12 @@ import (
 
 func TestStructBuilder(t *testing.T) {
 	b := NewStructBuilder()
-	b.Field("Name", reflect.TypeOf(""))
-	b.Field("Bool", reflect.TypeOf(true))
-	b.Field("Int", reflect.TypeOf(123))
-	b.Field("Float", reflect.TypeOf(float64(12.3)))
-	b.Field("Record", reflect.TypeOf(make(map[string]interface{})))
-	b.Field("Record2", reflect.TypeOf(make(map[string]interface{})))
+	b.SetField("Name", reflect.TypeOf(""))
+	b.SetField("Bool", reflect.TypeOf(true))
+	b.SetField("Int", reflect.TypeOf(123))
+	b.SetField("Float", reflect.TypeOf(float64(12.3)))
+	b.SetField("Record", reflect.TypeOf(make(map[string]interface{})))
+	b.SetField("Record2", reflect.TypeOf(make(map[string]interface{})))
 	strct := b.Build()
 
 	i := strct.NewInstance()
