@@ -18,6 +18,7 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 		m["Value"] = i
 		w.Update(MapEvent{m})
 	}
+
 }
 
 func BenchmarkLengthWindowAverageInt(b *testing.B) {
@@ -149,6 +150,7 @@ func TestLengthWindow(t *testing.T) {
 			t.Error(event)
 		}
 	}
+
 }
 
 func TestLengthWindowMap(t *testing.T) {

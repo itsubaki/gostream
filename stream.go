@@ -40,6 +40,10 @@ func (s *Stream) InsertInto(stream *Stream) {
 	go s.transfer()
 }
 
+func (s *Stream) Window() []Window {
+	return s.window
+}
+
 func (s *Stream) Input() chan interface{} {
 	return s.in
 }
