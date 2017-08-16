@@ -11,6 +11,7 @@ type Window interface {
 	SetView(v View)
 	Input() chan interface{}
 	Output() chan []Event
+	Event() []Event
 	Close()
 	Listen(input interface{})
 	Update(input interface{}) []Event
@@ -65,6 +66,10 @@ func (w *IdentityWindow) Input() chan interface{} {
 
 func (w *IdentityWindow) Output() chan []Event {
 	return w.out
+}
+
+func (w *IdentityWindow) Event() []Event {
+	return w.event
 }
 
 func (w *IdentityWindow) work() {
