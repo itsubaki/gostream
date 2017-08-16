@@ -151,6 +151,10 @@ func TestLengthWindow(t *testing.T) {
 		}
 	}
 
+	if w.Event()[0].Record["count"] != 2 {
+		t.Error(w.Event())
+	}
+
 }
 
 func TestLengthWindowMap(t *testing.T) {

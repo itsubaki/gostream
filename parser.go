@@ -9,7 +9,7 @@ import (
 )
 
 type Statement struct {
-	token    Token
+	window   Token
 	length   int
 	time     time.Duration
 	unit     time.Duration
@@ -38,11 +38,18 @@ func (stmt *Statement) SetView(v View) {
 	stmt.view = append(stmt.view, v)
 }
 
+func (stmt *Statement) NewStream(capacity int) *Stream {
+	st := NewStream(capacity)
+	w := stmt.New(capacity)
+	st.SetWindow(w)
+	return st
+}
+
 func (stmt *Statement) New(capacity int) (w Window) {
-	if stmt.token == LENGTH {
+	if stmt.window == LENGTH {
 		w = NewLengthWindow(stmt.length, capacity)
 	}
-	if stmt.token == TIME {
+	if stmt.window == TIME {
 		time := stmt.time * stmt.unit
 		w = NewTimeWindow(time, capacity)
 	}
@@ -126,7 +133,7 @@ func (p *Parser) Parse() (*Statement, error) {
 				break
 			}
 		}
-		stmt.token = token
+		stmt.window = token
 		stmt.length = length
 		log.Println("add Window", token, literal, length)
 	}
