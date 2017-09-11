@@ -125,6 +125,7 @@ type MapEvent struct {
 // select sum(Value) from MyEvent.length(10)
 s := NewStream(1024)
 defer s.Close()
+
 w := NewLengthWindow(10, 1024)
 w.SetSelector(EqualsType{MyEvent{}})
 w.SetFunction(SumInt{"Value", "sum(Value)"})
@@ -133,6 +134,7 @@ s.SetWindow(w)
 // select * from MapEvent.length(10) where sum(Value) > 10
 is := NewStream(1024)
 defer is.Close()
+
 iw := NewLengthWindow(10, 1024)
 iw.SetSelector(EqualsType{MapEvent{}})
 iw.SetSelector(LargerThanMapInt{"Record", "sum(Value)", 10})
