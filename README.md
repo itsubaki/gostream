@@ -26,7 +26,7 @@ The Stream Processing API for Go
  - [x] View
     + [x] OrderBy, Limit
     + [x] First, Last
- - [x] InsertInto
+ - [ ] InsertInto
  - [ ] Utility
     + [x] Builder
     + [x] Lexer
@@ -87,66 +87,6 @@ defer w.Close()
 w.SetSelector(EqualsType{MyEvent{}})
 w.SetFunction(AverageInt{"Value", "avg(Value)"})
 w.SetFunction(SumInt{"Value", "sum(Value)"})
-```
-
-## Stream
-
- - Dispatch Event to multi Window
- - Collect Event from multi Window
-
-```go
-s := NewStream(1024)
-defer s.Close()
-
-s.SetWindow(NewTimeWindow(10 * time.Millisecond, 1024))
-s.SetWindow(NewLengthWindow(10, 1024))
-s.SetWindow(...)
-
-go func() {
-  for {
-    fmt.Println(<-s.Output())
-  }
-}()
-
-s.Input() <-MyEvent{"name", 100}
-s.Input() <-MapEvent{"name", map}
-...
-```
-
-## InsertInto
-
-```go
-type MapEvent struct {
-  Record map[string]interface{}
-}
-```
-
-```go
-// select sum(Value) from MyEvent.length(10)
-s := NewStream(1024)
-defer s.Close()
-
-w := NewLengthWindow(10, 1024)
-w.SetSelector(EqualsType{MyEvent{}})
-w.SetFunction(SumInt{"Value", "sum(Value)"})
-s.SetWindow(w)
-
-// select * from MapEvent.length(10) where sum(Value) > 10
-is := NewStream(1024)
-defer is.Close()
-
-iw := NewLengthWindow(10, 1024)
-iw.SetSelector(EqualsType{MapEvent{}})
-iw.SetSelector(LargerThanMapInt{"Record", "sum(Value)", 10})
-iw.SetFunction(SelectMapAll{"Record"})
-is.SetWindow(iw)
-
-// insert into MapEvent select sum(Value) from MyEvent.length(10)
-// select * from MapEvent.length(10) where sum(Value) > 10
-s.InsertInto(is)
-
-s.Input() <-MyEvent{"name", 100}
-fmt.Println(<-is.Output())
 ```
 
 # EventBuilder
