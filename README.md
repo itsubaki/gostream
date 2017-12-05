@@ -38,9 +38,37 @@ The Stream Processing API for Go
 go get github.com/itsubaki/gocep
 ```
 
-# Example
+# Usecase
 
-## Window
+```go
+type LogEvent struct {
+  Time    time.Time
+  Level   int
+  Message string
+}
+
+// select count(*) from LogEvent(10sec) where Level > 2
+w := NewTimeWindow(10*time.Second, 1024)
+defer w.Close()
+
+w.SetSelector(EqualsType{LogEvent{}})
+w.SetSelector(LargerThanInt{"Level", 2})
+w.SetFunction(Count{As: "count"})
+
+go func() {
+  for {
+    events := <-w.Output()
+    last := events[len(events)-1]
+    if last.Int("count") > 10 {
+      // notification
+    }
+  }
+}()
+
+w.Input() <- LogEvent{time.Now(), 1, "this is text log."}
+```
+
+# Example
 
 ```go
 type MyEvent struct {
@@ -99,14 +127,14 @@ w.SetFunction(SumInt{"Value", "sum(Value)"})
 b := NewStructBuilder()
 b.SetField("Name", reflect.TypeOf(""))
 b.SetField("Value", reflect.TypeOf(0))
-strct := b.Build()
+s := b.Build()
 
 
 // i.Value()
 // -> RuntimeEvent{Name: "foobar", Value: 123}
 // i.Pointer()
 // -> &RuntimeEvent{Name: "foobar", Value: 123}
-i := strct.NewInstance()
+i := s.NewInstance()
 i.SetString("Name", "foobar")
 i.SetInt("Value", 123)
 
