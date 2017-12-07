@@ -5,7 +5,6 @@ type Stream struct {
 	in       chan interface{}
 	out      chan []Event
 	window   []Window
-	insert   *Stream
 	Canceller
 }
 
@@ -15,7 +14,6 @@ func NewStream(capacity int) *Stream {
 		make(chan interface{}, capacity),
 		make(chan []Event, capacity),
 		[]Window{},
-		nil,
 		NewCanceller(),
 	}
 
@@ -33,11 +31,6 @@ func (s *Stream) Close() {
 func (s *Stream) SetWindow(w Window) {
 	s.window = append(s.window, w)
 	go s.collect(w)
-}
-
-func (s *Stream) InsertInto(stream *Stream) {
-	s.insert = stream
-	go s.transfer()
 }
 
 func (s *Stream) Window() []Window {
@@ -72,19 +65,6 @@ func (s *Stream) collect(w Window) {
 			return
 		case event := <-w.Output():
 			s.out <- event
-		}
-	}
-}
-
-func (s *Stream) transfer() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
-		case input := <-s.Output():
-			for _, e := range input {
-				s.insert.Input() <- MapEvent{e.Record}
-			}
 		}
 	}
 }

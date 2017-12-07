@@ -27,21 +27,3 @@ func TestStream(t *testing.T) {
 	}
 
 }
-
-func TestStreamInsert(t *testing.T) {
-	stream := NewStream(32)
-	defer stream.Close()
-	stream.SetWindow(NewIdentityWindow(16))
-
-	insert := NewStream(32)
-	defer insert.Close()
-	insert.SetWindow(NewIdentityWindow(16))
-
-	stream.InsertInto(insert)
-
-	stream.Input() <- "test"
-	e := <-insert.Output()
-	if len(e) != 1 {
-		t.Error(e)
-	}
-}
