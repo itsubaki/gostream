@@ -18,6 +18,10 @@ type BoolEvent struct {
 	Value bool
 }
 
+type MapEvent struct {
+	Record map[string]interface{}
+}
+
 func TestFloat(t *testing.T) {
 	event := NewEvent(FloatEvent{"foobar", 12.3})
 
@@ -39,28 +43,6 @@ func TestString(t *testing.T) {
 
 	if event.String("Name") != "foobar" {
 		t.Errorf("failed.")
-	}
-}
-
-func TestMap(t *testing.T) {
-	m := make(map[string]interface{})
-	m["foo"] = "bar"
-	m["piyo"] = 123
-	m["hoge"] = 12.3
-	m["fuga"] = false
-	e := NewEvent(MapEvent{m})
-
-	if e.MapString("Record", "foo") != "bar" {
-		t.Error(e)
-	}
-	if e.MapInt("Record", "piyo") != 123 {
-		t.Error(e)
-	}
-	if e.MapFloat("Record", "hoge") != 12.3 {
-		t.Error(e)
-	}
-	if e.MapBool("Record", "fuga") {
-		t.Error(e)
 	}
 }
 

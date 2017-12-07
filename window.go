@@ -94,7 +94,7 @@ func (w *IdentityWindow) Listen(input interface{}) {
 func (w *IdentityWindow) Update(input interface{}) (event []Event) {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Println(err, input)
+			log.Printf("[WARNING] recover() %v %v", err, input)
 		}
 	}()
 

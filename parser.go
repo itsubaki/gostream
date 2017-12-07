@@ -2,7 +2,7 @@ package gocep
 
 import (
 	"errors"
-	"log"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -69,29 +69,32 @@ func (stmt *Statement) New(capacity int) (w Window) {
 	return w
 }
 
+type Registry map[string]interface{}
+
 type Parser struct {
-	query string
-	lexer *Lexer
+	registry Registry
 }
 
-func NewParser(query string) *Parser {
-	return &Parser{
-		query,
-		NewLexer(strings.NewReader(query)),
-	}
+func NewParser() *Parser {
+	return &Parser{make(map[string]interface{})}
 }
 
-func (p *Parser) Parse() (*Statement, error) {
+func (p *Parser) Register(name string, t interface{}) {
+	p.registry[name] = t
+}
+
+func (p *Parser) Parse(query string) (*Statement, error) {
 	stmt := NewStatement()
+	lexer := NewLexer(strings.NewReader(query))
 
 	// Select or InsertInto
-	if token, literal := p.lexer.Tokenize(); token != SELECT {
+	if token, literal := lexer.Tokenize(); token != SELECT {
 		return nil, errors.New("invalid token. literal: " + literal)
 	}
 
 	// Function
 	for {
-		token, literal := p.lexer.Tokenize()
+		token, literal := lexer.Tokenize()
 		if token == EOF {
 			return nil, errors.New("invalid token. literal: " + literal)
 		}
@@ -100,13 +103,12 @@ func (p *Parser) Parse() (*Statement, error) {
 		}
 		if token == ASTERISK {
 			stmt.SetFunction(SelectMapAll{"Record"})
-			log.Println("add Function", token, literal)
 		}
 	}
 
 	// Selector
 	for {
-		token, literal := p.lexer.Tokenize()
+		token, literal := lexer.Tokenize()
 		if token == EOF {
 			return nil, errors.New("invalid token. literal: " + literal)
 		}
@@ -114,20 +116,23 @@ func (p *Parser) Parse() (*Statement, error) {
 			break
 		}
 		if token == IDENTIFIER {
-			stmt.SetSelector(EqualsType{MapEvent{}})
-			log.Println("add Selector", token, literal)
+			v, ok := p.registry[literal]
+			if !ok {
+				return nil, fmt.Errorf("EventType [%s] is not registered.", literal)
+			}
+			stmt.SetSelector(EqualsType{v})
 		}
 	}
 
 	// Window
-	token, literal := p.lexer.Tokenize()
+	token, literal := lexer.Tokenize()
 	if token == EOF {
 		return nil, errors.New("invalid token. literal: " + literal)
 	}
 	if token == LENGTH {
 		length := 0
 		for {
-			t, l := p.lexer.Tokenize()
+			t, l := lexer.Tokenize()
 			if t == IDENTIFIER {
 				length, _ = strconv.Atoi(l)
 				break
@@ -135,12 +140,11 @@ func (p *Parser) Parse() (*Statement, error) {
 		}
 		stmt.window = token
 		stmt.length = length
-		log.Println("add Window", token, literal, length)
 	}
 
 	// Where
 	for {
-		token, _ := p.lexer.Tokenize()
+		token, _ := lexer.Tokenize()
 		if token == EOF {
 			return stmt, nil
 		}

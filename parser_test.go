@@ -5,9 +5,11 @@ import (
 )
 
 func TestParser(t *testing.T) {
-	q := "select * from MapEvent.length(10)"
+	p := NewParser()
+	p.Register("MapEvent", MapEvent{})
 
-	stmt, err := NewParser(q).Parse()
+	q := "select * from MapEvent.length(10)"
+	stmt, err := p.Parse(q)
 	if err != nil {
 		t.Error(err)
 		return
@@ -25,9 +27,11 @@ func TestParser(t *testing.T) {
 }
 
 func TestNewStream(t *testing.T) {
-	q := "select * from MapEvent.length(10)"
+	p := NewParser()
+	p.Register("MapEvent", MapEvent{})
 
-	stmt, err := NewParser(q).Parse()
+	q := "select * from MapEvent.length(10)"
+	stmt, err := p.Parse(q)
 	if err != nil {
 		t.Error(err)
 		return
@@ -43,5 +47,4 @@ func TestNewStream(t *testing.T) {
 	if event[0].RecordString("Value") != "foobar" {
 		t.Error(event)
 	}
-
 }
