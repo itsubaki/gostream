@@ -143,8 +143,11 @@ w.Input() <-i.Value()
 # (WIP) Query
 
 ```go
+p := NewParser()
+p.Register("MapEvent", MapEvent{})
+
 query := "select * from MapEvent.length(10)"
-statement, err := NewParser(q).Parse()
+statement, err := p.Parse(query)
 if err != nil {
   log.Println("failed.")
   return
