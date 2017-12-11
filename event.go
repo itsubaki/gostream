@@ -11,6 +11,14 @@ type Event struct {
 	Record     map[string]interface{}
 }
 
+func Oldest(event []Event) Event {
+	return event[0]
+}
+
+func Newest(event []Event) Event {
+	return event[len(event)-1]
+}
+
 func NewEvent(underlying interface{}) Event {
 	return Event{time.Now(), underlying, make(map[string]interface{})}
 }

@@ -28,11 +28,19 @@ type IdentityWindow struct {
 	Canceller
 }
 
-func NewIdentityWindow(capacity int) Window {
+func Capacity(capacity ...int) int {
+	if len(capacity) > 0 {
+		return capacity[0]
+	}
+	return 1024
+}
+
+func NewIdentityWindow(capacity ...int) Window {
+	cap := Capacity(capacity...)
 	w := &IdentityWindow{
-		capacity,
-		make(chan interface{}, capacity),
-		make(chan []Event, capacity),
+		cap,
+		make(chan interface{}, cap),
+		make(chan []Event, cap),
 		[]Event{},
 		[]Selector{},
 		[]Function{},
@@ -125,12 +133,13 @@ type LengthWindow struct {
 	IdentityWindow
 }
 
-func NewLengthWindow(length, capacity int) Window {
+func NewLengthWindow(length int, capacity ...int) Window {
+	cap := Capacity(capacity...)
 	w := &LengthWindow{
 		IdentityWindow{
-			capacity,
-			make(chan interface{}, capacity),
-			make(chan []Event, capacity),
+			cap,
+			make(chan interface{}, cap),
+			make(chan []Event, cap),
 			[]Event{},
 			[]Selector{},
 			[]Function{},
@@ -148,12 +157,13 @@ type LengthBatchWindow struct {
 	IdentityWindow
 }
 
-func NewLengthBatchWindow(length, capacity int) Window {
+func NewLengthBatchWindow(length int, capacity ...int) Window {
+	cap := Capacity(capacity...)
 	w := &LengthBatchWindow{
 		IdentityWindow{
-			capacity,
-			make(chan interface{}, capacity),
-			make(chan []Event, capacity),
+			cap,
+			make(chan interface{}, cap),
+			make(chan []Event, cap),
 			[]Event{},
 			[]Selector{},
 			[]Function{},
@@ -171,12 +181,13 @@ type TimeWindow struct {
 	IdentityWindow
 }
 
-func NewTimeWindow(expire time.Duration, capacity int) Window {
+func NewTimeWindow(expire time.Duration, capacity ...int) Window {
+	cap := Capacity(capacity...)
 	w := &TimeWindow{
 		IdentityWindow{
-			capacity,
-			make(chan interface{}, capacity),
-			make(chan []Event, capacity),
+			cap,
+			make(chan interface{}, cap),
+			make(chan []Event, cap),
 			[]Event{},
 			[]Selector{},
 			[]Function{},
@@ -194,12 +205,13 @@ type TimeBatchWindow struct {
 	IdentityWindow
 }
 
-func NewTimeBatchWindow(expire time.Duration, capacity int) Window {
+func NewTimeBatchWindow(expire time.Duration, capacity ...int) Window {
+	cap := Capacity(capacity...)
 	w := &TimeBatchWindow{
 		IdentityWindow{
-			capacity,
-			make(chan interface{}, capacity),
-			make(chan []Event, capacity),
+			cap,
+			make(chan interface{}, cap),
+			make(chan []Event, cap),
 			[]Event{},
 			[]Selector{},
 			[]Function{},

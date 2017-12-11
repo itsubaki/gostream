@@ -5,7 +5,7 @@ import (
 )
 
 func TestStream(t *testing.T) {
-	s := NewStream(32)
+	s := NewStream()
 	defer s.Close()
 
 	wnum := 2

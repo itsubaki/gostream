@@ -8,11 +8,12 @@ type Stream struct {
 	Canceller
 }
 
-func NewStream(capacity int) *Stream {
+func NewStream(capacity ...int) *Stream {
+	cap := Capacity(capacity...)
 	s := &Stream{
-		capacity,
-		make(chan interface{}, capacity),
-		make(chan []Event, capacity),
+		cap,
+		make(chan interface{}, cap),
+		make(chan []Event, cap),
 		[]Window{},
 		NewCanceller(),
 	}

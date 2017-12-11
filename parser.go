@@ -38,20 +38,20 @@ func (stmt *Statement) SetView(v View) {
 	stmt.view = append(stmt.view, v)
 }
 
-func (stmt *Statement) NewStream(capacity int) *Stream {
-	st := NewStream(capacity)
-	w := stmt.New(capacity)
+func (stmt *Statement) NewStream(capacity ...int) *Stream {
+	st := NewStream(capacity...)
+	w := stmt.New(capacity...)
 	st.SetWindow(w)
 	return st
 }
 
-func (stmt *Statement) New(capacity int) (w Window) {
+func (stmt *Statement) New(capacity ...int) (w Window) {
 	if stmt.window == LENGTH {
-		w = NewLengthWindow(stmt.length, capacity)
+		w = NewLengthWindow(stmt.length, capacity...)
 	}
 	if stmt.window == TIME {
 		time := stmt.time * stmt.unit
-		w = NewTimeWindow(time, capacity)
+		w = NewTimeWindow(time, capacity...)
 	}
 
 	for _, s := range stmt.selector {

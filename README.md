@@ -47,7 +47,7 @@ type LogEvent struct {
 }
 
 // select count(*) from LogEvent(10sec) where Level > 2
-w := NewTimeWindow(10*time.Second, 1024)
+w := NewTimeWindow(10*time.Second)
 defer w.Close()
 
 w.SetSelector(EqualsType{LogEvent{}})
@@ -57,8 +57,7 @@ w.SetFunction(Count{As: "count"})
 go func() {
   for {
     events := <-w.Output()
-    last := events[len(events)-1]
-    if last.Int("count") > 10 {
+    if Newest(events).Int("count") > 10 {
       // notification
     }
   }
@@ -83,8 +82,7 @@ type MyEvent struct {
 //  orderby Value DESC
 //  limit 10 offset 5
 
-// 1024 is capacity of input/output queue
-w := NewTimeWindow(10 * time.Millisecond, 1024)
+w := NewTimeWindow(10 * time.Millisecond)
 defer w.Close()
 
 w.SetSelector(EqualsType{MyEvent{}})
@@ -108,7 +106,7 @@ for i := 0; i < 100; i++ {
 
 ```go
 // select avg(Value), sum(Value) from MyEvent.length(10)
-w := NewLengthWindow(10, 1024)
+w := NewLengthWindow(10)
 defer w.Close()
 
 w.SetSelector(EqualsType{MyEvent{}})
@@ -153,7 +151,7 @@ if err != nil {
   return
 }
 
-window := statement.New(1024)
+window := statement.New()
 window.Input() <-MapEvent{map}
 fmt.Println(<-window.Output())
 ```

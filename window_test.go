@@ -6,7 +6,7 @@ import (
 )
 
 func BenchmarkLengthWindowAverageMap(b *testing.B) {
-	w := NewLengthWindow(128, 1024)
+	w := NewLengthWindow(128)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{MapEvent{}})
@@ -22,7 +22,7 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 }
 
 func BenchmarkLengthWindowAverageInt(b *testing.B) {
-	w := NewLengthWindow(128, 1024)
+	w := NewLengthWindow(128)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{IntEvent{}})
@@ -35,7 +35,7 @@ func BenchmarkLengthWindowAverageInt(b *testing.B) {
 }
 
 func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
-	w := NewLengthWindow(128, 1024)
+	w := NewLengthWindow(128)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{MapEvent{}})
@@ -50,7 +50,7 @@ func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
 }
 
 func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
-	w := NewLengthWindow(128, 1024)
+	w := NewLengthWindow(128)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{IntEvent{}})
@@ -63,7 +63,7 @@ func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
 }
 
 func BenchmarkLengthWindowOrderByMap(b *testing.B) {
-	w := NewLengthWindow(128, 1024)
+	w := NewLengthWindow(128)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{MapEvent{}})
@@ -78,7 +78,7 @@ func BenchmarkLengthWindowOrderByMap(b *testing.B) {
 }
 
 func BenchmarkLengthWindowOrderByInt(b *testing.B) {
-	w := NewLengthWindow(128, 1024)
+	w := NewLengthWindow(128)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{IntEvent{}})
@@ -91,7 +91,7 @@ func BenchmarkLengthWindowOrderByInt(b *testing.B) {
 }
 
 func BenchmarkLengthWindowOrderByReverseMap(b *testing.B) {
-	w := NewLengthWindow(128, 1024)
+	w := NewLengthWindow(128)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{MapEvent{}})
@@ -106,7 +106,7 @@ func BenchmarkLengthWindowOrderByReverseMap(b *testing.B) {
 }
 
 func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
-	w := NewLengthWindow(128, 1024)
+	w := NewLengthWindow(128)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{IntEvent{}})
@@ -120,7 +120,7 @@ func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
 
 func TestLengthWindow(t *testing.T) {
 
-	w := NewLengthWindow(2, 1024)
+	w := NewLengthWindow(2)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{IntEvent{}})
@@ -159,7 +159,7 @@ func TestLengthWindow(t *testing.T) {
 
 func TestLengthWindowMap(t *testing.T) {
 
-	w := NewLengthWindow(2, 1024)
+	w := NewLengthWindow(2)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{MapEvent{}})
@@ -200,7 +200,7 @@ func TestLengthWindowMap(t *testing.T) {
 
 func TestLengthWindowListen(t *testing.T) {
 
-	w := NewLengthWindow(2, 1024)
+	w := NewLengthWindow(2)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{IntEvent{}})
@@ -210,7 +210,7 @@ func TestLengthWindowListen(t *testing.T) {
 
 func TestLengthBatchWindow(t *testing.T) {
 
-	w := NewLengthBatchWindow(2, 1024)
+	w := NewLengthBatchWindow(2)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{IntEvent{}})
@@ -231,7 +231,7 @@ func TestLengthBatchWindow(t *testing.T) {
 }
 
 func TestTimeWindow0ms(t *testing.T) {
-	w := NewTimeWindow(0*time.Millisecond, 1024)
+	w := NewTimeWindow(0 * time.Millisecond)
 	defer w.Close()
 
 	event := []Event{}
@@ -245,7 +245,7 @@ func TestTimeWindow0ms(t *testing.T) {
 }
 
 func TestTimeWindow10ms(t *testing.T) {
-	w := NewTimeWindow(1*time.Millisecond, 1024)
+	w := NewTimeWindow(1 * time.Millisecond)
 	defer w.Close()
 
 	event := []Event{}
@@ -259,7 +259,7 @@ func TestTimeWindow10ms(t *testing.T) {
 }
 
 func TestTimeBatchWindow10ms(t *testing.T) {
-	w := NewTimeBatchWindow(4*time.Millisecond, 1024)
+	w := NewTimeBatchWindow(4 * time.Millisecond)
 	defer w.Close()
 
 	for i := 0; i < 10; i++ {
@@ -274,7 +274,7 @@ func TestLengthWindowPanic(t *testing.T) {
 		}
 	}()
 
-	w := NewLengthWindow(10, 16)
+	w := NewLengthWindow(10)
 	defer w.Close()
 
 	w.SetSelector(EqualsType{IntEvent{}})
