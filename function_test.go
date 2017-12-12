@@ -384,7 +384,7 @@ func TestHavingEqualsInt(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		f := HavingEqualsInt{
+		f := FuncEqualsInt{
 			SumInt{"Value", "sum(Value)"},
 			"sum(Value)",
 			tt.sum,
@@ -412,7 +412,7 @@ func TestHavingLargerThanInt(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		f := HavingLargerThanInt{
+		f := FuncLargerThanInt{
 			SumInt{"Value", "sum(Value)"},
 			"sum(Value)",
 			tt.sum,
@@ -440,7 +440,7 @@ func TestHavingLessThanInt(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		f := HavingLessThanInt{
+		f := FuncLessThanInt{
 			SumInt{"Value", "sum(Value)"},
 			"sum(Value)",
 			tt.sum,

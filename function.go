@@ -331,13 +331,13 @@ func (f CastStringToBool) Apply(event []Event) []Event {
 	return event
 }
 
-type HavingEqualsInt struct {
+type FuncEqualsInt struct {
 	Function Function
 	Name     string
 	Value    int
 }
 
-func (f HavingEqualsInt) Apply(event []Event) []Event {
+func (f FuncEqualsInt) Apply(event []Event) []Event {
 	e := f.Function.Apply(event)
 	val := e[len(e)-1].RecordInt(f.Name)
 	if val == f.Value {
@@ -347,13 +347,13 @@ func (f HavingEqualsInt) Apply(event []Event) []Event {
 	return []Event{}
 }
 
-type HavingLargerThanInt struct {
+type FuncLargerThanInt struct {
 	Function Function
 	Name     string
 	Value    int
 }
 
-func (f HavingLargerThanInt) Apply(event []Event) []Event {
+func (f FuncLargerThanInt) Apply(event []Event) []Event {
 	e := f.Function.Apply(event)
 	val := e[len(e)-1].RecordInt(f.Name)
 	if val > f.Value {
@@ -363,13 +363,13 @@ func (f HavingLargerThanInt) Apply(event []Event) []Event {
 	return []Event{}
 }
 
-type HavingLessThanInt struct {
+type FuncLessThanInt struct {
 	Function Function
 	Name     string
 	Value    int
 }
 
-func (f HavingLessThanInt) Apply(event []Event) []Event {
+func (f FuncLessThanInt) Apply(event []Event) []Event {
 	e := f.Function.Apply(event)
 	val := e[len(e)-1].RecordInt(f.Name)
 	if val < f.Value {

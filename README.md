@@ -21,8 +21,8 @@ The Stream Processing API for Go
     + [x] Cast
     + [x] As
     + [x] SelectAll, Select
-    + [x] Having
     + [ ] GroupBy
+    + [ ] Having
  - [x] View
     + [x] OrderBy, Limit
     + [x] First, Last
@@ -113,6 +113,18 @@ w.SetSelector(EqualsType{MyEvent{}})
 w.SetFunction(AverageInt{"Value", "avg(Value)"})
 w.SetFunction(SumInt{"Value", "sum(Value)"})
 ```
+
+
+```go
+// select * from MyEvent.length(10) where sum(Value) > 10
+w := NewLengthWindow(10)
+defer w.Close()
+
+w.SetSelector(EqualsType{MyEvent{}})
+w.SetFunction(FuncLargerThanInt{SumInt{"Value", "sum(Value)"}, "sum(Value)", 10})
+w.SetFunction(SelectAll{})
+```
+
 
 # EventBuilder
 
