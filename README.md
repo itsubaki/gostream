@@ -26,7 +26,7 @@ The Stream Processing API for Go
  - [x] View
     + [x] OrderBy, Limit
     + [x] First, Last
- - [ ] Utility
+ - [ ] Tool
     + [x] Builder
     + [x] Lexer
     + [ ] Parser
@@ -57,7 +57,8 @@ w.SetFunction(Count{As: "count"})
 go func() {
   for {
     events := <-w.Output()
-    if Newest(events).Int("count") > 10 {
+    latest := Newest(events)
+    if latest.Int("count") > 10 {
       // notification
     }
   }

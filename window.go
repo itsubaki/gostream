@@ -99,7 +99,7 @@ func (w *IdentityWindow) Listen(input interface{}) {
 	w.Output() <- event
 }
 
-func (w *IdentityWindow) Update(input interface{}) (event []Event) {
+func (w *IdentityWindow) Update(input interface{}) []Event {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Printf("[WARNING] recover() %v %v", err, input)
@@ -109,19 +109,16 @@ func (w *IdentityWindow) Update(input interface{}) (event []Event) {
 	e := NewEvent(input)
 	for _, s := range w.selector {
 		if !s.Select(e) {
-			return event
+			return []Event{}
 		}
 	}
-	w.event = append(w.event, e)
 
+	w.event = append(w.event, e)
 	for _, f := range w.function {
 		w.event = f.Apply(w.event)
 	}
 
-	for _, e := range w.event {
-		event = append(event, e)
-	}
-
+	event := append([]Event{}, w.event...)
 	for _, f := range w.view {
 		event = f.Apply(event)
 	}

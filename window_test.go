@@ -151,7 +151,7 @@ func TestLengthWindow(t *testing.T) {
 		}
 	}
 
-	if w.Event()[0].Record["count"] != 2 {
+	if Oldest(w.Event()).Record["count"] != 2 {
 		t.Error(w.Event())
 	}
 

@@ -276,7 +276,7 @@ func (f MedianFloat) Apply(event []Event) []Event {
 	center := len(values) / 2
 	median := values[center]
 	if len(values)%2 == 0 {
-		median = float64(values[center-1]+values[center]) / float64(2)
+		median = (values[center-1] + values[center]) / float64(2)
 	}
 
 	for _, e := range event {

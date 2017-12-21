@@ -140,8 +140,8 @@ func (f AverageMapFloat) Apply(event []Event) []Event {
 	for _, e := range event {
 		sum = sum + e.MapFloat(f.Name, f.Key)
 	}
-	length := len(event)
-	avg := float64(sum) / float64(length)
+
+	avg := sum / float64(len(event))
 
 	for _, e := range event {
 		e.Record[f.As] = avg

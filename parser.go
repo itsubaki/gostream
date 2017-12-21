@@ -118,7 +118,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 		if token == IDENTIFIER {
 			v, ok := p.registry[literal]
 			if !ok {
-				return nil, fmt.Errorf("EventType [%s] is not registered.", literal)
+				return nil, fmt.Errorf("EventType [%s] is not registered", literal)
 			}
 			stmt.SetSelector(EqualsType{v})
 		}
