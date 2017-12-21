@@ -4,5 +4,5 @@ install:
   - go get github.com/itsubaki/gocep
 
 script:
-  - gometalinter --disable=golint
+  - gometalinter --disable=golint --disable=gocyclo
   - go test -v -race -bench . --benchmem
