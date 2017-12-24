@@ -20,8 +20,7 @@ func TestStream(t *testing.T) {
 	s.Input() <- "test"
 
 	for i := 0; i < wnum; i++ {
-		e := <-s.Output()
-		if e[0].Underlying != "test" {
+		if Oldest(<-s.Output()).Underlying != "test" {
 			t.Error("failed")
 		}
 	}
