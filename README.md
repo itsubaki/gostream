@@ -57,8 +57,7 @@ w.SetFunction(Count{As: "count"})
 go func() {
   for {
     events := <-w.Output()
-    latest := Newest(events)
-    if latest.Int("count") > 10 {
+    if Newest(events).Int("count") > 10 {
       // notification
     }
   }
