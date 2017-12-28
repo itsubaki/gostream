@@ -46,7 +46,7 @@ type LogEvent struct {
   Message string
 }
 
-// select count(*) from LogEvent(10sec) where Level > 2
+// select count(*) from LogEvent.time(10sec) where Level > 2
 w := NewTimeWindow(10*time.Second)
 defer w.Close()
 
@@ -57,8 +57,7 @@ w.SetFunction(Count{As: "count"})
 go func() {
   for {
     events := <-w.Output()
-    latest := Newest(events)
-    if latest.Int("count") > 10 {
+    if Newest(events).Int("count") > 10 {
       // notification
     }
   }

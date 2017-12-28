@@ -29,6 +29,7 @@ const (
 	SEC
 	WHERE
 	LARGER
+	LESS
 )
 
 type Lexer struct {
@@ -78,6 +79,8 @@ func (l *Lexer) symbol(ch rune) (Token, string) {
 		return DOT, string(ch)
 	case '>':
 		return LARGER, string(ch)
+	case '<':
+		return LESS, string(ch)
 	}
 
 	return ILLEGAL, string(ch)

@@ -104,6 +104,10 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 		if token == ASTERISK {
 			stmt.SetFunction(SelectMapAll{"Record"})
 		}
+
+		if token == COUNT {
+			stmt.SetFunction(Count{"count(*)"})
+		}
 	}
 
 	// Selector
@@ -129,6 +133,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 	if token == EOF {
 		return nil, errors.New("invalid token. literal: " + literal)
 	}
+
 	if token == LENGTH {
 		length := 0
 		for {
@@ -142,13 +147,44 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 		stmt.length = length
 	}
 
+	if token == TIME {
+		for {
+			t, l := lexer.Tokenize()
+			if t == IDENTIFIER {
+				ct, err := strconv.Atoi(l)
+				if err != nil {
+					return nil, errors.New("invalid token. literal: " + l)
+				}
+				stmt.time = time.Duration(ct)
+				break
+			}
+		}
+
+		for {
+			t, l := lexer.Tokenize()
+			if t == SEC {
+				if l == "sec" {
+					stmt.unit = time.Second
+					break
+				}
+			}
+		}
+	}
+
 	// Where
 	for {
 		token, _ := lexer.Tokenize()
 		if token == EOF {
 			return stmt, nil
 		}
+
 		if token == WHERE {
+			for {
+				t, _ := lexer.Tokenize()
+				if t == IDENTIFIER {
+					break
+				}
+			}
 			break
 		}
 	}
