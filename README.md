@@ -37,7 +37,7 @@ The Stream Processing API for Go
 go get github.com/itsubaki/gocep
 ```
 
-# Usecase
+# Example
 
 ```go
 type LogEvent struct {
@@ -66,16 +66,12 @@ go func() {
 w.Input() <- LogEvent{time.Now(), 1, "this is text log."}
 ```
 
-# Example
-
 ```go
 type MyEvent struct {
   Name  string
   Value int
 }
-```
 
-```go
 // select Name as n, Value as v
 //  from MyEvent.time(10msec)
 //  where Value > 97
@@ -126,7 +122,7 @@ w.SetFunction(SelectAll{})
 ```
 
 
-# EventBuilder
+# RuntimeEventBuilder
 
 ```go
 // type RuntimeEvent struct {
