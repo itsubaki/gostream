@@ -12,7 +12,6 @@ type Statement struct {
 	window   Token
 	length   int
 	time     time.Duration
-	unit     time.Duration
 	selector []Selector
 	function []Function
 	view     []View
@@ -49,9 +48,9 @@ func (stmt *Statement) New(capacity ...int) (w Window) {
 	if stmt.window == LENGTH {
 		w = NewLengthWindow(stmt.length, capacity...)
 	}
+
 	if stmt.window == TIME {
-		time := stmt.time * stmt.unit
-		w = NewTimeWindow(time, capacity...)
+		w = NewTimeWindow(stmt.time, capacity...)
 	}
 
 	for _, s := range stmt.selector {
@@ -148,6 +147,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 	}
 
 	if token == TIME {
+		var dt time.Duration
 		for {
 			t, l := lexer.Tokenize()
 			if t == IDENTIFIER {
@@ -155,7 +155,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 				if err != nil {
 					return nil, errors.New("invalid token. literal: " + l)
 				}
-				stmt.time = time.Duration(ct)
+				dt = time.Duration(ct)
 				break
 			}
 		}
@@ -164,7 +164,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 			t, l := lexer.Tokenize()
 			if t == SEC {
 				if l == "sec" {
-					stmt.unit = time.Second
+					stmt.time = dt * time.Second
 					break
 				}
 			}

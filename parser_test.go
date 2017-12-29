@@ -23,8 +23,7 @@ func TestParserTimeWindow(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected := 10 * time.Second
-	if expected != stmt.time*stmt.unit {
+	if stmt.time != 10*time.Second {
 		t.Fail()
 	}
 
