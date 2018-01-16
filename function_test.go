@@ -368,7 +368,7 @@ func TestCastStringToBool(t *testing.T) {
 	}
 }
 
-func TestHavingEqualsInt(t *testing.T) {
+func TestFuncEqualsInt(t *testing.T) {
 	event := []Event{
 		NewEvent(IntEvent{"foo", 10}),
 		NewEvent(IntEvent{"foo", 10}),
@@ -396,7 +396,7 @@ func TestHavingEqualsInt(t *testing.T) {
 	}
 }
 
-func TestHavingLargerThanInt(t *testing.T) {
+func TestFuncLargerThanInt(t *testing.T) {
 	event := []Event{
 		NewEvent(IntEvent{"foo", 10}),
 		NewEvent(IntEvent{"foo", 10}),
@@ -424,7 +424,7 @@ func TestHavingLargerThanInt(t *testing.T) {
 	}
 }
 
-func TestHavingLessThanInt(t *testing.T) {
+func TestFuncLessThanInt(t *testing.T) {
 	event := []Event{
 		NewEvent(IntEvent{"foo", 10}),
 		NewEvent(IntEvent{"foo", 10}),
