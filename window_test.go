@@ -133,6 +133,10 @@ func TestLengthWindow(t *testing.T) {
 		event = w.Update(IntEvent{"foo", i})
 	}
 
+	if w.Capacity() != 1024 {
+		t.Error(w.Capacity())
+	}
+
 	var test = []struct {
 		index int
 		count int

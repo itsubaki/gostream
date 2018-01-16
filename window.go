@@ -10,12 +10,17 @@ type Window interface {
 	SetSelector(s Selector)
 	SetFunction(f Function)
 	SetView(v View)
+
 	Input() chan interface{}
 	Output() chan []Event
 	Event() []Event
-	Close()
+	Capacity() int
+
+	Work()
 	Listen(input interface{})
 	Update(input interface{}) []Event
+
+	Close()
 }
 
 type IdentityWindow struct {
@@ -53,26 +58,8 @@ func NewIdentityWindow(capacity ...int) Window {
 		NewCanceller(),
 	}
 
-	go w.work()
+	go w.Work()
 	return w
-}
-
-func (w *IdentityWindow) Close() {
-	w.mutex.Lock()
-	defer w.mutex.Unlock()
-
-	if w.IsClosed() {
-		return
-	}
-
-	w.closed = true
-	w.cancel()
-	close(w.Input())
-	close(w.Output())
-}
-
-func (w *IdentityWindow) IsClosed() bool {
-	return w.closed
 }
 
 func (w *IdentityWindow) SetSelector(s Selector) {
@@ -99,7 +86,11 @@ func (w *IdentityWindow) Event() []Event {
 	return w.event
 }
 
-func (w *IdentityWindow) work() {
+func (w *IdentityWindow) Capacity() int {
+	return w.capacity
+}
+
+func (w *IdentityWindow) Work() {
 	for {
 		select {
 		case <-w.ctx.Done():
@@ -153,108 +144,74 @@ func (w *IdentityWindow) Update(input interface{}) []Event {
 	return event
 }
 
+func (w *IdentityWindow) Close() {
+	w.mutex.Lock()
+	defer w.mutex.Unlock()
+
+	if w.IsClosed() {
+		return
+	}
+
+	w.closed = true
+	w.cancel()
+	close(w.Input())
+	close(w.Output())
+}
+
+func (w *IdentityWindow) IsClosed() bool {
+	return w.closed
+}
+
 type LengthWindow struct {
-	IdentityWindow
+	Window
 }
 
 func NewLengthWindow(length int, capacity ...int) Window {
-	cap := Capacity(capacity...)
-	w := &LengthWindow{
-		IdentityWindow{
-			cap,
-			make(chan interface{}, cap),
-			make(chan []Event, cap),
-			[]Event{},
-			[]Selector{},
-			[]Function{},
-			[]View{},
-			false,
-			sync.RWMutex{},
-			NewCanceller(),
-		},
-	}
+	w := &LengthWindow{NewIdentityWindow(capacity...)}
 
 	w.SetFunction(Length{length})
-	go w.work()
+	go w.Work()
+
 	return w
 }
 
 type LengthBatchWindow struct {
-	IdentityWindow
+	Window
 }
 
 func NewLengthBatchWindow(length int, capacity ...int) Window {
-	cap := Capacity(capacity...)
-	w := &LengthBatchWindow{
-		IdentityWindow{
-			cap,
-			make(chan interface{}, cap),
-			make(chan []Event, cap),
-			[]Event{},
-			[]Selector{},
-			[]Function{},
-			[]View{},
-			false,
-			sync.RWMutex{},
-			NewCanceller(),
-		},
-	}
+	w := &LengthWindow{NewIdentityWindow(capacity...)}
 
 	w.SetFunction(&LengthBatch{length, []Event{}})
-	go w.work()
+	go w.Work()
+
 	return w
 }
 
 type TimeWindow struct {
-	IdentityWindow
+	Window
 }
 
 func NewTimeWindow(expire time.Duration, capacity ...int) Window {
-	cap := Capacity(capacity...)
-	w := &TimeWindow{
-		IdentityWindow{
-			cap,
-			make(chan interface{}, cap),
-			make(chan []Event, cap),
-			[]Event{},
-			[]Selector{},
-			[]Function{},
-			[]View{},
-			false,
-			sync.RWMutex{},
-			NewCanceller(),
-		},
-	}
-	w.SetFunction(TimeDuration{expire})
+	w := &TimeWindow{NewIdentityWindow(capacity...)}
 
-	go w.work()
+	w.SetFunction(TimeDuration{expire})
+	go w.Work()
+
 	return w
 }
 
 type TimeBatchWindow struct {
-	IdentityWindow
+	Window
 }
 
 func NewTimeBatchWindow(expire time.Duration, capacity ...int) Window {
-	cap := Capacity(capacity...)
-	w := &TimeBatchWindow{
-		IdentityWindow{
-			cap,
-			make(chan interface{}, cap),
-			make(chan []Event, cap),
-			[]Event{},
-			[]Selector{},
-			[]Function{},
-			[]View{},
-			false,
-			sync.RWMutex{},
-			NewCanceller(),
-		},
-	}
+	w := &TimeBatchWindow{NewIdentityWindow(capacity...)}
 
 	start := time.Now()
 	end := start.Add(expire)
 	w.SetFunction(&TimeDurationBatch{start, end, expire})
-	go w.work()
+	go w.Work()
+
 	return w
 }
