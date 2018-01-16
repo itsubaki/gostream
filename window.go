@@ -2,6 +2,7 @@ package gocep
 
 import (
 	"log"
+	"sync"
 	"time"
 )
 
@@ -25,6 +26,8 @@ type IdentityWindow struct {
 	selector []Selector
 	function []Function
 	view     []View
+	closed   bool
+	mutex    sync.RWMutex
 	Canceller
 }
 
@@ -45,6 +48,8 @@ func NewIdentityWindow(capacity ...int) Window {
 		[]Selector{},
 		[]Function{},
 		[]View{},
+		false,
+		sync.RWMutex{},
 		NewCanceller(),
 	}
 
@@ -53,7 +58,21 @@ func NewIdentityWindow(capacity ...int) Window {
 }
 
 func (w *IdentityWindow) Close() {
+	w.mutex.Lock()
+	defer w.mutex.Unlock()
+
+	if w.IsClosed() {
+		return
+	}
+
+	w.closed = true
 	w.cancel()
+	close(w.Input())
+	close(w.Output())
+}
+
+func (w *IdentityWindow) IsClosed() bool {
+	return w.closed
 }
 
 func (w *IdentityWindow) SetSelector(s Selector) {
@@ -92,10 +111,18 @@ func (w *IdentityWindow) work() {
 }
 
 func (w *IdentityWindow) Listen(input interface{}) {
+	w.mutex.RLock()
+	defer w.mutex.RUnlock()
+
+	if w.IsClosed() {
+		return
+	}
+
 	event := w.Update(input)
 	if len(event) == 0 {
 		return
 	}
+
 	w.Output() <- event
 }
 
@@ -141,6 +168,8 @@ func NewLengthWindow(length int, capacity ...int) Window {
 			[]Selector{},
 			[]Function{},
 			[]View{},
+			false,
+			sync.RWMutex{},
 			NewCanceller(),
 		},
 	}
@@ -165,6 +194,8 @@ func NewLengthBatchWindow(length int, capacity ...int) Window {
 			[]Selector{},
 			[]Function{},
 			[]View{},
+			false,
+			sync.RWMutex{},
 			NewCanceller(),
 		},
 	}
@@ -189,6 +220,8 @@ func NewTimeWindow(expire time.Duration, capacity ...int) Window {
 			[]Selector{},
 			[]Function{},
 			[]View{},
+			false,
+			sync.RWMutex{},
 			NewCanceller(),
 		},
 	}
@@ -213,6 +246,8 @@ func NewTimeBatchWindow(expire time.Duration, capacity ...int) Window {
 			[]Selector{},
 			[]Function{},
 			[]View{},
+			false,
+			sync.RWMutex{},
 			NewCanceller(),
 		},
 	}
