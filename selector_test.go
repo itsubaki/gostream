@@ -2,6 +2,16 @@ package gocep
 
 import "testing"
 
+func BenchmarkEqualsType(b *testing.B) {
+	e0 := IntEvent{"foo", 1}
+	e1 := IntEvent{"foo", 1}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		EqualsType{e0}.Select(NewEvent(e1))
+	}
+}
+
 func TestEqualsType(t *testing.T) {
 	e0 := IntEvent{"foo", 1}
 	e1 := IntEvent{"foo", 1}

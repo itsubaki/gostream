@@ -5,6 +5,74 @@ import (
 	"time"
 )
 
+func BenchmarkLengthWindowNoFunction(b *testing.B) {
+	w := NewLengthWindow(128)
+	defer w.Close()
+
+	w.SetSelector(EqualsType{MapEvent{}})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m := make(map[string]interface{})
+		m["Value"] = i
+
+		w.Update(MapEvent{m})
+	}
+
+}
+
+func BenchmarkLengthWindowSumInt(b *testing.B) {
+	w := NewLengthWindow(1)
+	defer w.Close()
+
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetFunction(SumInt{"Value", "sum(Value)"})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		w.Update(IntEvent{"foobar", i})
+	}
+}
+
+func BenchmarkLengthWindowSumInt64(b *testing.B) {
+	w := NewLengthWindow(64)
+	defer w.Close()
+
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetFunction(SumInt{"Value", "sum(Value)"})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		w.Update(IntEvent{"foobar", i})
+	}
+}
+
+func BenchmarkLengthWindowSumInt128(b *testing.B) {
+	w := NewLengthWindow(128)
+	defer w.Close()
+
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetFunction(SumInt{"Value", "sum(Value)"})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		w.Update(IntEvent{"foobar", i})
+	}
+}
+
+func BenchmarkLengthWindowSumInt256(b *testing.B) {
+	w := NewLengthWindow(256)
+	defer w.Close()
+
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetFunction(SumInt{"Value", "sum(Value)"})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		w.Update(IntEvent{"foobar", i})
+	}
+}
+
 func BenchmarkLengthWindowAverageMap(b *testing.B) {
 	w := NewLengthWindow(128)
 	defer w.Close()
@@ -16,6 +84,7 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		m := make(map[string]interface{})
 		m["Value"] = i
+
 		w.Update(MapEvent{m})
 	}
 

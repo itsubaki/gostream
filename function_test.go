@@ -4,6 +4,76 @@ import (
 	"testing"
 )
 
+func BenchmarkSumInt(b *testing.B) {
+	f := SumInt{"Value", "sun(Value)"}
+
+	event := []Event{}
+	for i := 0; i < 1; i++ {
+		event = append(event, NewEvent(IntEvent{"foo", i}))
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Apply(event)
+	}
+}
+
+func BenchmarkSumInt64(b *testing.B) {
+	f := SumInt{"Value", "sun(Value)"}
+
+	event := []Event{}
+	for i := 0; i < 64; i++ {
+		event = append(event, NewEvent(IntEvent{"foo", i}))
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Apply(event)
+	}
+}
+
+func BenchmarkSumInt128(b *testing.B) {
+	f := SumInt{"Value", "sun(Value)"}
+
+	event := []Event{}
+	for i := 0; i < 128; i++ {
+		event = append(event, NewEvent(IntEvent{"foo", i}))
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Apply(event)
+	}
+}
+
+func BenchmarkAverageInt(b *testing.B) {
+	f := AverageInt{"Value", "avg(Value)"}
+
+	event := []Event{}
+	for i := 0; i < 1; i++ {
+		event = append(event, NewEvent(IntEvent{"foo", i}))
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Apply(event)
+	}
+}
+
+func BenchmarkAverageInt128(b *testing.B) {
+	f := AverageInt{"Value", "avg(Value)"}
+
+	event := []Event{}
+	for i := 0; i < 128; i++ {
+		event = append(event, NewEvent(IntEvent{"foo", i}))
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Apply(event)
+	}
+}
+
 func TestSelectAll(t *testing.T) {
 	event := []Event{NewEvent(IntEvent{"foo", 10})}
 	f := SelectAll{}

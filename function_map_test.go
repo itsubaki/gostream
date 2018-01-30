@@ -1,6 +1,72 @@
 package gocep
 
-import "testing"
+import (
+	"testing"
+)
+
+func BenchmarkSumMapInt(b *testing.B) {
+	f := SumMapInt{"Record", "piyo", "sum(Record:piyo)"}
+
+	event := []Event{}
+	for i := 0; i < 1; i++ {
+		m := make(map[string]interface{})
+		m["piyo"] = i
+		event = append(event, NewEvent(MapEvent{m}))
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Apply(event)
+	}
+}
+
+func BenchmarkSumMapInt128(b *testing.B) {
+	f := SumMapInt{"Record", "piyo", "sum(Record:piyo)"}
+
+	event := []Event{}
+	for i := 0; i < 128; i++ {
+		m := make(map[string]interface{})
+		m["piyo"] = i
+		event = append(event, NewEvent(MapEvent{m}))
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Apply(event)
+	}
+}
+
+func BenchmarkAverageMapInt(b *testing.B) {
+	f := AverageMapInt{"Record", "piyo", "avg(Record:piyo)"}
+
+	event := []Event{}
+	for i := 0; i < 1; i++ {
+		m := make(map[string]interface{})
+		m["piyo"] = i
+		event = append(event, NewEvent(MapEvent{m}))
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Apply(event)
+	}
+}
+
+func BenchmarkAverageMapInt128(b *testing.B) {
+	f := AverageMapInt{"Record", "piyo", "avg(Record:piyo)"}
+
+	event := []Event{}
+	for i := 0; i < 128; i++ {
+		m := make(map[string]interface{})
+		m["piyo"] = i
+		event = append(event, NewEvent(MapEvent{m}))
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Apply(event)
+	}
+}
 
 func TestSelectMapAll(t *testing.T) {
 	m := make(map[string]interface{})
