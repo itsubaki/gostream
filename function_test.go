@@ -4,6 +4,33 @@ import (
 	"testing"
 )
 
+func BenchmarkSum128(b *testing.B) {
+
+	event := []Event{}
+	for i := 0; i < 128; i++ {
+		event = append(event, NewEvent(IntEvent{"foo", i}))
+	}
+
+	f := func() int {
+		sum := 0
+		for _, e := range event {
+			sum = sum + e.Int("Value")
+		}
+
+		for _, e := range event {
+			e.Record["sum(Value)"] = sum
+		}
+
+		return sum
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f()
+	}
+
+}
+
 func BenchmarkSumInt(b *testing.B) {
 	f := SumInt{"Value", "sun(Value)"}
 
