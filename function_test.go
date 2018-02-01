@@ -4,6 +4,37 @@ import (
 	"testing"
 )
 
+func BenchmarkSumRaw128(b *testing.B) {
+	type Raw struct {
+		Value int
+		Sum   int
+	}
+
+	event := []Raw{}
+	for i := 0; i < 128; i++ {
+		event = append(event, Raw{Value: i})
+	}
+
+	f := func() int {
+		sum := 0
+		for _, e := range event {
+			sum = sum + e.Value
+		}
+
+		for _, e := range event {
+			e.Sum = sum
+		}
+
+		return sum
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f()
+	}
+
+}
+
 func BenchmarkSum128(b *testing.B) {
 
 	event := []Event{}
@@ -13,10 +44,13 @@ func BenchmarkSum128(b *testing.B) {
 
 	f := func() int {
 		sum := 0
+
+		// 128 allocs
 		for _, e := range event {
 			sum = sum + e.Int("Value")
 		}
 
+		// 128 allocs
 		for _, e := range event {
 			e.Record["sum(Value)"] = sum
 		}
