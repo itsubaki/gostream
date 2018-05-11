@@ -58,7 +58,6 @@ func NewIdentityWindow(capacity ...int) Window {
 		NewCanceller(),
 	}
 
-	go w.Work()
 	return w
 }
 

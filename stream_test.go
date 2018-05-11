@@ -10,7 +10,9 @@ func TestStream(t *testing.T) {
 
 	wnum := 2
 	for i := 0; i < wnum; i++ {
-		s.SetWindow(NewIdentityWindow(16))
+		w := NewIdentityWindow(16)
+		go w.Work()
+		s.SetWindow(w)
 	}
 
 	if len(s.Window()) != wnum {
