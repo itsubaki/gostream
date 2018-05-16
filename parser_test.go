@@ -67,7 +67,7 @@ func TestNewStatementLength(t *testing.T) {
 
 	window.Input() <- MapEvent{m}
 	event := <-window.Output()
-	if event[0].RecordString("Value") != "foobar" {
+	if event[0].MapString("Record", "Value") != "foobar" {
 		t.Error(event)
 	}
 }
@@ -89,7 +89,7 @@ func TestNewStatementTime(t *testing.T) {
 
 	window.Input() <- MapEvent{m}
 	event := <-window.Output()
-	if event[0].RecordString("Value") != "foobar" {
+	if event[0].MapString("Record", "Value") != "foobar" {
 		t.Error(event)
 	}
 }

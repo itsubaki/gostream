@@ -94,7 +94,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 			break
 		}
 		if token == ASTERISK {
-			stmt.SetFunction(SelectMapAll{"Record"})
+			stmt.SetFunction(SelectAll{})
 		}
 
 		if token == COUNT {

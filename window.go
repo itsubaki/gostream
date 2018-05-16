@@ -7,6 +7,10 @@ import (
 )
 
 type Window interface {
+	Selector() []Selector
+	Function() []Function
+	View() []View
+
 	SetSelector(s Selector)
 	SetFunction(f Function)
 	SetView(v View)
@@ -59,6 +63,18 @@ func NewIdentityWindow(capacity ...int) Window {
 	}
 
 	return w
+}
+
+func (w *IdentityWindow) Selector() []Selector {
+	return w.selector
+}
+
+func (w *IdentityWindow) Function() []Function {
+	return w.function
+}
+
+func (w *IdentityWindow) View() []View {
+	return w.view
 }
 
 func (w *IdentityWindow) SetSelector(s Selector) {
