@@ -37,13 +37,6 @@ func (stmt *Statement) SetView(v View) {
 	stmt.view = append(stmt.view, v)
 }
 
-func (stmt *Statement) NewStream(capacity ...int) *Stream {
-	st := NewStream(capacity...)
-	w := stmt.New(capacity...)
-	st.SetWindow(w)
-	return st
-}
-
 func (stmt *Statement) New(capacity ...int) (w Window) {
 	if stmt.window == LENGTH {
 		w = NewLengthWindow(stmt.length, capacity...)
@@ -134,6 +127,8 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 	}
 
 	if token == LENGTH {
+		stmt.window = token
+
 		length := 0
 		for {
 			t, l := lexer.Tokenize()
@@ -142,11 +137,12 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 				break
 			}
 		}
-		stmt.window = token
 		stmt.length = length
 	}
 
 	if token == TIME {
+		stmt.window = token
+
 		var dt time.Duration
 		for {
 			t, l := lexer.Tokenize()

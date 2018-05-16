@@ -50,7 +50,7 @@ func TestParserError(t *testing.T) {
 	}
 }
 
-func TestParser(t *testing.T) {
+func TestNewStatementLength(t *testing.T) {
 	p := NewParser()
 	p.Register("MapEvent", MapEvent{})
 
@@ -72,24 +72,23 @@ func TestParser(t *testing.T) {
 	}
 }
 
-func TestNewStream(t *testing.T) {
+func TestNewStatementTime(t *testing.T) {
 	p := NewParser()
 	p.Register("MapEvent", MapEvent{})
 
-	q := "select * from MapEvent.length(10)"
+	q := "select * from MapEvent.time(10 sec)"
 	stmt, err := p.Parse(q)
 	if err != nil {
 		t.Error(err)
-		return
 	}
 
-	st := stmt.NewStream(1024)
+	window := stmt.New(1024)
 
 	m := make(map[string]interface{})
 	m["Value"] = "foobar"
 
-	st.Input() <- MapEvent{m}
-	event := <-st.Output()
+	window.Input() <- MapEvent{m}
+	event := <-window.Output()
 	if event[0].RecordString("Value") != "foobar" {
 		t.Error(event)
 	}
