@@ -1,7 +1,6 @@
 package gocep
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -81,14 +80,14 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 
 	// Select or InsertInto
 	if token, literal := lexer.Tokenize(); token != SELECT {
-		return nil, errors.New("invalid token. literal: " + literal)
+		return nil, fmt.Errorf("invalid token=%s", literal)
 	}
 
 	// Function
 	for {
 		token, literal := lexer.Tokenize()
 		if token == EOF {
-			return nil, errors.New("invalid token. literal: " + literal)
+			return nil, fmt.Errorf("invalid token=%s", literal)
 		}
 		if token == FROM {
 			break
@@ -106,7 +105,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 	for {
 		token, literal := lexer.Tokenize()
 		if token == EOF {
-			return nil, errors.New("invalid token. literal: " + literal)
+			return nil, fmt.Errorf("invalid token=%s", literal)
 		}
 		if token == DOT {
 			break
@@ -123,7 +122,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 	// Window
 	token, literal := lexer.Tokenize()
 	if token == EOF {
-		return nil, errors.New("invalid token. literal: " + literal)
+		return nil, fmt.Errorf("invalid token=%s", literal)
 	}
 
 	if token == LENGTH {
@@ -149,7 +148,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 			if t == IDENTIFIER {
 				ct, err := strconv.Atoi(l)
 				if err != nil {
-					return nil, errors.New("invalid token. literal: " + l)
+					return nil, fmt.Errorf("invalid token=%s", literal)
 				}
 				dt = time.Duration(ct)
 				break
@@ -175,12 +174,49 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 		}
 
 		if token == WHERE {
+			var name, value string
+			var selector Token
+
 			for {
-				t, _ := lexer.Tokenize()
+				t, l := lexer.Tokenize()
 				if t == IDENTIFIER {
+					name = l
 					break
 				}
 			}
+
+			for {
+				t, _ := lexer.Tokenize()
+				if t == LARGER || t == LESS {
+					selector = t
+					break
+				}
+			}
+
+			for {
+				t, l := lexer.Tokenize()
+				if t == IDENTIFIER {
+					value = l
+					break
+				}
+			}
+
+			if selector == LARGER {
+				val, err := strconv.Atoi(value)
+				if err != nil {
+					return nil, fmt.Errorf("atoi=%s", value)
+				}
+				stmt.SetSelector(LargerThanInt{Name: name, Value: val})
+			}
+
+			if selector == LESS {
+				val, err := strconv.Atoi(value)
+				if err != nil {
+					return nil, fmt.Errorf("atoi=%s", value)
+				}
+				stmt.SetSelector(LessThanInt{Name: name, Value: val})
+			}
+
 			break
 		}
 	}

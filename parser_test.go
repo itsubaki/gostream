@@ -34,6 +34,10 @@ func TestParserTimeWindow(t *testing.T) {
 	if reflect.TypeOf(stmt.selector[0]).Name() != "EqualsType" {
 		t.Fail()
 	}
+
+	if reflect.TypeOf(stmt.selector[1]).Name() != "LargerThanInt" {
+		t.Fail()
+	}
 }
 
 func TestParserError(t *testing.T) {
@@ -61,6 +65,7 @@ func TestNewStatementLength(t *testing.T) {
 		return
 	}
 	window := stmt.New(1024)
+	defer window.Close()
 
 	m := make(map[string]interface{})
 	m["Value"] = "foobar"
@@ -83,6 +88,7 @@ func TestNewStatementTime(t *testing.T) {
 	}
 
 	window := stmt.New(1024)
+	defer window.Close()
 
 	m := make(map[string]interface{})
 	m["Value"] = "foobar"
