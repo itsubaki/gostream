@@ -13,11 +13,22 @@ const (
 	ILLEGAL Token = iota
 	EOF
 	WHITESPACE
+
+	// indentifier
 	IDENTIFIER
-	ASTERISK
+
+	// delimiter
 	DOT
 	COMMA
+	SEMICOLON
+	LPAREN
+	RPAREN
+	LBRACE
+	RBRACE
+
+	// keyword
 	SELECT
+	ASTERISK
 	COUNT
 	SUM
 	AVG
@@ -81,6 +92,14 @@ func (l *Lexer) symbol(ch rune) (Token, string) {
 		return LARGER, string(ch)
 	case '<':
 		return LESS, string(ch)
+	case '(':
+		return LPAREN, string(ch)
+	case ')':
+		return RPAREN, string(ch)
+	case '{':
+		return LBRACE, string(ch)
+	case '}':
+		return RBRACE, string(ch)
 	}
 
 	return ILLEGAL, string(ch)
