@@ -116,43 +116,33 @@ func (p *Parser) ParseWindow(stmt *Statement, lexer *Lexer) error {
 
 	if token == LENGTH {
 		stmt.window = token
-		for {
-			t, l := lexer.Tokenize()
-			if t != IDENTIFIER {
-				continue
-			}
-
-			length, err := strconv.Atoi(l)
-			if err != nil {
-				return fmt.Errorf("atoi=%s: %v", l, err)
-			}
-
-			stmt.length = length
-			return nil
+		_, l := lexer.TokenizeIdentifier()
+		length, err := strconv.Atoi(l)
+		if err != nil {
+			return fmt.Errorf("atoi=%s: %v", l, err)
 		}
+
+		stmt.length = length
+		return nil
 	}
 
 	if token == TIME {
 		stmt.window = token
-		for {
-			t, l := lexer.Tokenize()
-			if t != IDENTIFIER {
-				continue
-			}
-
-			ct, err := strconv.Atoi(l)
-			if err != nil {
-				return fmt.Errorf("atoi=%s: %v", l, err)
-			}
-
-			for {
-				t, _ := lexer.Tokenize()
-				if t == SEC {
-					stmt.time = time.Duration(ct) * time.Second
-					return nil
-				}
-			}
+		_, l := lexer.TokenizeIdentifier()
+		ct, err := strconv.Atoi(l)
+		if err != nil {
+			return fmt.Errorf("atoi=%s: %v", l, err)
 		}
+
+		t, _ := lexer.TokenizeIgnoreWhiteSpace()
+		switch t {
+		case SEC:
+			stmt.time = time.Duration(ct) * time.Second
+		case MIN:
+			stmt.time = time.Duration(ct) * time.Minute
+		}
+
+		return nil
 	}
 
 	return fmt.Errorf("invalid token=%s", literal)
@@ -169,35 +159,9 @@ func (p *Parser) ParseWhere(stmt *Statement, lexer *Lexer) error {
 			continue
 		}
 
-		var name, value string
-		var selector Token
-
-		for {
-			t, l := lexer.Tokenize()
-			if t != IDENTIFIER {
-				continue
-			}
-			name = l
-			break
-		}
-
-		for {
-			t, _ := lexer.Tokenize()
-			if t != LARGER && t != LESS {
-				continue
-			}
-			selector = t
-			break
-		}
-
-		for {
-			t, l := lexer.Tokenize()
-			if t != IDENTIFIER {
-				continue
-			}
-			value = l
-			break
-		}
+		_, name := lexer.TokenizeIdentifier()
+		selector, _ := lexer.TokenizeIgnoreIdentifier()
+		_, value := lexer.TokenizeIdentifier()
 
 		val, err := strconv.Atoi(value)
 		if err != nil {

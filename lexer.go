@@ -38,6 +38,7 @@ const (
 	TIME_BATCH
 	LENGTH_BATCH
 	SEC
+	MIN
 	WHERE
 	LARGER
 	LESS
@@ -58,6 +59,26 @@ func (l *Lexer) TokenizeIgnoreWhiteSpace() (Token, string) {
 	for {
 		token, literal := l.Tokenize()
 		if token == WHITESPACE {
+			continue
+		}
+		return token, literal
+	}
+}
+
+func (l *Lexer) TokenizeIgnoreIdentifier() (Token, string) {
+	for {
+		token, literal := l.TokenizeIgnoreWhiteSpace()
+		if token == IDENTIFIER {
+			continue
+		}
+		return token, literal
+	}
+}
+
+func (l *Lexer) TokenizeIdentifier() (Token, string) {
+	for {
+		token, literal := l.TokenizeIgnoreWhiteSpace()
+		if token != IDENTIFIER {
 			continue
 		}
 		return token, literal
@@ -132,6 +153,8 @@ func (l *Lexer) literal(literal string) (Token, string) {
 		return LENGTH_BATCH, literal
 	case "SEC":
 		return SEC, literal
+	case "MIN":
+		return MIN, literal
 	case "AND":
 		return AND, literal
 	case "OR":
