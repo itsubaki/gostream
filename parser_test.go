@@ -53,8 +53,8 @@ func TestParserError(t *testing.T) {
 		t.Error("failed.")
 	}
 
-	if err.Error() != "EventType [MapEvent] is not registered" {
-		t.Error("failed.")
+	if err.Error() != "parse selector: EventType [MapEvent] is not registered" {
+		t.Errorf("failed: %v", err)
 	}
 }
 
