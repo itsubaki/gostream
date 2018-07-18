@@ -17,7 +17,7 @@ func TestParserTimeWindow(t *testing.T) {
 	p := NewParser()
 	p.Register("LogEvent", LogEvent{})
 
-	q := "select count(*) from LogEvent.time(10 sec) where Level > 2"
+	q := "select count(*) from LogEvent.time(10 sec) where Level > 2 and Level < 10"
 	stmt, err := p.Parse(q)
 	if err != nil {
 		t.Error(err)
@@ -36,6 +36,10 @@ func TestParserTimeWindow(t *testing.T) {
 	}
 
 	if reflect.TypeOf(stmt.selector[1]).Name() != "LargerThanInt" {
+		t.Fail()
+	}
+
+	if reflect.TypeOf(stmt.selector[2]).Name() != "LessThanInt" {
 		t.Fail()
 	}
 }

@@ -41,6 +41,8 @@ const (
 	WHERE
 	LARGER
 	LESS
+	AND
+	OR
 )
 
 type Lexer struct {
@@ -130,6 +132,10 @@ func (l *Lexer) literal(literal string) (Token, string) {
 		return LENGTH_BATCH, literal
 	case "SEC":
 		return SEC, literal
+	case "AND":
+		return AND, literal
+	case "OR":
+		return OR, literal
 	}
 
 	return IDENTIFIER, literal

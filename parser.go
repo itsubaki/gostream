@@ -176,7 +176,7 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 			break
 		}
 
-		if token != WHERE {
+		if token != WHERE && token != AND && token != OR {
 			continue
 		}
 
