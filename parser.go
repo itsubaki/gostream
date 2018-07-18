@@ -86,37 +86,38 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 	// Function
 	for {
 		token, literal := lexer.Tokenize()
-		if token == EOF {
+		switch token {
+		case EOF:
 			return nil, fmt.Errorf("invalid token=%s", literal)
-		}
-		if token == FROM {
-			break
-		}
-		if token == ASTERISK {
+		case ASTERISK:
 			stmt.SetFunction(SelectAll{})
+		case COUNT:
+			stmt.SetFunction(Count{"count(*)"})
 		}
 
-		if token == COUNT {
-			stmt.SetFunction(Count{"count(*)"})
+		if token == FROM {
+			break
 		}
 	}
 
 	// Selector
 	for {
 		token, literal := lexer.Tokenize()
-		if token == EOF {
+		switch token {
+		case EOF:
 			return nil, fmt.Errorf("invalid token=%s", literal)
+		case IDENTIFIER:
+			if v, ok := p.registry[literal]; ok {
+				stmt.SetSelector(EqualsType{v})
+			} else {
+				return nil, fmt.Errorf("EventType [%s] is not registered", literal)
+			}
 		}
+
 		if token == DOT {
 			break
 		}
-		if token == IDENTIFIER {
-			v, ok := p.registry[literal]
-			if !ok {
-				return nil, fmt.Errorf("EventType [%s] is not registered", literal)
-			}
-			stmt.SetSelector(EqualsType{v})
-		}
+
 	}
 
 	// Window
@@ -127,42 +128,44 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 
 	if token == LENGTH {
 		stmt.window = token
-
-		length := 0
 		for {
 			t, l := lexer.Tokenize()
-			if t == IDENTIFIER {
-				length, _ = strconv.Atoi(l)
-				break
+			if t != IDENTIFIER {
+				continue
 			}
+
+			length, err := strconv.Atoi(l)
+			if err != nil {
+				return nil, fmt.Errorf("atoi=%s: %v", l, err)
+			}
+
+			stmt.length = length
+			break
 		}
-		stmt.length = length
 	}
 
 	if token == TIME {
 		stmt.window = token
-
-		var dt time.Duration
 		for {
 			t, l := lexer.Tokenize()
-			if t == IDENTIFIER {
-				ct, err := strconv.Atoi(l)
-				if err != nil {
-					return nil, fmt.Errorf("invalid token=%s", literal)
-				}
-				dt = time.Duration(ct)
-				break
+			if t != IDENTIFIER {
+				continue
 			}
-		}
 
-		for {
-			t, l := lexer.Tokenize()
-			if t == SEC {
-				if l == "sec" {
-					stmt.time = dt * time.Second
+			ct, err := strconv.Atoi(l)
+			if err != nil {
+				return nil, fmt.Errorf("atoi=%s: %v", l, err)
+			}
+
+			for {
+				t, _ := lexer.Tokenize()
+				if t == SEC {
+					stmt.time = time.Duration(ct) * time.Second
 					break
 				}
 			}
+
+			break
 		}
 	}
 
@@ -170,54 +173,50 @@ func (p *Parser) Parse(query string) (*Statement, error) {
 	for {
 		token, _ := lexer.Tokenize()
 		if token == EOF {
-			return stmt, nil
+			break
 		}
 
-		if token == WHERE {
-			var name, value string
-			var selector Token
+		if token != WHERE {
+			continue
+		}
 
-			for {
-				t, l := lexer.Tokenize()
-				if t == IDENTIFIER {
-					name = l
-					break
-				}
+		var name, value string
+		var selector Token
+
+		for {
+			t, l := lexer.Tokenize()
+			if t == IDENTIFIER {
+				name = l
+				break
 			}
+		}
 
-			for {
-				t, _ := lexer.Tokenize()
-				if t == LARGER || t == LESS {
-					selector = t
-					break
-				}
+		for {
+			t, _ := lexer.Tokenize()
+			if t == LARGER || t == LESS {
+				selector = t
+				break
 			}
+		}
 
-			for {
-				t, l := lexer.Tokenize()
-				if t == IDENTIFIER {
-					value = l
-					break
-				}
+		for {
+			t, l := lexer.Tokenize()
+			if t == IDENTIFIER {
+				value = l
+				break
 			}
+		}
 
-			if selector == LARGER {
-				val, err := strconv.Atoi(value)
-				if err != nil {
-					return nil, fmt.Errorf("atoi=%s", value)
-				}
-				stmt.SetSelector(LargerThanInt{Name: name, Value: val})
-			}
+		val, err := strconv.Atoi(value)
+		if err != nil {
+			return nil, fmt.Errorf("atoi=%s", value)
+		}
 
-			if selector == LESS {
-				val, err := strconv.Atoi(value)
-				if err != nil {
-					return nil, fmt.Errorf("atoi=%s", value)
-				}
-				stmt.SetSelector(LessThanInt{Name: name, Value: val})
-			}
-
-			break
+		switch selector {
+		case LARGER:
+			stmt.SetSelector(LargerThanInt{Name: name, Value: val})
+		case LESS:
+			stmt.SetSelector(LessThanInt{Name: name, Value: val})
 		}
 	}
 
