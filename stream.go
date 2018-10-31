@@ -1,10 +1,17 @@
 package gocep
 
+import (
+	"sync"
+)
+
 type Stream struct {
 	capacity int
 	in       chan interface{}
 	out      chan []Event
 	window   []Window
+	closed   bool
+	mutex    sync.RWMutex
+	wg       sync.WaitGroup
 	Canceller
 }
 
@@ -15,23 +22,43 @@ func NewStream(capacity ...int) *Stream {
 		make(chan interface{}, cap),
 		make(chan []Event, cap),
 		[]Window{},
+		false,
+		sync.RWMutex{},
+		sync.WaitGroup{},
 		NewCanceller(),
 	}
 
-	go s.dispatch()
+	go s.fanout()
 	return s
 }
 
 func (s *Stream) Close() {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	if s.IsClosed() {
+		return
+	}
+
+	s.closed = true
 	s.cancel()
+
+	s.wg.Wait()
+	close(s.Input())
+	close(s.Output())
 	for _, w := range s.window {
 		w.Close()
 	}
 }
 
+func (s *Stream) IsClosed() bool {
+	return s.closed
+}
+
 func (s *Stream) SetWindow(w Window) {
 	s.window = append(s.window, w)
-	go s.collect(w)
+	go w.Work()
+	go s.fanin(w)
 }
 
 func (s *Stream) Window() []Window {
@@ -46,10 +73,12 @@ func (s *Stream) Output() chan []Event {
 	return s.out
 }
 
-func (s *Stream) dispatch() {
+func (s *Stream) fanout() {
+	s.wg.Add(1)
 	for {
 		select {
 		case <-s.ctx.Done():
+			s.wg.Done()
 			return
 		case input := <-s.in:
 			for _, w := range s.window {
@@ -59,13 +88,16 @@ func (s *Stream) dispatch() {
 	}
 }
 
-func (s *Stream) collect(w Window) {
+func (s *Stream) fanin(w Window) {
+	s.wg.Add(1)
 	for {
 		select {
 		case <-s.ctx.Done():
+			s.wg.Done()
 			return
 		case event := <-w.Output():
 			s.out <- event
 		}
 	}
+
 }

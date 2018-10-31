@@ -8,23 +8,20 @@ func TestStream(t *testing.T) {
 	s := NewStream()
 	defer s.Close()
 
-	wnum := 2
-	for i := 0; i < wnum; i++ {
-		w := NewIdentityWindow(16)
-		go w.Work()
-		s.SetWindow(w)
+	n := 2
+	for i := 0; i < n; i++ {
+		s.SetWindow(NewIdentityWindow())
 	}
 
-	if len(s.Window()) != wnum {
+	if len(s.Window()) != n {
 		t.Error("failed.")
 	}
 
 	s.Input() <- "test"
 
-	for i := 0; i < wnum; i++ {
+	for i := 0; i < n; i++ {
 		if Oldest(<-s.Output()).Underlying != "test" {
 			t.Error("failed")
 		}
 	}
-
 }
