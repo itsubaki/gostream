@@ -117,9 +117,6 @@ func (w *IdentityWindow) Work() {
 }
 
 func (w *IdentityWindow) Listen(input interface{}) {
-	w.mutex.RLock()
-	defer w.mutex.RUnlock()
-
 	if w.IsClosed() {
 		return
 	}
@@ -146,12 +143,15 @@ func (w *IdentityWindow) Update(input interface{}) []Event {
 		}
 	}
 
+	w.mutex.Lock()
+	defer w.mutex.Unlock()
+
 	w.event = append(w.event, e)
 	for _, f := range w.function {
 		w.event = f.Apply(w.event)
 	}
-
 	event := append([]Event{}, w.event...)
+
 	for _, f := range w.view {
 		event = f.Apply(event)
 	}

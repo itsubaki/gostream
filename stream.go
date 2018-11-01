@@ -56,6 +56,9 @@ func (s *Stream) IsClosed() bool {
 }
 
 func (s *Stream) SetWindow(w Window) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	s.window = append(s.window, w)
 	go w.Work()
 	go s.fanin(w)
@@ -81,9 +84,11 @@ func (s *Stream) fanout() {
 			s.wg.Done()
 			return
 		case input := <-s.in:
+			s.mutex.RLock()
 			for _, w := range s.window {
 				w.Input() <- input
 			}
+			s.mutex.RUnlock()
 		}
 	}
 }
@@ -99,5 +104,4 @@ func (s *Stream) fanin(w Window) {
 			s.out <- event
 		}
 	}
-
 }

@@ -4,6 +4,25 @@ import (
 	"testing"
 )
 
+func BenchmarkLengthWindowSumIntStream(b *testing.B) {
+	s := NewStream(b.N)
+	defer s.Close()
+
+	w := NewLengthWindow(b.N)
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetFunction(SumInt{"Value", "sum(Value)"})
+	s.SetWindow(w)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		s.Input() <- IntEvent{"foobar", i}
+	}
+
+	for i := 0; i < b.N; i++ {
+		<-s.Output()
+	}
+}
+
 func TestStream(t *testing.T) {
 	s := NewStream()
 	defer s.Close()
