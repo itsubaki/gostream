@@ -150,8 +150,8 @@ func (w *IdentityWindow) Update(input interface{}) []Event {
 	for _, f := range w.function {
 		w.event = f.Apply(w.event)
 	}
-	event := append([]Event{}, w.event...)
 
+	event := append([]Event{}, w.event...)
 	for _, f := range w.view {
 		event = f.Apply(event)
 	}

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func BenchmarkLengthWindowNoFunction(b *testing.B) {
+func BenchmarkLengthWindowNoFunction128(b *testing.B) {
 	w := NewLengthWindow(128)
 	defer w.Close()
 
