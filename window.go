@@ -62,6 +62,7 @@ func NewIdentityWindow(capacity ...int) Window {
 		NewCanceller(),
 	}
 
+	go w.Work()
 	return w
 }
 
@@ -180,9 +181,7 @@ type LengthWindow struct {
 
 func NewLengthWindow(length int, capacity ...int) Window {
 	w := &LengthWindow{NewIdentityWindow(capacity...)}
-
 	w.SetFunction(Length{length})
-	go w.Work()
 
 	return w
 }
@@ -193,9 +192,7 @@ type LengthBatchWindow struct {
 
 func NewLengthBatchWindow(length int, capacity ...int) Window {
 	w := &LengthWindow{NewIdentityWindow(capacity...)}
-
 	w.SetFunction(&LengthBatch{length, []Event{}})
-	go w.Work()
 
 	return w
 }
@@ -206,9 +203,7 @@ type TimeWindow struct {
 
 func NewTimeWindow(expire time.Duration, capacity ...int) Window {
 	w := &TimeWindow{NewIdentityWindow(capacity...)}
-
 	w.SetFunction(TimeDuration{expire})
-	go w.Work()
 
 	return w
 }
@@ -223,7 +218,6 @@ func NewTimeBatchWindow(expire time.Duration, capacity ...int) Window {
 	start := time.Now()
 	end := start.Add(expire)
 	w.SetFunction(&TimeDurationBatch{start, end, expire})
-	go w.Work()
 
 	return w
 }
