@@ -86,6 +86,7 @@ func (s *Stream) fanout() {
 		case input := <-s.in:
 			s.mutex.RLock()
 			for _, w := range s.window {
+				// TODO: need deep copy
 				w.Input() <- input
 			}
 			s.mutex.RUnlock()

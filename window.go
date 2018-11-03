@@ -111,6 +111,7 @@ func (w *IdentityWindow) Work() {
 		case <-w.ctx.Done():
 			return
 		case input := <-w.in:
+			// sequencial call
 			w.Listen(input)
 		}
 	}
@@ -142,9 +143,6 @@ func (w *IdentityWindow) Update(input interface{}) []Event {
 			return []Event{}
 		}
 	}
-
-	w.mutex.Lock()
-	defer w.mutex.Unlock()
 
 	w.event = append(w.event, e)
 	for _, f := range w.function {
