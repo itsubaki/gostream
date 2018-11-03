@@ -111,7 +111,6 @@ func (w *IdentityWindow) Work() {
 		case <-w.ctx.Done():
 			return
 		case input := <-w.in:
-			// sequencial call
 			w.Listen(input)
 		}
 	}

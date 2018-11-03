@@ -1,6 +1,8 @@
 package gocep
 
 import (
+	"math/rand"
+	"sync"
 	"testing"
 	"time"
 )
@@ -187,8 +189,31 @@ func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
 	}
 }
 
-func TestLengthWindow(t *testing.T) {
+func TestConcurrency(t *testing.T) {
+	w := NewLengthWindow(2)
+	defer w.Close()
 
+	w.SetSelector(EqualsType{IntEvent{}})
+	w.SetSelector(LargerThanInt{"Value", 1})
+	w.SetFunction(Count{"count"})
+	w.SetView(OrderByInt{"Value", true})
+
+	var wg sync.WaitGroup
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func() {
+			w.Input() <- IntEvent{"foo", rand.Int()}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	for i := 0; i < 100; i++ {
+		<-w.Output()
+	}
+}
+
+func TestLengthWindow(t *testing.T) {
 	w := NewLengthWindow(2)
 	defer w.Close()
 
