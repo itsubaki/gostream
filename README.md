@@ -1,6 +1,8 @@
 # gocep
 
 [![Build Status](https://travis-ci.org/itsubaki/gocep.svg?branch=develop)](https://travis-ci.org/itsubaki/gocep)
+[![Go Report Card](https://goreportcard.com/badge/github.com/itsubaki/gocep?style=flat-square)](https://goreportcard.com/report/github.com/itsubaki/gocep)
+
 
 The Stream Processing API for Go
 
