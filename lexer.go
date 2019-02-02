@@ -14,10 +14,8 @@ const (
 	EOF
 	WHITESPACE
 
-	// indentifier
 	IDENTIFIER
 
-	// delimiter
 	DOT
 	COMMA
 	SEMICOLON
@@ -26,7 +24,6 @@ const (
 	LBRACE
 	RBRACE
 
-	// keyword
 	SELECT
 	ASTERISK
 	COUNT
@@ -129,7 +126,6 @@ func (l *Lexer) symbol(ch rune) (Token, string) {
 }
 
 func (l *Lexer) literal(literal string) (Token, string) {
-
 	switch strings.ToUpper(literal) {
 	case "SELECT":
 		return SELECT, literal
