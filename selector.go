@@ -2,6 +2,28 @@ package gocep
 
 import "reflect"
 
+type Or []Selector
+
+func (f Or) Select(e Event) bool {
+	for _, s := range f {
+		if s.Select(e) {
+			return true
+		}
+	}
+	return false
+}
+
+type And []Selector
+
+func (f And) Select(e Event) bool {
+	for _, s := range f {
+		if !s.Select(e) {
+			return false
+		}
+	}
+	return true
+}
+
 type Selector interface {
 	Select(e Event) bool
 }
