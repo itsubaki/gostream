@@ -33,7 +33,8 @@ func Example() {
 
 	go func() {
 		for {
-			if event.Newest(<-w.Output()).Int("count") > 10 {
+			newest := event.Newest(<-w.Output())
+			if newest.Int("count") > 10 {
 				// notification
 			}
 		}
