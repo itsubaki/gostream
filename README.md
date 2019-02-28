@@ -49,17 +49,18 @@ type LogEvent struct {
 }
 
 // select count(*) from LogEvent.time(10sec) where Level > 2
-w := NewTimeWindow(10*time.Second)
+w := window.NewTime(10*time.Second)
 defer w.Close()
 
-w.SetSelector(EqualsType{LogEvent{}})
-w.SetSelector(LargerThanInt{"Level", 2})
+w.SetSelector(
+  selector.EqualsType{Accept: LogEvent{}},
+  selector.LargerThanInt{Name: "Level", Value: 2},
+)
 w.SetFunction(Count{As: "count"})
 
 go func() {
   for {
-    events := <-w.Output()
-    if Newest(events).Int("count") > 10 {
+    if event.Newest(<-w.Output()).Int("count") > 10 {
       // notification
     }
   }
@@ -80,15 +81,21 @@ type MyEvent struct {
 //  orderby Value DESC
 //  limit 10 offset 5
 
-w := NewTimeWindow(10 * time.Millisecond)
+w := window.NewTime(10 * time.Millisecond)
 defer w.Close()
 
-w.SetSelector(EqualsType{MyEvent{}})
-w.SetSelector(LargerThanInt{"Value", 97})
-w.SetFunction(SelectString{"Name", "n"})
-w.SetFunction(SelectInt{"Value", "v"})
-w.SetView(OrderByInt{"Value", true})
-w.SetView(Limit{10, 5})
+w.SetSelector(
+  selector.EqualsType{Accept: MyEvent{}},
+  selector.LargerThanInt{Name: "Value", Value: 97},
+)
+w.SetFunction(
+  function.SelectString{Name: "Name", As: "n"},
+  function.SelectInt{Name: "Value", As: "v"},
+)
+w.SetView(
+  view.OrderByInt{Name: "Value", Reverse: true},
+  view.Limit{Limit: 10, Offset: 5},
+)
 
 go func() {
   for {
@@ -104,12 +111,16 @@ for i := 0; i < 100; i++ {
 
 ```go
 // select avg(Value), sum(Value) from MyEvent.length(10)
-w := NewLengthWindow(10)
+w := window.NewLength(10)
 defer w.Close()
 
-w.SetSelector(EqualsType{MyEvent{}})
-w.SetFunction(AverageInt{"Value", "avg(Value)"})
-w.SetFunction(SumInt{"Value", "sum(Value)"})
+w.SetSelector(
+  selector.EqualsType{Accept: MyEvent{}},
+)
+w.SetFunction(
+  function.AverageInt{Name: "Value", As: "avg(Value)"},
+  function.SumInt{Name: "Value", As: "sum(Value)"},
+)
 ```
 
 # RuntimeEventBuilder
@@ -119,7 +130,7 @@ w.SetFunction(SumInt{"Value", "sum(Value)"})
 //  Name string
 //  Value int
 // }
-b := NewStructBuilder()
+b := builder.New()
 b.SetField("Name", reflect.TypeOf(""))
 b.SetField("Value", reflect.TypeOf(0))
 s := b.Build()
@@ -139,7 +150,7 @@ w.Input() <-i.Value()
 # (WIP) Query
 
 ```go
-p := NewParser()
+p := parser.New()
 p.Register("MapEvent", MapEvent{})
 
 query := "select * from MapEvent.length(10)"
