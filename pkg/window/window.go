@@ -127,12 +127,12 @@ func (w *IdentityWindow) Listen(input interface{}) {
 		return
 	}
 
-	event := w.Update(input)
-	if len(event) == 0 {
+	events := w.Update(input)
+	if len(events) == 0 {
 		return
 	}
 
-	w.Output() <- event
+	w.Output() <- events
 }
 
 func (w *IdentityWindow) Update(input interface{}) []event.Event {
@@ -154,12 +154,12 @@ func (w *IdentityWindow) Update(input interface{}) []event.Event {
 		w.event = f.Apply(w.event)
 	}
 
-	event := append(event.List(), w.event...)
+	events := append(event.List(), w.event...)
 	for _, f := range w.view {
-		event = f.Apply(event)
+		events = f.Apply(events)
 	}
 
-	return event
+	return events
 }
 
 func (w *IdentityWindow) Close() {

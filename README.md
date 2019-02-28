@@ -56,7 +56,7 @@ w.SetSelector(
   selector.EqualsType{Accept: LogEvent{}},
   selector.LargerThanInt{Name: "Level", Value: 2},
 )
-w.SetFunction(Count{As: "count"})
+w.SetFunction(function.Count{As: "count"})
 
 go func() {
   for {
@@ -161,6 +161,8 @@ if err != nil {
 }
 
 window := statement.New()
+defer window.Close()
+
 window.Input() <-MapEvent{map}
 fmt.Println(<-window.Output())
 ```

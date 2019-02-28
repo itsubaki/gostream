@@ -38,6 +38,12 @@ func (p *Parser) ParseFunction(st *statement.Statement, l *lexer.Lexer) error {
 			st.SetFunction(function.SelectAll{})
 		case lexer.COUNT:
 			st.SetFunction(function.Count{As: "count(*)"})
+		case lexer.SUM:
+			_, val := l.TokenizeIdentifier()
+			st.SetFunction(function.SumInt{Name: val, As: fmt.Sprintf("sum(%s)", val)})
+		case lexer.AVG:
+			_, val := l.TokenizeIdentifier()
+			st.SetFunction(function.AverageInt{Name: val, As: fmt.Sprintf("avg(%s)", val)})
 		}
 	}
 }
@@ -116,6 +122,25 @@ func (p *Parser) ParseSelector(st *statement.Statement, l *lexer.Lexer) error {
 		_, name := l.TokenizeIdentifier()
 		s, _ := l.TokenizeIgnoreIdentifier()
 		_, value := l.TokenizeIdentifier()
+
+		dot, _ := l.Tokenize()
+		if dot == lexer.DOT {
+			_, value2 := l.TokenizeIdentifier()
+
+			fvalue := fmt.Sprintf("%s.%s", value, value2)
+			val, err := strconv.ParseFloat(fvalue, 64)
+			if err != nil {
+				return fmt.Errorf("parse float=%s", fvalue)
+			}
+
+			switch s {
+			case lexer.LARGER:
+				st.SetSelector(selector.LargerThanFloat{Name: name, Value: val})
+			case lexer.LESS:
+				st.SetSelector(selector.LessThanFloat{Name: name, Value: val})
+			}
+			continue
+		}
 
 		val, err := strconv.Atoi(value)
 		if err != nil {

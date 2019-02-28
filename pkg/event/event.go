@@ -11,12 +11,12 @@ type Event struct {
 	Record     map[string]interface{}
 }
 
-func Oldest(event []Event) *Event {
-	return &event[0]
+func Oldest(event []Event) Event {
+	return event[0]
 }
 
-func Newest(event []Event) *Event {
-	return &event[len(event)-1]
+func Newest(event []Event) Event {
+	return event[len(event)-1]
 }
 
 func List(underlying ...interface{}) []Event {

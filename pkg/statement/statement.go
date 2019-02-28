@@ -11,12 +11,13 @@ import (
 )
 
 type Statement struct {
-	Window   lexer.Token
-	Length   int
-	Time     time.Duration
-	Selector []selector.Selector
-	Function []function.Function
-	View     []view.View
+	Window    lexer.Token
+	EventType interface{}
+	Length    int
+	Time      time.Duration
+	Selector  []selector.Selector
+	Function  []function.Function
+	View      []view.View
 }
 
 func New() *Statement {
@@ -25,6 +26,10 @@ func New() *Statement {
 		Function: []function.Function{},
 		View:     []view.View{},
 	}
+}
+
+func (st *Statement) SetEventType(_type interface{}) {
+	st.EventType = _type
 }
 
 func (st *Statement) SetWindow(token lexer.Token) {
