@@ -5,6 +5,41 @@ import (
 	"testing"
 )
 
+func TestLexerTokenizeMin(t *testing.T) {
+	q := "select min(Level) from LogEvent.time(10 sec) where Level > 2"
+	lexer := New(strings.NewReader(q))
+
+	var test = []struct {
+		token   Token
+		literal string
+	}{
+		{SELECT, "select"},
+		{MIN, "min"},
+		{LPAREN, "("},
+		{IDENTIFIER, "Level"},
+		{RPAREN, ")"},
+		{FROM, "from"},
+		{IDENTIFIER, "LogEvent"},
+		{DOT, "."},
+		{TIME, "time"},
+		{LPAREN, "("},
+		{IDENTIFIER, "10"},
+		{SEC, "sec"},
+		{RPAREN, ")"},
+		{WHERE, "where"},
+		{IDENTIFIER, "Level"},
+		{LARGER, ">"},
+		{IDENTIFIER, "2"},
+	}
+
+	for _, tt := range test {
+		token, literal := lexer.TokenizeIgnoreWhiteSpace()
+		if token != tt.token || literal != tt.literal {
+			t.Error(token, literal)
+		}
+	}
+}
+
 func TestLexerTokenizeFloat(t *testing.T) {
 	q := "select count(*) from LogEvent.time(10 sec) where Level > 2.5"
 	lexer := New(strings.NewReader(q))
