@@ -6,29 +6,7 @@ import (
 	"time"
 )
 
-func TestParserSum(t *testing.T) {
-	type LogEvent struct {
-		ID      string
-		Time    time.Time
-		Level   int
-		Message string
-	}
-
-	p := New()
-	p.Register("LogEvent", LogEvent{})
-
-	q := "select sum(Level) from LogEvent.time(10 sec) where Level > 2 and Level < 10"
-	st, err := p.Parse(q)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if reflect.TypeOf(st.Function[0]).Name() != "SumInt" {
-		t.Error(reflect.TypeOf(st.Function[0]).Name())
-	}
-}
-
-func TestParserAvg(t *testing.T) {
+func TestParserFloat(t *testing.T) {
 	type LogEvent struct {
 		ID      string
 		Time    time.Time
@@ -39,26 +17,54 @@ func TestParserAvg(t *testing.T) {
 	p := New()
 	p.Register("LogEvent", LogEvent{})
 
-	q := "select avg(Level) from LogEvent.time(10 sec) where Level > 2.5 and Level < 10.5"
-	st, err := p.Parse(q)
+	q := "select avg(Level), sum(Level), max(Level), min(Level), med(Level), count(*) from LogEvent.length(10) where Level > 2.5 and Level < 10.5"
+	s, err := p.Parse(q)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if reflect.TypeOf(st.Function[0]).Name() != "AverageInt" {
-		t.Error(reflect.TypeOf(st.Function[0]).Name())
+	if s.Length != 10 {
+		t.Fail()
 	}
 
-	if reflect.TypeOf(st.Selector[1]).Name() != "LargerThanFloat" {
-		t.Error(reflect.TypeOf(st.Selector[1]).Name())
+	if reflect.TypeOf(s.EventType) != reflect.TypeOf(LogEvent{}) {
+		t.Fail()
 	}
 
-	if reflect.TypeOf(st.Selector[2]).Name() != "LessThanFloat" {
-		t.Error(reflect.TypeOf(st.Selector[2]).Name())
+	if reflect.TypeOf(s.Function[0]).Name() != "AverageFloat" {
+		t.Error(reflect.TypeOf(s.Function[0]).Name())
+	}
+
+	if reflect.TypeOf(s.Function[1]).Name() != "SumFloat" {
+		t.Error(reflect.TypeOf(s.Function[1]).Name())
+	}
+
+	if reflect.TypeOf(s.Function[2]).Name() != "MaxFloat" {
+		t.Error(reflect.TypeOf(s.Function[2]).Name())
+	}
+
+	if reflect.TypeOf(s.Function[3]).Name() != "MinFloat" {
+		t.Error(reflect.TypeOf(s.Function[3]).Name())
+	}
+
+	if reflect.TypeOf(s.Function[4]).Name() != "MedianFloat" {
+		t.Error(reflect.TypeOf(s.Function[4]).Name())
+	}
+
+	if reflect.TypeOf(s.Function[5]).Name() != "Count" {
+		t.Error(reflect.TypeOf(s.Function[5]).Name())
+	}
+
+	if reflect.TypeOf(s.Selector[1]).Name() != "LargerThanFloat" {
+		t.Error(reflect.TypeOf(s.Selector[1]).Name())
+	}
+
+	if reflect.TypeOf(s.Selector[2]).Name() != "LessThanFloat" {
+		t.Error(reflect.TypeOf(s.Selector[2]).Name())
 	}
 }
 
-func TestParserTimeWindow(t *testing.T) {
+func TestParserInt(t *testing.T) {
 	type LogEvent struct {
 		ID      string
 		Time    time.Time
@@ -69,30 +75,54 @@ func TestParserTimeWindow(t *testing.T) {
 	p := New()
 	p.Register("LogEvent", LogEvent{})
 
-	q := "select count(*) from LogEvent.time(10 sec) where Level > 2 and Level < 10"
-	st, err := p.Parse(q)
+	q := "select avg(Level), sum(Level), max(Level), min(Level), med(Level), count(*) from LogEvent.time(10 sec) where Level > 2 and Level < 10"
+	s, err := p.Parse(q)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if st.Time != 10*time.Second {
+	if s.Time != 10*time.Second {
 		t.Fail()
 	}
 
-	if reflect.TypeOf(st.Function[0]).Name() != "Count" {
+	if reflect.TypeOf(s.EventType) != reflect.TypeOf(LogEvent{}) {
 		t.Fail()
 	}
 
-	if reflect.TypeOf(st.Selector[0]).Name() != "EqualsType" {
-		t.Fail()
+	if reflect.TypeOf(s.Function[0]).Name() != "AverageInt" {
+		t.Error(reflect.TypeOf(s.Function[0]).Name())
 	}
 
-	if reflect.TypeOf(st.Selector[1]).Name() != "LargerThanInt" {
-		t.Fail()
+	if reflect.TypeOf(s.Function[1]).Name() != "SumInt" {
+		t.Error(reflect.TypeOf(s.Function[1]).Name())
 	}
 
-	if reflect.TypeOf(st.Selector[2]).Name() != "LessThanInt" {
-		t.Fail()
+	if reflect.TypeOf(s.Function[2]).Name() != "MaxInt" {
+		t.Error(reflect.TypeOf(s.Function[2]).Name())
+	}
+
+	if reflect.TypeOf(s.Function[3]).Name() != "MinInt" {
+		t.Error(reflect.TypeOf(s.Function[3]).Name())
+	}
+
+	if reflect.TypeOf(s.Function[4]).Name() != "MedianInt" {
+		t.Error(reflect.TypeOf(s.Function[4]).Name())
+	}
+
+	if reflect.TypeOf(s.Function[5]).Name() != "Count" {
+		t.Error(reflect.TypeOf(s.Function[5]).Name())
+	}
+
+	if reflect.TypeOf(s.Selector[0]).Name() != "EqualsType" {
+		t.Error(reflect.TypeOf(s.Selector[0]).Name())
+	}
+
+	if reflect.TypeOf(s.Selector[1]).Name() != "LargerThanInt" {
+		t.Error(reflect.TypeOf(s.Selector[1]).Name())
+	}
+
+	if reflect.TypeOf(s.Selector[2]).Name() != "LessThanInt" {
+		t.Error(reflect.TypeOf(s.Selector[2]).Name())
 	}
 }
 
@@ -119,19 +149,19 @@ func TestNewStatementLength(t *testing.T) {
 	p.Register("MapEvent", MapEvent{})
 
 	q := "select * from MapEvent.length(10)"
-	stmt, err := p.Parse(q)
+	s, err := p.Parse(q)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	window := stmt.New(1024)
-	defer window.Close()
+	w := s.New(1024)
+	defer w.Close()
 
 	m := make(map[string]interface{})
 	m["Value"] = "foobar"
 
-	window.Input() <- MapEvent{m}
-	event := <-window.Output()
+	w.Input() <- MapEvent{m}
+	event := <-w.Output()
 	if event[0].MapString("Record", "Value") != "foobar" {
 		t.Error(event)
 	}
@@ -145,20 +175,20 @@ func TestNewStatementTime(t *testing.T) {
 	p := New()
 	p.Register("MapEvent", MapEvent{})
 
-	q := "select * from MapEvent.time(10 sec)"
-	stmt, err := p.Parse(q)
+	q := "select * from MapEvent.time(10 min)"
+	s, err := p.Parse(q)
 	if err != nil {
 		t.Error(err)
 	}
 
-	window := stmt.New(1024)
-	defer window.Close()
+	w := s.New()
+	defer w.Close()
 
 	m := make(map[string]interface{})
 	m["Value"] = "foobar"
 
-	window.Input() <- MapEvent{m}
-	event := <-window.Output()
+	w.Input() <- MapEvent{m}
+	event := <-w.Output()
 	if event[0].MapString("Record", "Value") != "foobar" {
 		t.Error(event)
 	}

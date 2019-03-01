@@ -29,6 +29,9 @@ const (
 	COUNT
 	SUM
 	AVG
+	MAX
+	MED
+
 	FROM
 	TIME
 	LENGTH
@@ -135,6 +138,10 @@ func (l *Lexer) literal(literal string) (Token, string) {
 		return SUM, literal
 	case "AVG":
 		return AVG, literal
+	case "MAX":
+		return MAX, literal
+	case "MED":
+		return MED, literal
 	case "FROM":
 		return FROM, literal
 	case "WHERE":
