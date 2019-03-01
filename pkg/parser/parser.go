@@ -29,7 +29,6 @@ func (p *Parser) Register(name string, t interface{}) {
 func (p *Parser) ParseFunction(s *statement.Statement, l *lexer.Lexer) error {
 	for {
 		token, literal := l.Tokenize()
-
 		switch token {
 		case lexer.EOF:
 			return fmt.Errorf("invalid token=%s", literal)
@@ -92,7 +91,6 @@ func (p *Parser) ParseEventType(s *statement.Statement, l *lexer.Lexer) error {
 
 	for {
 		token, literal := l.Tokenize()
-
 		switch token {
 		case lexer.EOF:
 			return fmt.Errorf("invalid token=%s", literal)
@@ -118,7 +116,6 @@ func (p *Parser) ParseWindow(s *statement.Statement, l *lexer.Lexer) error {
 	}
 
 	token, literal := l.Tokenize()
-
 	if token == lexer.EOF {
 		return fmt.Errorf("invalid token=%s", literal)
 	}
@@ -161,9 +158,16 @@ func (p *Parser) ParseWindow(s *statement.Statement, l *lexer.Lexer) error {
 
 func (p *Parser) ParseSelector(s *statement.Statement, l *lexer.Lexer) error {
 	for {
+		if token, _ := l.Tokenize(); token == lexer.DOT {
+			break
+		}
+	}
+
+	list := []selector.Selector{}
+	for {
 		token, _ := l.Tokenize()
 		if token == lexer.EOF {
-			return nil
+			break
 		}
 
 		if token != lexer.WHERE && token != lexer.AND && token != lexer.OR {
@@ -182,9 +186,9 @@ func (p *Parser) ParseSelector(s *statement.Statement, l *lexer.Lexer) error {
 
 			switch sel {
 			case lexer.LARGER:
-				s.SetSelector(selector.LargerThanInt{Name: name, Value: val})
+				list = append(list, selector.LargerThanInt{Name: name, Value: val})
 			case lexer.LESS:
-				s.SetSelector(selector.LessThanInt{Name: name, Value: val})
+				list = append(list, selector.LessThanInt{Name: name, Value: val})
 			}
 		}
 
@@ -199,12 +203,15 @@ func (p *Parser) ParseSelector(s *statement.Statement, l *lexer.Lexer) error {
 
 			switch sel {
 			case lexer.LARGER:
-				s.SetSelector(selector.LargerThanFloat{Name: name, Value: val})
+				list = append(list, selector.LargerThanFloat{Name: name, Value: val})
 			case lexer.LESS:
-				s.SetSelector(selector.LessThanFloat{Name: name, Value: val})
+				list = append(list, selector.LessThanFloat{Name: name, Value: val})
 			}
 		}
 	}
+
+	s.SetSelector(list...)
+	return nil
 }
 
 func (p *Parser) Parse(query string) (*statement.Statement, error) {
