@@ -242,20 +242,16 @@ func TestSumInt(t *testing.T) {
 		Value int
 	}
 
-	events := event.List(
-		IntEvent{"foo", 10},
-		IntEvent{"foo", 20},
-	)
-
 	f := SumInt{"Value", "sum(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(IntEvent{"foo", 30}))
+	result = f.Apply(append(result, event.List(IntEvent{"foo", 30})...))
 
 	var test = []struct {
 		index int
 		sum   int
 	}{
 		{0, 30},
-		{1, 30},
+		{1, 60},
 	}
 
 	for _, tt := range test {
@@ -271,20 +267,16 @@ func TestSumFloat(t *testing.T) {
 		Value float64
 	}
 
-	events := event.List(
-		FloatEvent{"foo", 10.0},
-		FloatEvent{"foo", 20.0},
-	)
-
 	f := SumFloat{"Value", "sum(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(FloatEvent{"foo", 30}))
+	result = f.Apply(append(result, event.List(FloatEvent{"foo", 30})...))
 
 	var test = []struct {
 		index int
 		sum   float64
 	}{
 		{0, 30.0},
-		{1, 30.0},
+		{1, 60.0},
 	}
 
 	for _, tt := range test {
@@ -300,25 +292,21 @@ func TestAverageInt(t *testing.T) {
 		Value int
 	}
 
-	events := event.List(
-		IntEvent{"foo", 10},
-		IntEvent{"foo", 20},
-	)
-
 	f := AverageInt{"Value", "avg(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(IntEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(IntEvent{"foo", 20})...))
 
 	var test = []struct {
 		index int
 		avg   float64
 	}{
-		{0, 15.0},
-		{1, 15.0},
+		{0, 10},
+		{1, 15},
 	}
 
 	for _, tt := range test {
 		if result[tt.index].Record["avg(Value)"] != tt.avg {
-			t.Error(result)
+			t.Errorf("%v %v\n", result[tt.index].Record["avg(Value)"], tt.avg)
 		}
 	}
 }
@@ -329,25 +317,21 @@ func TestAverageFloat(t *testing.T) {
 		Value float64
 	}
 
-	events := event.List(
-		FloatEvent{"foo", 10.0},
-		FloatEvent{"foo", 20.0},
-	)
-
 	f := AverageFloat{"Value", "avg(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(FloatEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(FloatEvent{"foo", 20})...))
 
 	var test = []struct {
 		index int
 		avg   float64
 	}{
-		{0, 15.0},
+		{0, 10.0},
 		{1, 15.0},
 	}
 
 	for _, tt := range test {
 		if result[tt.index].Record["avg(Value)"] != tt.avg {
-			t.Error(result)
+			t.Errorf("%v %v\n", result[tt.index].Record["avg(Value)"], tt.avg)
 		}
 	}
 }
@@ -358,19 +342,15 @@ func TestMaxInt(t *testing.T) {
 		Value int
 	}
 
-	events := event.List(
-		IntEvent{"foo", 10},
-		IntEvent{"foo", 20},
-	)
-
 	f := MaxInt{"Value", "max(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(IntEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(IntEvent{"foo", 20})...))
 
 	var test = []struct {
 		index int
 		max   int
 	}{
-		{0, 20},
+		{0, 10},
 		{1, 20},
 	}
 
@@ -387,19 +367,15 @@ func TestMaxFloat(t *testing.T) {
 		Value float64
 	}
 
-	events := event.List(
-		FloatEvent{"foo", 10},
-		FloatEvent{"foo", 20},
-	)
-
 	f := MaxFloat{"Value", "max(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(FloatEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(FloatEvent{"foo", 20})...))
 
 	var test = []struct {
 		index int
 		max   float64
 	}{
-		{0, 20.0},
+		{0, 10.0},
 		{1, 20.0},
 	}
 
@@ -416,13 +392,9 @@ func TestMinInt(t *testing.T) {
 		Value int
 	}
 
-	events := event.List(
-		IntEvent{"foo", 10},
-		IntEvent{"foo", 20},
-	)
-
 	f := MinInt{"Value", "min(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(IntEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(IntEvent{"foo", 20})...))
 
 	var test = []struct {
 		index int
@@ -445,13 +417,9 @@ func TestMinFloat(t *testing.T) {
 		Value float64
 	}
 
-	events := event.List(
-		FloatEvent{"foo", 10},
-		FloatEvent{"foo", 20},
-	)
-
 	f := MinFloat{"Value", "min(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(FloatEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(FloatEvent{"foo", 20})...))
 
 	var test = []struct {
 		index int
@@ -474,19 +442,15 @@ func TestMedianIntEvent(t *testing.T) {
 		Value int
 	}
 
-	events := event.List(
-		IntEvent{"foo", 10},
-		IntEvent{"foo", 20},
-	)
-
 	f := MedianInt{"Value", "median(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(IntEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(IntEvent{"foo", 20})...))
 
 	var test = []struct {
 		index  int
 		median float64
 	}{
-		{0, 15.0},
+		{0, 10.0},
 		{1, 15.0},
 	}
 
@@ -503,21 +467,18 @@ func TestMedianIntOdd(t *testing.T) {
 		Value int
 	}
 
-	events := event.List(
-		IntEvent{"foo", 10},
-		IntEvent{"foo", 20},
-		IntEvent{"foo", 30},
-	)
-
 	f := MedianInt{"Value", "median(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(IntEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(IntEvent{"foo", 20})...))
+	result = f.Apply(append(result, event.List(IntEvent{"foo", 30})...))
 
 	var test = []struct {
 		index  int
 		median float64
 	}{
-		{0, 20.0},
-		{1, 20.0},
+		{0, 10.0},
+		{1, 15.0},
+		{2, 20.0},
 	}
 
 	for _, tt := range test {
@@ -533,19 +494,15 @@ func TestMedianFloatEven(t *testing.T) {
 		Value float64
 	}
 
-	events := event.List(
-		FloatEvent{"foo", 10},
-		FloatEvent{"foo", 20},
-	)
-
 	f := MedianFloat{"Value", "median(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(FloatEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(FloatEvent{"foo", 20})...))
 
 	var test = []struct {
 		index  int
 		median float64
 	}{
-		{0, 15.0},
+		{0, 10.0},
 		{1, 15.0},
 	}
 
@@ -562,21 +519,18 @@ func TestMedianFloatOdd(t *testing.T) {
 		Value float64
 	}
 
-	events := event.List(
-		FloatEvent{"foo", 10},
-		FloatEvent{"foo", 20},
-		FloatEvent{"foo", 30},
-	)
-
 	f := MedianFloat{"Value", "median(Value)"}
-	result := f.Apply(events)
+	result := f.Apply(event.List(FloatEvent{"foo", 10}))
+	result = f.Apply(append(result, event.List(FloatEvent{"foo", 20})...))
+	result = f.Apply(append(result, event.List(FloatEvent{"foo", 30})...))
 
 	var test = []struct {
 		index  int
 		median float64
 	}{
-		{0, 20},
-		{1, 20},
+		{0, 10},
+		{1, 15},
+		{2, 20},
 	}
 
 	for _, tt := range test {

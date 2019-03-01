@@ -11,13 +11,13 @@ type SelectMapAll struct {
 }
 
 func (f SelectMapAll) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		ref := e.Value(f.Name)
-		for _, k := range ref.MapKeys() {
-			key := k.Interface().(string)
-			val := ref.MapIndex(k)
-			e.Record[key] = val.Interface()
-		}
+	e := event.Newest(events)
+
+	ref := e.Value(f.Name)
+	for _, k := range ref.MapKeys() {
+		key := k.Interface().(string)
+		val := ref.MapIndex(k)
+		e.Record[key] = val.Interface()
 	}
 
 	return events
@@ -30,9 +30,8 @@ type SelectMapString struct {
 }
 
 func (f SelectMapString) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		e.Record[f.As] = e.MapString(f.Name, f.Key)
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = e.MapString(f.Name, f.Key)
 
 	return events
 }
@@ -44,9 +43,8 @@ type SelectMapBool struct {
 }
 
 func (f SelectMapBool) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		e.Record[f.As] = e.MapBool(f.Name, f.Key)
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = e.MapBool(f.Name, f.Key)
 
 	return events
 }
@@ -58,9 +56,8 @@ type SelectMapInt struct {
 }
 
 func (f SelectMapInt) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		e.Record[f.As] = e.MapInt(f.Name, f.Key)
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = e.MapInt(f.Name, f.Key)
 
 	return events
 }
@@ -72,9 +69,8 @@ type SelectMapFloat struct {
 }
 
 func (f SelectMapFloat) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		e.Record[f.As] = e.MapFloat(f.Name, f.Key)
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = e.MapFloat(f.Name, f.Key)
 
 	return events
 }
@@ -91,9 +87,8 @@ func (f SumMapInt) Apply(events []event.Event) []event.Event {
 		sum = sum + e.MapInt(f.Name, f.Key)
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = sum
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = sum
 
 	return events
 }
@@ -110,9 +105,8 @@ func (f SumMapFloat) Apply(events []event.Event) []event.Event {
 		sum = sum + e.MapFloat(f.Name, f.Key)
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = sum
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = sum
 
 	return events
 }
@@ -128,12 +122,10 @@ func (f AverageMapInt) Apply(events []event.Event) []event.Event {
 	for _, e := range events {
 		sum = sum + e.MapInt(f.Name, f.Key)
 	}
-	length := len(events)
-	avg := float64(sum) / float64(length)
+	avg := float64(sum) / float64(len(events))
 
-	for _, e := range events {
-		e.Record[f.As] = avg
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = avg
 
 	return events
 }
@@ -149,12 +141,10 @@ func (f AverageMapFloat) Apply(events []event.Event) []event.Event {
 	for _, e := range events {
 		sum = sum + e.MapFloat(f.Name, f.Key)
 	}
-
 	avg := sum / float64(len(events))
 
-	for _, e := range events {
-		e.Record[f.As] = avg
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = avg
 
 	return events
 }
@@ -166,15 +156,14 @@ type CastMapStringToInt struct {
 }
 
 func (f CastMapStringToInt) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		str := e.MapString(f.Name, f.Key)
-		val, err := strconv.Atoi(str)
-		if err != nil {
-			panic(err)
-		}
+	e := event.Newest(events)
 
-		e.Record[f.As] = val
+	str := e.MapString(f.Name, f.Key)
+	val, err := strconv.Atoi(str)
+	if err != nil {
+		panic(err)
 	}
+	e.Record[f.As] = val
 
 	return events
 }
@@ -186,15 +175,14 @@ type CastMapStringToFloat struct {
 }
 
 func (f CastMapStringToFloat) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		str := e.MapString(f.Name, f.Key)
-		val, err := strconv.ParseFloat(str, 64)
-		if err != nil {
-			panic(err)
-		}
+	e := event.Newest(events)
 
-		e.Record[f.As] = val
+	str := e.MapString(f.Name, f.Key)
+	val, err := strconv.ParseFloat(str, 64)
+	if err != nil {
+		panic(err)
 	}
+	e.Record[f.As] = val
 
 	return events
 }
@@ -206,15 +194,14 @@ type CastMapStringToBool struct {
 }
 
 func (f CastMapStringToBool) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		str := e.MapString(f.Name, f.Key)
-		val, err := strconv.ParseBool(str)
-		if err != nil {
-			panic(err)
-		}
+	e := event.Newest(events)
 
-		e.Record[f.As] = val
+	str := e.MapString(f.Name, f.Key)
+	val, err := strconv.ParseBool(str)
+	if err != nil {
+		panic(err)
 	}
+	e.Record[f.As] = val
 
 	return events
 }

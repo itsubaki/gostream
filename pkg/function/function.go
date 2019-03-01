@@ -15,14 +15,15 @@ type SelectAll struct {
 }
 
 func (f SelectAll) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		t := e.ValueType()
-		for i := 0; i < t.NumField(); i++ {
-			f := t.Field(i)
-			v := e.Value(f.Name)
-			e.Record[f.Name] = v.Interface()
-		}
+	e := event.Newest(events)
+
+	t := e.ValueType()
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		v := e.Value(f.Name)
+		e.Record[f.Name] = v.Interface()
 	}
+
 	return events
 }
 
@@ -32,9 +33,9 @@ type SelectString struct {
 }
 
 func (f SelectString) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		e.Record[f.As] = e.String(f.Name)
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = e.String(f.Name)
+
 	return events
 }
 
@@ -44,9 +45,9 @@ type SelectBool struct {
 }
 
 func (f SelectBool) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		e.Record[f.As] = e.Bool(f.Name)
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = e.Bool(f.Name)
+
 	return events
 }
 
@@ -56,9 +57,9 @@ type SelectInt struct {
 }
 
 func (f SelectInt) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		e.Record[f.As] = e.Int(f.Name)
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = e.Int(f.Name)
+
 	return events
 }
 
@@ -68,9 +69,9 @@ type SelectFloat struct {
 }
 
 func (f SelectFloat) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		e.Record[f.As] = e.Float(f.Name)
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = e.Float(f.Name)
+
 	return events
 }
 
@@ -79,10 +80,9 @@ type Count struct {
 }
 
 func (f Count) Apply(events []event.Event) []event.Event {
-	count := len(events)
-	for _, e := range events {
-		e.Record[f.As] = count
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = len(events)
+
 	return events
 }
 
@@ -97,9 +97,8 @@ func (f SumInt) Apply(events []event.Event) []event.Event {
 		sum = sum + e.Int(f.Name)
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = sum
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = sum
 
 	return events
 }
@@ -115,9 +114,8 @@ func (f SumFloat) Apply(events []event.Event) []event.Event {
 		sum = sum + e.Float(f.Name)
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = sum
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = sum
 
 	return events
 }
@@ -127,19 +125,17 @@ type AverageInt struct {
 	As   string
 }
 
-func (f AverageInt) Apply(event []event.Event) []event.Event {
+func (f AverageInt) Apply(events []event.Event) []event.Event {
 	sum := 0
-	for _, e := range event {
+	for _, e := range events {
 		sum = sum + e.Int(f.Name)
 	}
-	length := len(event)
-	avg := float64(sum) / float64(length)
+	avg := float64(sum) / float64(len(events))
 
-	for _, e := range event {
-		e.Record[f.As] = avg
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = avg
 
-	return event
+	return events
 }
 
 type AverageFloat struct {
@@ -152,12 +148,10 @@ func (f AverageFloat) Apply(events []event.Event) []event.Event {
 	for _, e := range events {
 		sum = sum + e.Float(f.Name)
 	}
-	length := len(events)
-	avg := sum / float64(length)
+	avg := sum / float64(len(events))
 
-	for _, e := range events {
-		e.Record[f.As] = avg
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = avg
 
 	return events
 }
@@ -176,9 +170,8 @@ func (f MaxInt) Apply(events []event.Event) []event.Event {
 		}
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = max
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = max
 
 	return events
 }
@@ -194,9 +187,8 @@ func (f MaxFloat) Apply(events []event.Event) []event.Event {
 		max = math.Max(max, e.Float(f.Name))
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = max
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = max
 
 	return events
 }
@@ -215,9 +207,8 @@ func (f MinInt) Apply(events []event.Event) []event.Event {
 		}
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = min
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = min
 
 	return events
 }
@@ -233,9 +224,8 @@ func (f MinFloat) Apply(events []event.Event) []event.Event {
 		min = math.Min(min, e.Float(f.Name))
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = min
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = min
 
 	return events
 }
@@ -257,9 +247,8 @@ func (f MedianInt) Apply(events []event.Event) []event.Event {
 		median = float64(values[center-1]+values[center]) / float64(2)
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = median
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = median
 
 	return events
 }
@@ -281,9 +270,8 @@ func (f MedianFloat) Apply(events []event.Event) []event.Event {
 		median = (values[center-1] + values[center]) / float64(2)
 	}
 
-	for _, e := range events {
-		e.Record[f.As] = median
-	}
+	e := event.Newest(events)
+	e.Record[f.As] = median
 
 	return events
 }
@@ -294,11 +282,10 @@ type CastStringToInt struct {
 }
 
 func (f CastStringToInt) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		str := e.String(f.Name)
-		val, _ := strconv.Atoi(str)
-		e.Record[f.As] = val
-	}
+	e := event.Newest(events)
+	str := e.String(f.Name)
+	val, _ := strconv.Atoi(str)
+	e.Record[f.As] = val
 
 	return events
 }
@@ -309,11 +296,10 @@ type CastStringToFloat struct {
 }
 
 func (f CastStringToFloat) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		str := e.String(f.Name)
-		val, _ := strconv.ParseFloat(str, 64)
-		e.Record[f.As] = val
-	}
+	e := event.Newest(events)
+	str := e.String(f.Name)
+	val, _ := strconv.ParseFloat(str, 64)
+	e.Record[f.As] = val
 
 	return events
 }
@@ -324,11 +310,10 @@ type CastStringToBool struct {
 }
 
 func (f CastStringToBool) Apply(events []event.Event) []event.Event {
-	for _, e := range events {
-		str := e.String(f.Name)
-		val, _ := strconv.ParseBool(str)
-		e.Record[f.As] = val
-	}
+	e := event.Newest(events)
+	str := e.String(f.Name)
+	val, _ := strconv.ParseBool(str)
+	e.Record[f.As] = val
 
 	return events
 }

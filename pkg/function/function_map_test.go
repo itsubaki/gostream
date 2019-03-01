@@ -300,24 +300,17 @@ func TestCastMapStringToInt(t *testing.T) {
 	m := make(map[string]interface{})
 	m["piyo"] = "123"
 
-	events := event.List(
-		MapEvent{m},
-		MapEvent{m},
-	)
+	events := event.List(MapEvent{m})
 	cast := CastMapStringToInt{"Record", "piyo", "cast(Record:piyo)"}
 	casted := cast.Apply(events)
 	if casted[0].RecordInt("cast(Record:piyo)") != 123 {
 		t.Error(casted)
 	}
 
-	events = event.List(
-		MapEvent{casted[0].Record},
-		MapEvent{casted[0].Record},
-	)
-
+	events = event.List(MapEvent{casted[0].Record})
 	sum := SumMapInt{"Record", "cast(Record:piyo)", "sum(Record:cast(Record:piyo))"}
 	result := sum.Apply(events)
-	if result[0].RecordInt("sum(Record:cast(Record:piyo))") != 246 {
+	if result[0].RecordInt("sum(Record:cast(Record:piyo))") != 123 {
 		t.Error(result)
 	}
 }

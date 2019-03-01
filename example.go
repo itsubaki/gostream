@@ -26,10 +26,19 @@ func Example() {
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{Accept: LogEvent{}},
-		selector.LargerThanInt{Name: "Level", Value: 2},
+		selector.EqualsType{
+			Accept: LogEvent{},
+		},
+		selector.LargerThanInt{
+			Name:  "Level",
+			Value: 2,
+		},
 	)
-	w.SetFunction(function.Count{As: "count"})
+	w.SetFunction(
+		function.Count{
+			As: "count",
+		},
+	)
 
 	go func() {
 		for {
@@ -53,16 +62,33 @@ func Example2() {
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{Accept: MyEvent{}},
-		selector.LargerThanInt{Name: "Value", Value: 97},
+		selector.EqualsType{
+			Accept: MyEvent{},
+		},
+		selector.LargerThanInt{
+			Name:  "Value",
+			Value: 97,
+		},
 	)
 	w.SetFunction(
-		function.SelectString{Name: "Name", As: "n"},
-		function.SelectInt{Name: "Value", As: "v"},
+		function.SelectString{
+			Name: "Name",
+			As:   "n",
+		},
+		function.SelectInt{
+			Name: "Value",
+			As:   "v",
+		},
 	)
 	w.SetView(
-		view.OrderByInt{Name: "Value", Reverse: true},
-		view.Limit{Limit: 10, Offset: 5},
+		view.OrderByInt{
+			Name:    "Value",
+			Reverse: true,
+		},
+		view.Limit{
+			Limit:  10,
+			Offset: 5,
+		},
 	)
 
 	go func() {
@@ -86,11 +112,19 @@ func Example3() {
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{Accept: MyEvent{}},
+		selector.EqualsType{
+			Accept: MyEvent{},
+		},
 	)
 	w.SetFunction(
-		function.AverageInt{Name: "Value", As: "avg(Value)"},
-		function.SumInt{Name: "Value", As: "sum(Value)"},
+		function.AverageInt{
+			Name: "Value",
+			As:   "avg(Value)",
+		},
+		function.SumInt{
+			Name: "Value",
+			As:   "sum(Value)",
+		},
 	)
 }
 
