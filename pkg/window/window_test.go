@@ -526,7 +526,7 @@ func TestLengthWindowMap(t *testing.T) {
 		avg   float64
 	}{
 		{0, 2, 9, 8.5},
-		{1, 2, 8, 8.5},
+		{1, 2, 8, 7.5},
 	}
 
 	for _, tt := range test {

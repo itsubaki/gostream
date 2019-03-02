@@ -500,7 +500,7 @@ func TestMedianIntEvent(t *testing.T) {
 		Value int
 	}
 
-	f := MedianInt{"Value", "median(Value)"}
+	f := MedianInt{"Value", "med(Value)"}
 
 	events := event.List()
 
@@ -519,7 +519,7 @@ func TestMedianIntEvent(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if events[tt.index].Record["median(Value)"] != tt.median {
+		if events[tt.index].Record["med(Value)"] != tt.median {
 			t.Error(events)
 		}
 	}
@@ -531,7 +531,7 @@ func TestMedianIntOdd(t *testing.T) {
 		Value int
 	}
 
-	f := MedianInt{"Value", "median(Value)"}
+	f := MedianInt{"Value", "med(Value)"}
 
 	events := event.List()
 
@@ -554,7 +554,7 @@ func TestMedianIntOdd(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if events[tt.index].Record["median(Value)"] != tt.median {
+		if events[tt.index].Record["med(Value)"] != tt.median {
 			t.Error(events)
 		}
 	}
@@ -566,7 +566,7 @@ func TestMedianFloatEven(t *testing.T) {
 		Value float64
 	}
 
-	f := MedianFloat{"Value", "median(Value)"}
+	f := MedianFloat{"Value", "med(Value)"}
 
 	events := event.List()
 
@@ -585,7 +585,7 @@ func TestMedianFloatEven(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if events[tt.index].Record["median(Value)"] != tt.median {
+		if events[tt.index].Record["med(Value)"] != tt.median {
 			t.Error(events)
 		}
 	}
@@ -597,7 +597,7 @@ func TestMedianFloatOdd(t *testing.T) {
 		Value float64
 	}
 
-	f := MedianFloat{"Value", "median(Value)"}
+	f := MedianFloat{"Value", "med(Value)"}
 
 	events := event.List()
 
@@ -620,7 +620,7 @@ func TestMedianFloatOdd(t *testing.T) {
 	}
 
 	for _, tt := range test {
-		if events[tt.index].Record["median(Value)"] != tt.median {
+		if events[tt.index].Record["med(Value)"] != tt.median {
 			t.Error(events)
 		}
 	}
