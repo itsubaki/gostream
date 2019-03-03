@@ -1,7 +1,7 @@
 language: go
 
 install:
-  - go get github.com/itsubaki/gocep
+  - go get github.com/itsubaki/gostream-core
 
 script:
   - go test -cover $(go list ./... | grep -v /vendor/ | grep -v /build/) -v
