@@ -15,7 +15,7 @@ import (
 	"github.com/itsubaki/gocep/pkg/window"
 )
 
-func Example() {
+func TimeWindow() {
 	type LogEvent struct {
 		Time    time.Time
 		Level   int
@@ -52,7 +52,33 @@ func Example() {
 	w.Input() <- LogEvent{time.Now(), 1, "this is text log."}
 }
 
-func Example2() {
+func LengthWindow() {
+	type MyEvent struct {
+		Name  string
+		Value int
+	}
+
+	w := window.NewLength(10)
+	defer w.Close()
+
+	w.SetSelector(
+		selector.EqualsType{
+			Accept: MyEvent{},
+		},
+	)
+	w.SetFunction(
+		function.AverageInt{
+			Name: "Value",
+			As:   "avg(Value)",
+		},
+		function.SumInt{
+			Name: "Value",
+			As:   "sum(Value)",
+		},
+	)
+}
+
+func View() {
 	type MyEvent struct {
 		Name  string
 		Value int
@@ -100,32 +126,6 @@ func Example2() {
 	for i := 0; i < 100; i++ {
 		w.Input() <- MyEvent{"name", i}
 	}
-}
-
-func Example3() {
-	type MyEvent struct {
-		Name  string
-		Value int
-	}
-
-	w := window.NewLength(10)
-	defer w.Close()
-
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: MyEvent{},
-		},
-	)
-	w.SetFunction(
-		function.AverageInt{
-			Name: "Value",
-			As:   "avg(Value)",
-		},
-		function.SumInt{
-			Name: "Value",
-			As:   "sum(Value)",
-		},
-	)
 }
 
 func Builder() {
