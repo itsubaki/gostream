@@ -6,13 +6,13 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/itsubaki/gocep/pkg/builder"
-	"github.com/itsubaki/gocep/pkg/event"
-	"github.com/itsubaki/gocep/pkg/function"
-	"github.com/itsubaki/gocep/pkg/parser"
-	"github.com/itsubaki/gocep/pkg/selector"
-	"github.com/itsubaki/gocep/pkg/view"
-	"github.com/itsubaki/gocep/pkg/window"
+	"github.com/itsubaki/gostream-core/pkg/builder"
+	"github.com/itsubaki/gostream-core/pkg/event"
+	"github.com/itsubaki/gostream-core/pkg/function"
+	"github.com/itsubaki/gostream-core/pkg/parser"
+	"github.com/itsubaki/gostream-core/pkg/selector"
+	"github.com/itsubaki/gostream-core/pkg/view"
+	"github.com/itsubaki/gostream-core/pkg/window"
 )
 
 func TimeWindow() {

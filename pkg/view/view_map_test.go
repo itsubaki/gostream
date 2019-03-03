@@ -3,7 +3,7 @@ package view
 import (
 	"testing"
 
-	"github.com/itsubaki/gocep/pkg/event"
+	"github.com/itsubaki/gostream-core/pkg/event"
 )
 
 func TestOrderByMapInt(t *testing.T) {

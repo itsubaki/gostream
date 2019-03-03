@@ -1,7 +1,7 @@
-# gocep
+# gostream-core
 
-[![Build Status](https://travis-ci.org/itsubaki/gocep.svg?branch=develop)](https://travis-ci.org/itsubaki/gocep)
-[![Go Report Card](https://goreportcard.com/badge/github.com/itsubaki/gocep?style=flat-square)](https://goreportcard.com/report/github.com/itsubaki/gocep)
+[![Build Status](https://travis-ci.org/itsubaki/gostream-core.svg?branch=develop)](https://travis-ci.org/itsubaki/gostream-core)
+[![Go Report Card](https://goreportcard.com/badge/github.com/itsubaki/gostream-core?style=flat-square)](https://goreportcard.com/report/github.com/itsubaki/gostream-core)
 
 
 The Stream Processing API for Go
@@ -36,7 +36,7 @@ The Stream Processing API for Go
 ## Install
 
 ```console
-go get github.com/itsubaki/gocep
+go get github.com/itsubaki/gostream-core
 ```
 
 # Example

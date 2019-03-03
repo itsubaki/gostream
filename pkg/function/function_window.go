@@ -3,7 +3,7 @@ package function
 import (
 	"time"
 
-	"github.com/itsubaki/gocep/pkg/event"
+	"github.com/itsubaki/gostream-core/pkg/event"
 )
 
 type Length struct {

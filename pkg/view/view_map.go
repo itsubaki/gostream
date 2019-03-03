@@ -3,7 +3,7 @@ package view
 import (
 	"sort"
 
-	"github.com/itsubaki/gocep/pkg/event"
+	"github.com/itsubaki/gostream-core/pkg/event"
 )
 
 type SortableMapInt struct {

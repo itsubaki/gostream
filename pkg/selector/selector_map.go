@@ -1,6 +1,6 @@
 package selector
 
-import "github.com/itsubaki/gocep/pkg/event"
+import "github.com/itsubaki/gostream-core/pkg/event"
 
 type EqualsMapString struct {
 	Name  string

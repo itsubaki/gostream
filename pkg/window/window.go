@@ -5,10 +5,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/itsubaki/gocep/pkg/event"
-	"github.com/itsubaki/gocep/pkg/function"
-	"github.com/itsubaki/gocep/pkg/selector"
-	"github.com/itsubaki/gocep/pkg/view"
+	"github.com/itsubaki/gostream-core/pkg/event"
+	"github.com/itsubaki/gostream-core/pkg/function"
+	"github.com/itsubaki/gostream-core/pkg/selector"
+	"github.com/itsubaki/gostream-core/pkg/view"
 )
 
 type Window interface {

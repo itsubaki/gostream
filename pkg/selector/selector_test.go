@@ -3,7 +3,7 @@ package selector
 import (
 	"testing"
 
-	"github.com/itsubaki/gocep/pkg/event"
+	"github.com/itsubaki/gostream-core/pkg/event"
 )
 
 func BenchmarkEqualsType(b *testing.B) {

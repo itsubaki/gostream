@@ -3,7 +3,7 @@ package function
 import (
 	"strconv"
 
-	"github.com/itsubaki/gocep/pkg/event"
+	"github.com/itsubaki/gostream-core/pkg/event"
 )
 
 type SelectMapAll struct {
