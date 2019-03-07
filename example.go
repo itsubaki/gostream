@@ -44,12 +44,16 @@ func TimeWindow() {
 		for {
 			newest := event.Newest(<-w.Output())
 			if newest.Int("count") > 10 {
-				// notification
+				fmt.Println("Notify!")
 			}
 		}
 	}()
 
-	w.Input() <- LogEvent{time.Now(), 1, "this is text log."}
+	w.Input() <- LogEvent{
+		Time:    time.Now(),
+		Level:   1,
+		Message: "this is text log.",
+	}
 }
 
 func LengthWindow() {
@@ -124,7 +128,10 @@ func View() {
 	}()
 
 	for i := 0; i < 100; i++ {
-		w.Input() <- MyEvent{"name", i}
+		w.Input() <- MyEvent{
+			Name:  "name",
+			Value: i,
+		}
 	}
 }
 
