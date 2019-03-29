@@ -49,13 +49,10 @@ type LogEvent struct {
 }
 
 // select count(*) from LogEvent.time(10sec) where Level > 2
-w := window.NewTime(10*time.Second)
+w := window.NewTime(LogEvent{}, 10*time.Second)
 defer w.Close()
 
 w.SetSelector(
-  selector.EqualsType{
-    Accept: LogEvent{},
-  },
   selector.LargerThanInt{
     Name: "Level",
     Value: 2,
@@ -95,13 +92,10 @@ type MyEvent struct {
 //  orderby Value DESC
 //  limit 10 offset 5
 
-w := window.NewTime(10 * time.Millisecond)
+w := window.NewTime(MyEvent{}, 10 * time.Millisecond)
 defer w.Close()
 
 w.SetSelector(
-  selector.EqualsType{
-    Accept: MyEvent{},
-  },
   selector.LargerThanInt{
     Name: "Value",
     Value: 97,
@@ -145,14 +139,9 @@ for i := 0; i < 100; i++ {
 
 ```go
 // select avg(Value), sum(Value) from MyEvent.length(10)
-w := window.NewLength(10)
+w := window.NewLength(MyEvent{}, 10)
 defer w.Close()
 
-w.SetSelector(
-  selector.EqualsType{
-    Accept: MyEvent{},
-  },
-)
 w.SetFunction(
   function.AverageInt{
     Name: "Value",

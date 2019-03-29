@@ -180,12 +180,15 @@ func (w *IdentityWindow) IsClosed() bool {
 	return w.closed
 }
 
-type LengthWindow struct {
-	Window
-}
+func NewLength(_type interface{}, length int, capacity ...int) Window {
+	w := NewIdentity(capacity...)
 
-func NewLength(length int, capacity ...int) Window {
-	w := &LengthWindow{NewIdentity(capacity...)}
+	w.SetSelector(
+		selector.EqualsType{
+			Accept: _type,
+		},
+	)
+
 	w.SetFunction(
 		&function.Length{
 			Length: length,
@@ -195,12 +198,15 @@ func NewLength(length int, capacity ...int) Window {
 	return w
 }
 
-type LengthBatchWindow struct {
-	Window
-}
+func NewLengthBatch(_type interface{}, length int, capacity ...int) Window {
+	w := NewIdentity(capacity...)
 
-func NewLengthBatch(length int, capacity ...int) Window {
-	w := &LengthWindow{NewIdentity(capacity...)}
+	w.SetSelector(
+		selector.EqualsType{
+			Accept: _type,
+		},
+	)
+
 	w.SetFunction(
 		&function.LengthBatch{
 			Length: length,
@@ -211,12 +217,15 @@ func NewLengthBatch(length int, capacity ...int) Window {
 	return w
 }
 
-type TimeWindow struct {
-	Window
-}
+func NewTime(_type interface{}, expire time.Duration, capacity ...int) Window {
+	w := NewIdentity(capacity...)
 
-func NewTime(expire time.Duration, capacity ...int) Window {
-	w := &TimeWindow{NewIdentity(capacity...)}
+	w.SetSelector(
+		selector.EqualsType{
+			Accept: _type,
+		},
+	)
+
 	w.SetFunction(
 		&function.TimeDuration{
 			Expire: expire,
@@ -226,12 +235,14 @@ func NewTime(expire time.Duration, capacity ...int) Window {
 	return w
 }
 
-type TimeBatchWindow struct {
-	Window
-}
+func NewTimeBatch(_type interface{}, expire time.Duration, capacity ...int) Window {
+	w := NewIdentity(capacity...)
 
-func NewTimeBatch(expire time.Duration, capacity ...int) Window {
-	w := &TimeBatchWindow{NewIdentity(capacity...)}
+	w.SetSelector(
+		selector.EqualsType{
+			Accept: _type,
+		},
+	)
 
 	start := time.Now()
 	end := start.Add(expire)

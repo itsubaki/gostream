@@ -58,19 +58,19 @@ func (st *Statement) SetView(v ...view.View) {
 
 func (st *Statement) New(capacity ...int) (w window.Window) {
 	if st.Window == lexer.LENGTH {
-		w = window.NewLength(st.Length, capacity...)
+		w = window.NewLength(st.EventType, st.Length, capacity...)
 	}
 
 	if st.Window == lexer.LENGTH_BATCH {
-		w = window.NewLengthBatch(st.Length, capacity...)
+		w = window.NewLengthBatch(st.EventType, st.Length, capacity...)
 	}
 
 	if st.Window == lexer.TIME {
-		w = window.NewTime(st.Time, capacity...)
+		w = window.NewTime(st.EventType, st.Time, capacity...)
 	}
 
 	if st.Window == lexer.TIME_BATCH {
-		w = window.NewTimeBatch(st.Time, capacity...)
+		w = window.NewTimeBatch(st.EventType, st.Time, capacity...)
 	}
 
 	w.SetSelector(st.Selector...)

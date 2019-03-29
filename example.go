@@ -22,18 +22,16 @@ func TimeWindow() {
 		Message string
 	}
 
-	w := window.NewTime(10 * time.Second)
+	w := window.NewTime(LogEvent{}, 10*time.Second)
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{
-			Accept: LogEvent{},
-		},
 		selector.LargerThanInt{
 			Name:  "Level",
 			Value: 2,
 		},
 	)
+
 	w.SetFunction(
 		function.Count{
 			As: "count",
@@ -62,14 +60,9 @@ func LengthWindow() {
 		Value int
 	}
 
-	w := window.NewLength(10)
+	w := window.NewLength(MyEvent{}, 10)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: MyEvent{},
-		},
-	)
 	w.SetFunction(
 		function.AverageInt{
 			Name: "Value",
@@ -88,13 +81,10 @@ func View() {
 		Value int
 	}
 
-	w := window.NewTime(10 * time.Millisecond)
+	w := window.NewTime(MyEvent{}, 10*time.Millisecond)
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{
-			Accept: MyEvent{},
-		},
 		selector.LargerThanInt{
 			Name:  "Value",
 			Value: 97,

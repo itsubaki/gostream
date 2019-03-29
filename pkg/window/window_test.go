@@ -17,14 +17,8 @@ func BenchmarkLengthWindowNoFunction128(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(128)
+	w := NewLength(MapEvent{}, 128)
 	defer w.Close()
-
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: MapEvent{},
-		},
-	)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -42,14 +36,8 @@ func BenchmarkLengthWindowSumInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(1)
+	w := NewLength(IntEvent{}, 1)
 	defer w.Close()
-
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
-	)
 
 	w.SetFunction(
 		function.SumInt{
@@ -70,14 +58,9 @@ func BenchmarkLengthWindowSumInt64(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(64)
+	w := NewLength(IntEvent{}, 64)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
-	)
 	w.SetFunction(
 		function.SumInt{
 			Name: "Value",
@@ -97,14 +80,9 @@ func BenchmarkLengthWindowSumInt128(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(128)
+	w := NewLength(IntEvent{}, 128)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
-	)
 	w.SetFunction(
 		function.SumInt{
 			Name: "Value",
@@ -124,14 +102,9 @@ func BenchmarkLengthWindowSumInt256(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(256)
+	w := NewLength(IntEvent{}, 256)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
-	)
 	w.SetFunction(
 		function.SumInt{
 			Name: "Value",
@@ -150,14 +123,9 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(128)
+	w := NewLength(MapEvent{}, 128)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: MapEvent{},
-		},
-	)
 	w.SetFunction(
 		function.AverageMapInt{
 			Name: "Record",
@@ -182,14 +150,9 @@ func BenchmarkLengthWindowAverageInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(128)
+	w := NewLength(IntEvent{}, 128)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
-	)
 	w.SetFunction(
 		function.AverageInt{
 			Name: "Value",
@@ -208,13 +171,10 @@ func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(128)
+	w := NewLength(MapEvent{}, 128)
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{
-			Accept: MapEvent{},
-		},
 		selector.LargerThanMapInt{
 			Name:  "Record",
 			Key:   "Value",
@@ -237,13 +197,10 @@ func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(128)
+	w := NewLength(IntEvent{}, 128)
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
 		selector.LargerThanInt{
 			Name:  "Value",
 			Value: 100,
@@ -261,14 +218,9 @@ func BenchmarkLengthWindowOrderByMap(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(128)
+	w := NewLength(MapEvent{}, 128)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: MapEvent{},
-		},
-	)
 	w.SetView(
 		view.OrderByMapInt{
 			Name:    "Record",
@@ -292,14 +244,9 @@ func BenchmarkLengthWindowOrderByInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(128)
+	w := NewLength(IntEvent{}, 128)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
-	)
 	w.SetView(
 		view.OrderByInt{
 			Name:    "Value",
@@ -318,14 +265,9 @@ func BenchmarkLengthWindowOrderByReverseMap(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(128)
+	w := NewLength(MapEvent{}, 128)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: MapEvent{},
-		},
-	)
 	w.SetView(
 		view.OrderByMapInt{
 			Name:    "Record",
@@ -348,14 +290,9 @@ func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(128)
+	w := NewLength(IntEvent{}, 128)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
-	)
 	w.SetView(
 		view.OrderByInt{
 			Name:    "Value",
@@ -375,13 +312,10 @@ func TestConcurrency(t *testing.T) {
 		Value int
 	}
 
-	w := NewLength(2)
+	w := NewLength(IntEvent{}, 2)
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
 		selector.LargerThanInt{
 			Name:  "Value",
 			Value: 1,
@@ -420,13 +354,10 @@ func TestLengthWindow(t *testing.T) {
 		Value int
 	}
 
-	w := NewLength(2)
+	w := NewLength(IntEvent{}, 2)
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
 		selector.LargerThanInt{
 			Name:  "Value",
 			Value: 1,
@@ -481,13 +412,10 @@ func TestLengthWindowMap(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(2)
+	w := NewLength(MapEvent{}, 2)
 	defer w.Close()
 
 	w.SetSelector(
-		selector.EqualsType{
-			Accept: MapEvent{},
-		},
 		selector.LargerThanMapInt{
 			Name:  "Record",
 			Key:   "Value",
@@ -548,10 +476,9 @@ func TestLengthWindowListen(t *testing.T) {
 		Value int
 	}
 
-	w := NewLength(2)
+	w := NewLength(IntEvent{}, 2)
 	defer w.Close()
 
-	w.SetSelector(selector.EqualsType{Accept: IntEvent{}})
 	w.Listen("")
 }
 
@@ -561,10 +488,8 @@ func TestLengthBatchWindow(t *testing.T) {
 		Value int
 	}
 
-	w := NewLengthBatch(2)
+	w := NewLengthBatch(IntEvent{}, 2)
 	defer w.Close()
-
-	w.SetSelector(selector.EqualsType{Accept: IntEvent{}})
 
 	events := event.List()
 	for i := 0; i < 10; i++ {
@@ -586,7 +511,7 @@ func TestTimeWindow0ms(t *testing.T) {
 		Value int
 	}
 
-	w := NewTime(0 * time.Millisecond)
+	w := NewTime(IntEvent{}, 0*time.Millisecond)
 	defer w.Close()
 
 	events := event.List()
@@ -605,7 +530,7 @@ func TestTimeWindow10ms(t *testing.T) {
 		Value int
 	}
 
-	w := NewTime(1 * time.Millisecond)
+	w := NewTime(IntEvent{}, 1*time.Millisecond)
 	defer w.Close()
 
 	events := event.List()
@@ -624,7 +549,7 @@ func TestTimeBatchWindow10ms(t *testing.T) {
 		Value int
 	}
 
-	w := NewTimeBatch(4 * time.Millisecond)
+	w := NewTimeBatch(IntEvent{}, 4*time.Millisecond)
 	defer w.Close()
 
 	for i := 0; i < 10; i++ {
@@ -644,14 +569,9 @@ func TestLengthWindowPanic(t *testing.T) {
 		Value int
 	}
 
-	w := NewLength(10)
+	w := NewLength(IntEvent{}, 10)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.EqualsType{
-			Accept: IntEvent{},
-		},
-	)
 	// IntEvent and Map Function -> panic!!
 	w.SetFunction(
 		function.AverageMapInt{
