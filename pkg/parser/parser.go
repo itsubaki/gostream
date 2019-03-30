@@ -103,7 +103,6 @@ func (p *Parser) ParseEventType(s *statement.Statement, l *lexer.Lexer) error {
 			}
 
 			s.SetEventType(v)
-			s.SetSelector(selector.EqualsType{Accept: v})
 		}
 	}
 }
