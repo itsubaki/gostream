@@ -3,11 +3,11 @@ package statement
 import (
 	"time"
 
-	"github.com/itsubaki/gostream-core/pkg/function"
-	"github.com/itsubaki/gostream-core/pkg/lexer"
-	"github.com/itsubaki/gostream-core/pkg/selector"
-	"github.com/itsubaki/gostream-core/pkg/view"
-	"github.com/itsubaki/gostream-core/pkg/window"
+	"github.com/itsubaki/gostream/pkg/function"
+	"github.com/itsubaki/gostream/pkg/lexer"
+	"github.com/itsubaki/gostream/pkg/selector"
+	"github.com/itsubaki/gostream/pkg/view"
+	"github.com/itsubaki/gostream/pkg/window"
 )
 
 type Statement struct {

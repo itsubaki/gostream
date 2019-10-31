@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/itsubaki/gostream-core/pkg/event"
+	"github.com/itsubaki/gostream/pkg/event"
 )
 
 func TestStructBuilder(t *testing.T) {

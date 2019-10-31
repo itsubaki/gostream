@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/itsubaki/gostream-core/pkg/event"
+	"github.com/itsubaki/gostream/pkg/event"
 )
 
 func TestTimeDurationBatch(t *testing.T) {

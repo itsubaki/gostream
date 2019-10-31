@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itsubaki/gostream-core/pkg/function"
-	"github.com/itsubaki/gostream-core/pkg/lexer"
-	"github.com/itsubaki/gostream-core/pkg/selector"
-	"github.com/itsubaki/gostream-core/pkg/statement"
+	"github.com/itsubaki/gostream/pkg/function"
+	"github.com/itsubaki/gostream/pkg/lexer"
+	"github.com/itsubaki/gostream/pkg/selector"
+	"github.com/itsubaki/gostream/pkg/statement"
 )
 
 type Registry map[string]interface{}

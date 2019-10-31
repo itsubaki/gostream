@@ -4,7 +4,7 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/itsubaki/gostream-core/pkg/event"
+	"github.com/itsubaki/gostream/pkg/event"
 )
 
 type Function interface {

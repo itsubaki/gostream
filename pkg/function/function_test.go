@@ -3,7 +3,7 @@ package function
 import (
 	"testing"
 
-	"github.com/itsubaki/gostream-core/pkg/event"
+	"github.com/itsubaki/gostream/pkg/event"
 )
 
 func BenchmarkSumRaw128(b *testing.B) {
