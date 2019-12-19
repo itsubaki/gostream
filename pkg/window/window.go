@@ -41,7 +41,6 @@ type IdentityWindow struct {
 	view     []view.View
 	closed   bool
 	mutex    sync.RWMutex
-	Canceller
 }
 
 func Capacity(capacity ...int) int {
@@ -64,7 +63,6 @@ func NewIdentity(capacity ...int) Window {
 		[]view.View{},
 		false,
 		sync.RWMutex{},
-		NewCanceller(),
 	}
 
 	go w.Work()
@@ -112,13 +110,8 @@ func (w *IdentityWindow) Capacity() int {
 }
 
 func (w *IdentityWindow) Work() {
-	for {
-		select {
-		case <-w.Context.Done():
-			return
-		case input := <-w.in:
-			w.Listen(input)
-		}
+	for input := range w.in{
+		w.Listen(input)
 	}
 }
 
@@ -171,7 +164,7 @@ func (w *IdentityWindow) Close() {
 	}
 
 	w.closed = true
-	w.Cancel()
+
 	close(w.Input())
 	close(w.Output())
 }
