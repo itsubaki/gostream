@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/itsubaki/gostream.svg?branch=develop)](https://travis-ci.org/itsubaki/gostream)
 [![Go Report Card](https://goreportcard.com/badge/github.com/itsubaki/gostream?style=flat-square)](https://goreportcard.com/report/github.com/itsubaki/gostream)
 
-The Stream Processing API for Go
+A Stream Processing API for Go
 
 ## TODO
 
