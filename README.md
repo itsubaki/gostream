@@ -12,21 +12,21 @@ The Stream Processing API for Go
     + [x] LengthBatchWindow
     + [x] TimeWindow
     + [x] TimeBatchWindow
- - [x] Selector
+ - [x] Where
     + [x] EqualsType, NotEqualsType
     + [x] Equals, NotEquals
     + [x] LargerThan, LessThan
+ - [ ] GroupBy
  - [x] Function
     + [x] Max, Min, Median
     + [x] Count, Sum, Average
     + [x] Cast
     + [x] As
-    + [x] SelectAll, Select
-    + [ ] GroupBy
-    + [ ] Having
- - [x] View
-    + [x] OrderBy, Limit
-    + [x] First, Last
+ - [ ] Having
+ - [x] Select
+    + [ ] Distinct
+ - [x] OrderBy
+ - [x] Limit, First, Last
  - [ ] Tool
     + [x] Builder
     + [x] Lexer
@@ -51,14 +51,14 @@ type LogEvent struct {
 w := window.NewTime(LogEvent{}, 10*time.Second)
 defer w.Close()
 
-w.SetSelector(
-  selector.LargerThanInt{
+w.SetWhere(
+  expr.LargerThanInt{
     Name: "Level",
     Value: 2,
   },
 )
 w.SetFunction(
-  function.Count{
+  expr.Count{
     As: "count",
   },
 )
@@ -94,28 +94,30 @@ type MyEvent struct {
 w := window.NewTime(MyEvent{}, 10 * time.Millisecond)
 defer w.Close()
 
-w.SetSelector(
-  selector.LargerThanInt{
+w.SetWhere(
+  expr.LargerThanInt{
     Name: "Value",
     Value: 97,
   },
 )
 w.SetFunction(
-  function.SelectString{
+  expr.SelectString{
     Name: "Name",
     As: "n",
   },
-  function.SelectInt{
+  expr.SelectInt{
     Name: "Value",
     As: "v",
   },
 )
-w.SetView(
-  view.OrderByInt{
+w.SetOrderBy(
+  expr.OrderByInt{
     Name: "Value",
     Reverse: true,
   },
-  view.Limit{
+)
+w.SetLiimt(
+  expr.Limit{
     Limit: 10,
     Offset: 5,
   },
@@ -142,11 +144,11 @@ w := window.NewLength(MyEvent{}, 10)
 defer w.Close()
 
 w.SetFunction(
-  function.AverageInt{
+  expr.AverageInt{
     Name: "Value",
     As:   "avg(Value)",
   },
-  function.SumInt{
+  expr.SumInt{
     Name: "Value",
     As:   "sum(Value)",
   },

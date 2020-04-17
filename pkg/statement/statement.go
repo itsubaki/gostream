@@ -3,11 +3,9 @@ package statement
 import (
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/function"
+	"github.com/itsubaki/gostream/pkg/expr"
 	"github.com/itsubaki/gostream/pkg/lexer"
-	"github.com/itsubaki/gostream/pkg/selector"
-	"github.com/itsubaki/gostream/pkg/view"
-	"github.com/itsubaki/gostream/pkg/window"
+	"github.com/itsubaki/gostream/pkg/stream"
 )
 
 type Statement struct {
@@ -15,67 +13,70 @@ type Statement struct {
 	EventType interface{}
 	Length    int
 	Time      time.Duration
-	Selector  []selector.Selector
-	Function  []function.Function
-	View      []view.View
+	Where     []expr.Where
+	Function  []expr.Function
+	OrderBy   []expr.OrderBy
+	Limit     []expr.LimitIF
 }
 
 func New() *Statement {
 	return &Statement{
-		Selector: []selector.Selector{},
-		Function: []function.Function{},
-		View:     []view.View{},
+		Where:    []expr.Where{},
+		Function: []expr.Function{},
+		OrderBy:  []expr.OrderBy{},
+		Limit:    []expr.LimitIF{},
 	}
 }
 
-func (st *Statement) SetEventType(_type interface{}) {
-	st.EventType = _type
+func (s *Statement) SetEventType(_type interface{}) {
+	s.EventType = _type
 }
 
-func (st *Statement) SetWindow(token lexer.Token) {
-	st.Window = token
+func (s *Statement) SetWindow(token lexer.Token) {
+	s.Window = token
 }
 
-func (st *Statement) SetLength(length int) {
-	st.Length = length
+func (s *Statement) SetLength(length int) {
+	s.Length = length
 }
 
-func (st *Statement) SetTime(t time.Duration) {
-	st.Time = t
+func (s *Statement) SetTime(t time.Duration) {
+	s.Time = t
 }
 
-func (st *Statement) SetSelector(s ...selector.Selector) {
-	st.Selector = append(st.Selector, s...)
+func (s *Statement) SetWhere(w ...expr.Where) {
+	s.Where = append(s.Where, w...)
 }
 
-func (st *Statement) SetFunction(f ...function.Function) {
-	st.Function = append(st.Function, f...)
+func (s *Statement) SetFunction(f ...expr.Function) {
+	s.Function = append(s.Function, f...)
 }
 
-func (st *Statement) SetView(v ...view.View) {
-	st.View = append(st.View, v...)
+func (s *Statement) SetOrderBy(o ...expr.OrderBy) {
+	s.OrderBy = append(s.OrderBy, o...)
 }
 
-func (st *Statement) New(capacity ...int) (w window.Window) {
-	if st.Window == lexer.LENGTH {
-		w = window.NewLength(st.EventType, st.Length, capacity...)
+func (s *Statement) New(capacity ...int) (w stream.Window) {
+	if s.Window == lexer.LENGTH {
+		w = stream.NewLength(s.EventType, s.Length, capacity...)
 	}
 
-	if st.Window == lexer.LENGTH_BATCH {
-		w = window.NewLengthBatch(st.EventType, st.Length, capacity...)
+	if s.Window == lexer.LENGTH_BATCH {
+		w = stream.NewLengthBatch(s.EventType, s.Length, capacity...)
 	}
 
-	if st.Window == lexer.TIME {
-		w = window.NewTime(st.EventType, st.Time, capacity...)
+	if s.Window == lexer.TIME {
+		w = stream.NewTime(s.EventType, s.Time, capacity...)
 	}
 
-	if st.Window == lexer.TIME_BATCH {
-		w = window.NewTimeBatch(st.EventType, st.Time, capacity...)
+	if s.Window == lexer.TIME_BATCH {
+		w = stream.NewTimeBatch(s.EventType, s.Time, capacity...)
 	}
 
-	w.SetSelector(st.Selector...)
-	w.SetFunction(st.Function...)
-	w.SetView(st.View...)
+	w.SetWhere(s.Where...)
+	w.SetFunction(s.Function...)
+	w.SetOrderBy(s.OrderBy...)
+	w.SetLimit(s.Limit...)
 
 	return w
 }

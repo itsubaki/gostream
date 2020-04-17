@@ -1,9 +1,8 @@
-package view
+package expr
 
 import (
-	"sort"
-
 	"github.com/itsubaki/gostream/pkg/event"
+	"sort"
 )
 
 type SortableMapInt struct {

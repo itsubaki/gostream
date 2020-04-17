@@ -1,4 +1,4 @@
-package window
+package stream
 
 import (
 	"log"
@@ -6,19 +6,19 @@ import (
 	"time"
 
 	"github.com/itsubaki/gostream/pkg/event"
-	"github.com/itsubaki/gostream/pkg/function"
-	"github.com/itsubaki/gostream/pkg/selector"
-	"github.com/itsubaki/gostream/pkg/view"
+	"github.com/itsubaki/gostream/pkg/expr"
 )
 
 type Window interface {
-	Selector() []selector.Selector
-	Function() []function.Function
-	View() []view.View
+	Where() []expr.Where
+	Function() []expr.Function
+	OrderBy() []expr.OrderBy
+	Limit() []expr.LimitIF
 
-	SetSelector(s ...selector.Selector)
-	SetFunction(f ...function.Function)
-	SetView(v ...view.View)
+	SetWhere(w ...expr.Where)
+	SetFunction(f ...expr.Function)
+	SetOrderBy(o ...expr.OrderBy)
+	SetLimit(l ...expr.LimitIF)
 
 	Input() chan interface{}
 	Output() chan []event.Event
@@ -36,9 +36,10 @@ type IdentityWindow struct {
 	in       chan interface{}
 	out      chan []event.Event
 	event    []event.Event
-	selector []selector.Selector
-	function []function.Function
-	view     []view.View
+	where    []expr.Where
+	function []expr.Function
+	orderBy  []expr.OrderBy
+	limit    []expr.LimitIF
 	closed   bool
 	mutex    sync.RWMutex
 }
@@ -54,43 +55,52 @@ func Capacity(capacity ...int) int {
 func NewIdentity(capacity ...int) Window {
 	cap := Capacity(capacity...)
 	w := &IdentityWindow{
-		cap,
-		make(chan interface{}, cap),
-		make(chan []event.Event, cap),
-		[]event.Event{},
-		[]selector.Selector{},
-		[]function.Function{},
-		[]view.View{},
-		false,
-		sync.RWMutex{},
+		capacity: cap,
+		in:       make(chan interface{}, cap),
+		out:      make(chan []event.Event, cap),
+		event:    []event.Event{},
+		where:    []expr.Where{},
+		function: []expr.Function{},
+		orderBy:  []expr.OrderBy{},
+		limit:    []expr.LimitIF{},
+		closed:   false,
+		mutex:    sync.RWMutex{},
 	}
 
 	go w.Work()
 	return w
 }
 
-func (w *IdentityWindow) Selector() []selector.Selector {
-	return w.selector
+func (w *IdentityWindow) Where() []expr.Where {
+	return w.where
 }
 
-func (w *IdentityWindow) Function() []function.Function {
+func (w *IdentityWindow) Function() []expr.Function {
 	return w.function
 }
 
-func (w *IdentityWindow) View() []view.View {
-	return w.view
+func (w *IdentityWindow) OrderBy() []expr.OrderBy {
+	return w.orderBy
 }
 
-func (w *IdentityWindow) SetSelector(s ...selector.Selector) {
-	w.selector = append(w.selector, s...)
+func (w *IdentityWindow) Limit() []expr.LimitIF {
+	return w.limit
 }
 
-func (w *IdentityWindow) SetFunction(f ...function.Function) {
+func (w *IdentityWindow) SetWhere(wh ...expr.Where) {
+	w.where = append(w.where, wh...)
+}
+
+func (w *IdentityWindow) SetFunction(f ...expr.Function) {
 	w.function = append(w.function, f...)
 }
 
-func (w *IdentityWindow) SetView(v ...view.View) {
-	w.view = append(w.view, v...)
+func (w *IdentityWindow) SetOrderBy(o ...expr.OrderBy) {
+	w.orderBy = append(w.orderBy, o...)
+}
+
+func (w *IdentityWindow) SetLimit(l ...expr.LimitIF) {
+	w.limit = append(w.limit, l...)
 }
 
 func (w *IdentityWindow) Input() chan interface{} {
@@ -110,7 +120,7 @@ func (w *IdentityWindow) Capacity() int {
 }
 
 func (w *IdentityWindow) Work() {
-	for input := range w.in{
+	for input := range w.in {
 		w.Listen(input)
 	}
 }
@@ -136,19 +146,28 @@ func (w *IdentityWindow) Update(input interface{}) []event.Event {
 	}()
 
 	e := event.New(input)
-	for _, s := range w.selector {
-		if !s.Select(e) {
+
+	// where
+	for _, s := range w.where {
+		if !s.Apply(e) {
 			return event.List()
 		}
 	}
 
+	// function
 	w.event = append(w.event, e)
 	for _, f := range w.function {
 		w.event = f.Apply(w.event)
 	}
 
+	// order by
 	events := append(event.List(), w.event...)
-	for _, f := range w.view {
+	for _, f := range w.orderBy {
+		events = f.Apply(events)
+	}
+
+	// limit
+	for _, f := range w.limit {
 		events = f.Apply(events)
 	}
 
@@ -176,14 +195,14 @@ func (w *IdentityWindow) IsClosed() bool {
 func NewLength(_type interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetSelector(
-		selector.EqualsType{
+	w.SetWhere(
+		expr.EqualsType{
 			Accept: _type,
 		},
 	)
 
 	w.SetFunction(
-		&function.Length{
+		&expr.Length{
 			Length: length,
 		},
 	)
@@ -194,14 +213,14 @@ func NewLength(_type interface{}, length int, capacity ...int) Window {
 func NewLengthBatch(_type interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetSelector(
-		selector.EqualsType{
+	w.SetWhere(
+		expr.EqualsType{
 			Accept: _type,
 		},
 	)
 
 	w.SetFunction(
-		&function.LengthBatch{
+		&expr.LengthBatch{
 			Length: length,
 			Batch:  event.List(),
 		},
@@ -213,14 +232,14 @@ func NewLengthBatch(_type interface{}, length int, capacity ...int) Window {
 func NewTime(_type interface{}, expire time.Duration, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetSelector(
-		selector.EqualsType{
+	w.SetWhere(
+		expr.EqualsType{
 			Accept: _type,
 		},
 	)
 
 	w.SetFunction(
-		&function.TimeDuration{
+		&expr.TimeDuration{
 			Expire: expire,
 		},
 	)
@@ -231,8 +250,8 @@ func NewTime(_type interface{}, expire time.Duration, capacity ...int) Window {
 func NewTimeBatch(_type interface{}, expire time.Duration, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetSelector(
-		selector.EqualsType{
+	w.SetWhere(
+		expr.EqualsType{
 			Accept: _type,
 		},
 	)
@@ -240,7 +259,7 @@ func NewTimeBatch(_type interface{}, expire time.Duration, capacity ...int) Wind
 	start := time.Now()
 	end := start.Add(expire)
 	w.SetFunction(
-		&function.TimeDurationBatch{
+		&expr.TimeDurationBatch{
 			Start:  start,
 			End:    end,
 			Expire: expire,

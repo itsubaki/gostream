@@ -8,11 +8,9 @@ import (
 
 	"github.com/itsubaki/gostream/pkg/builder"
 	"github.com/itsubaki/gostream/pkg/event"
-	"github.com/itsubaki/gostream/pkg/function"
+	"github.com/itsubaki/gostream/pkg/expr"
 	"github.com/itsubaki/gostream/pkg/parser"
-	"github.com/itsubaki/gostream/pkg/selector"
-	"github.com/itsubaki/gostream/pkg/view"
-	"github.com/itsubaki/gostream/pkg/window"
+	"github.com/itsubaki/gostream/pkg/stream"
 )
 
 func TimeWindow() {
@@ -22,18 +20,18 @@ func TimeWindow() {
 		Message string
 	}
 
-	w := window.NewTime(LogEvent{}, 10*time.Second)
+	w := stream.NewTime(LogEvent{}, 10*time.Second)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.LargerThanInt{
+	w.SetWhere(
+		expr.LargerThanInt{
 			Name:  "Level",
 			Value: 2,
 		},
 	)
 
 	w.SetFunction(
-		function.Count{
+		expr.Count{
 			As: "count",
 		},
 	)
@@ -60,15 +58,15 @@ func LengthWindow() {
 		Value int
 	}
 
-	w := window.NewLength(MyEvent{}, 10)
+	w := stream.NewLength(MyEvent{}, 10)
 	defer w.Close()
 
 	w.SetFunction(
-		function.AverageInt{
+		expr.AverageInt{
 			Name: "Value",
 			As:   "avg(Value)",
 		},
-		function.SumInt{
+		expr.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -81,35 +79,36 @@ func View() {
 		Value int
 	}
 
-	w := window.NewTime(MyEvent{}, 10*time.Millisecond)
+	w := stream.NewTime(MyEvent{}, 10*time.Millisecond)
 	defer w.Close()
 
-	w.SetSelector(
-		selector.LargerThanInt{
+	w.SetWhere(
+		expr.LargerThanInt{
 			Name:  "Value",
 			Value: 97,
 		},
 	)
 	w.SetFunction(
-		function.SelectString{
+		expr.SelectString{
 			Name: "Name",
 			As:   "n",
 		},
-		function.SelectInt{
+		expr.SelectInt{
 			Name: "Value",
 			As:   "v",
 		},
 	)
-	w.SetView(
-		view.OrderByInt{
+	w.SetOrderBy(
+		expr.OrderByInt{
 			Name:    "Value",
 			Reverse: true,
 		},
-		view.Limit{
+	)
+	w.SetLimit(
+		expr.Limit{
 			Limit:  10,
 			Offset: 5,
-		},
-	)
+		})
 
 	go func() {
 		for {

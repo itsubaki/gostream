@@ -55,12 +55,12 @@ func TestParserFloat(t *testing.T) {
 		t.Error(reflect.TypeOf(s.Function[5]).Name())
 	}
 
-	if reflect.TypeOf(s.Selector[0]).Name() != "LargerThanFloat" {
-		t.Error(reflect.TypeOf(s.Selector[0]).Name())
+	if reflect.TypeOf(s.Where[0]).Name() != "LargerThanFloat" {
+		t.Error(reflect.TypeOf(s.Where[0]).Name())
 	}
 
-	if reflect.TypeOf(s.Selector[1]).Name() != "LessThanFloat" {
-		t.Error(reflect.TypeOf(s.Selector[1]).Name())
+	if reflect.TypeOf(s.Where[1]).Name() != "LessThanFloat" {
+		t.Error(reflect.TypeOf(s.Where[1]).Name())
 	}
 }
 
@@ -113,12 +113,12 @@ func TestParserInt(t *testing.T) {
 		t.Error(reflect.TypeOf(s.Function[5]).Name())
 	}
 
-	if reflect.TypeOf(s.Selector[0]).Name() != "LargerThanInt" {
-		t.Error(reflect.TypeOf(s.Selector[0]).Name())
+	if reflect.TypeOf(s.Where[0]).Name() != "LargerThanInt" {
+		t.Error(reflect.TypeOf(s.Where[0]).Name())
 	}
 
-	if reflect.TypeOf(s.Selector[1]).Name() != "LessThanInt" {
-		t.Error(reflect.TypeOf(s.Selector[1]).Name())
+	if reflect.TypeOf(s.Where[1]).Name() != "LessThanInt" {
+		t.Error(reflect.TypeOf(s.Where[1]).Name())
 	}
 }
 

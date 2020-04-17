@@ -1,4 +1,4 @@
-package selector
+package expr
 
 import "github.com/itsubaki/gostream/pkg/event"
 
@@ -8,7 +8,7 @@ type EqualsMapString struct {
 	Value string
 }
 
-func (f EqualsMapString) Select(e event.Event) bool {
+func (f EqualsMapString) Apply(e event.Event) bool {
 	return e.MapString(f.Name, f.Key) == f.Value
 }
 
@@ -18,7 +18,7 @@ type EqualsMapBool struct {
 	Value bool
 }
 
-func (f EqualsMapBool) Select(e event.Event) bool {
+func (f EqualsMapBool) Apply(e event.Event) bool {
 	return e.MapBool(f.Name, f.Key) == f.Value
 }
 
@@ -28,7 +28,7 @@ type EqualsMapInt struct {
 	Value int
 }
 
-func (f EqualsMapInt) Select(e event.Event) bool {
+func (f EqualsMapInt) Apply(e event.Event) bool {
 	return e.MapInt(f.Name, f.Key) == f.Value
 }
 
@@ -38,7 +38,7 @@ type EqualsMapFloat struct {
 	Value float64
 }
 
-func (f EqualsMapFloat) Select(e event.Event) bool {
+func (f EqualsMapFloat) Apply(e event.Event) bool {
 	return e.MapFloat(f.Name, f.Key) == f.Value
 }
 
@@ -48,7 +48,7 @@ type NotEqualsMapString struct {
 	Value string
 }
 
-func (f NotEqualsMapString) Select(e event.Event) bool {
+func (f NotEqualsMapString) Apply(e event.Event) bool {
 	return e.MapString(f.Name, f.Key) != f.Value
 }
 
@@ -58,7 +58,7 @@ type NotEqualsMapBool struct {
 	Value bool
 }
 
-func (f NotEqualsMapBool) Select(e event.Event) bool {
+func (f NotEqualsMapBool) Apply(e event.Event) bool {
 	return e.MapBool(f.Name, f.Key) != f.Value
 }
 
@@ -68,7 +68,7 @@ type NotEqualsMapInt struct {
 	Value int
 }
 
-func (f NotEqualsMapInt) Select(e event.Event) bool {
+func (f NotEqualsMapInt) Apply(e event.Event) bool {
 	return e.MapInt(f.Name, f.Key) != f.Value
 }
 
@@ -78,7 +78,7 @@ type NotEqualsMapFloat struct {
 	Value float64
 }
 
-func (f NotEqualsMapFloat) Select(e event.Event) bool {
+func (f NotEqualsMapFloat) Apply(e event.Event) bool {
 	return e.MapFloat(f.Name, f.Key) != f.Value
 }
 
@@ -88,7 +88,7 @@ type LargerThanMapInt struct {
 	Value int
 }
 
-func (f LargerThanMapInt) Select(e event.Event) bool {
+func (f LargerThanMapInt) Apply(e event.Event) bool {
 	return e.MapInt(f.Name, f.Key) > f.Value
 }
 
@@ -98,7 +98,7 @@ type LargerThanMapFloat struct {
 	Value float64
 }
 
-func (f LargerThanMapFloat) Select(e event.Event) bool {
+func (f LargerThanMapFloat) Apply(e event.Event) bool {
 	return e.MapFloat(f.Name, f.Key) > f.Value
 }
 
@@ -108,7 +108,7 @@ type LessThanMapInt struct {
 	Value int
 }
 
-func (f LessThanMapInt) Select(e event.Event) bool {
+func (f LessThanMapInt) Apply(e event.Event) bool {
 	return e.MapInt(f.Name, f.Key) < f.Value
 }
 
@@ -118,6 +118,6 @@ type LessThanMapFloat struct {
 	Value float64
 }
 
-func (f LessThanMapFloat) Select(e event.Event) bool {
+func (f LessThanMapFloat) Apply(e event.Event) bool {
 	return e.MapFloat(f.Name, f.Key) < f.Value
 }

@@ -1,4 +1,4 @@
-package selector
+package expr
 
 import (
 	"testing"
@@ -15,12 +15,12 @@ func TestEqualsMapString(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = "bar"
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = "hoge"
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -34,12 +34,12 @@ func TestNotEqualsMapString(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = "bar"
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = "hoge"
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -53,12 +53,12 @@ func TestEqualsMapBool(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = false
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = true
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -72,12 +72,12 @@ func TestNotEqualsMapBool(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = false
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = true
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -91,12 +91,12 @@ func TestEqualsMapInt(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = 123
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = 456
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -110,12 +110,12 @@ func TestNotEqualsMapInt(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = 123
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = 456
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -129,12 +129,12 @@ func TestEqualsEqualsMapFloat(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = 12.3
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = 45.6
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -148,12 +148,12 @@ func TestNotEqualsEqualsMapFloat(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = 12.3
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = 45.6
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -167,12 +167,12 @@ func TestLargerThanMapInt(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = 100
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = 101
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -186,12 +186,12 @@ func TestLargerThanMapFloat(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = 10.0
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = 10.1
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -205,12 +205,12 @@ func TestLessThanMapInt(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = 101
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = 99
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }
@@ -224,12 +224,12 @@ func TestLessThanMapFloat(t *testing.T) {
 	m := make(map[string]interface{})
 
 	m["foo"] = 10.1
-	if s.Select(event.New(MapEvent{m})) {
+	if s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 
 	m["foo"] = 9.9
-	if !s.Select(event.New(MapEvent{m})) {
+	if !s.Apply(event.New(MapEvent{m})) {
 		t.Error("failed.")
 	}
 }

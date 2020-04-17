@@ -6,9 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/function"
+	"github.com/itsubaki/gostream/pkg/expr"
 	"github.com/itsubaki/gostream/pkg/lexer"
-	"github.com/itsubaki/gostream/pkg/selector"
 	"github.com/itsubaki/gostream/pkg/statement"
 )
 
@@ -35,48 +34,48 @@ func (p *Parser) ParseFunction(s *statement.Statement, l *lexer.Lexer) error {
 		case lexer.FROM:
 			return nil
 		case lexer.ASTERISK:
-			s.SetFunction(function.SelectAll{})
+			s.SetFunction(expr.SelectAll{})
 		case lexer.COUNT:
-			s.SetFunction(function.Count{As: "count(*)"})
+			s.SetFunction(expr.Count{As: "count(*)"})
 		case lexer.MAX:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(function.MaxInt{Name: name, As: fmt.Sprintf("max(%s)", name)})
+				s.SetFunction(expr.MaxInt{Name: name, As: fmt.Sprintf("max(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(function.MaxFloat{Name: name, As: fmt.Sprintf("max(%s)", name)})
+				s.SetFunction(expr.MaxFloat{Name: name, As: fmt.Sprintf("max(%s)", name)})
 			}
 		case lexer.MIN:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(function.MinInt{Name: name, As: fmt.Sprintf("min(%s)", name)})
+				s.SetFunction(expr.MinInt{Name: name, As: fmt.Sprintf("min(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(function.MinFloat{Name: name, As: fmt.Sprintf("min(%s)", name)})
+				s.SetFunction(expr.MinFloat{Name: name, As: fmt.Sprintf("min(%s)", name)})
 			}
 		case lexer.MED:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(function.MedianInt{Name: name, As: fmt.Sprintf("med(%s)", name)})
+				s.SetFunction(expr.MedianInt{Name: name, As: fmt.Sprintf("med(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(function.MedianFloat{Name: name, As: fmt.Sprintf("med(%s)", name)})
+				s.SetFunction(expr.MedianFloat{Name: name, As: fmt.Sprintf("med(%s)", name)})
 			}
 		case lexer.SUM:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(function.SumInt{Name: name, As: fmt.Sprintf("sum(%s)", name)})
+				s.SetFunction(expr.SumInt{Name: name, As: fmt.Sprintf("sum(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(function.SumFloat{Name: name, As: fmt.Sprintf("sum(%s)", name)})
+				s.SetFunction(expr.SumFloat{Name: name, As: fmt.Sprintf("sum(%s)", name)})
 			}
 		case lexer.AVG:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(function.AverageInt{Name: name, As: fmt.Sprintf("avg(%s)", name)})
+				s.SetFunction(expr.AverageInt{Name: name, As: fmt.Sprintf("avg(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(function.AverageFloat{Name: name, As: fmt.Sprintf("avg(%s)", name)})
+				s.SetFunction(expr.AverageFloat{Name: name, As: fmt.Sprintf("avg(%s)", name)})
 			}
 		}
 	}
@@ -155,14 +154,14 @@ func (p *Parser) ParseWindow(s *statement.Statement, l *lexer.Lexer) error {
 	return fmt.Errorf("invalid token=%s", literal)
 }
 
-func (p *Parser) ParseSelector(s *statement.Statement, l *lexer.Lexer) error {
+func (p *Parser) ParseWhere(s *statement.Statement, l *lexer.Lexer) error {
 	for {
 		if token, _ := l.Tokenize(); token == lexer.DOT {
 			break
 		}
 	}
 
-	list := []selector.Selector{}
+	list := make([]expr.Where, 0)
 	for {
 		token, _ := l.Tokenize()
 		if token == lexer.EOF {
@@ -185,9 +184,9 @@ func (p *Parser) ParseSelector(s *statement.Statement, l *lexer.Lexer) error {
 
 			switch sel {
 			case lexer.LARGER:
-				list = append(list, selector.LargerThanInt{Name: name, Value: val})
+				list = append(list, expr.LargerThanInt{Name: name, Value: val})
 			case lexer.LESS:
-				list = append(list, selector.LessThanInt{Name: name, Value: val})
+				list = append(list, expr.LessThanInt{Name: name, Value: val})
 			}
 		}
 
@@ -202,14 +201,14 @@ func (p *Parser) ParseSelector(s *statement.Statement, l *lexer.Lexer) error {
 
 			switch sel {
 			case lexer.LARGER:
-				list = append(list, selector.LargerThanFloat{Name: name, Value: val})
+				list = append(list, expr.LargerThanFloat{Name: name, Value: val})
 			case lexer.LESS:
-				list = append(list, selector.LessThanFloat{Name: name, Value: val})
+				list = append(list, expr.LessThanFloat{Name: name, Value: val})
 			}
 		}
 	}
 
-	s.SetSelector(list...)
+	s.SetWhere(list...)
 	return nil
 }
 
@@ -232,7 +231,7 @@ func (p *Parser) Parse(query string) (*statement.Statement, error) {
 		return nil, fmt.Errorf("parse window: %v", err)
 	}
 
-	if err := p.ParseSelector(s, lexer.New(strings.NewReader(query))); err != nil {
+	if err := p.ParseWhere(s, lexer.New(strings.NewReader(query))); err != nil {
 		return nil, fmt.Errorf("parse selector: %v", err)
 	}
 
