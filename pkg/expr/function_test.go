@@ -772,3 +772,30 @@ func TestFuncLessThanInt(t *testing.T) {
 		}
 	}
 }
+
+func TestDistinctString(t *testing.T) {
+	type StringEvent struct {
+		Name string
+	}
+
+	events := event.List(
+		StringEvent{"foo"},
+		StringEvent{"bar"},
+		StringEvent{"foo"},
+	)
+
+	f := DistinctString{
+		Name: "Name",
+		As:   "distinct",
+	}
+
+	result := f.Apply(events)
+	newest := event.Newest(result)
+	distinct := newest.RecordStringSlice("distinct")
+	if distinct[0] != "foo" {
+		t.Error(distinct)
+	}
+	if distinct[1] != "bar" {
+		t.Error(distinct)
+	}
+}

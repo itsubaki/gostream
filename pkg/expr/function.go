@@ -27,6 +27,29 @@ func (f SelectAll) Apply(events []event.Event) []event.Event {
 	return events
 }
 
+type DistinctString struct {
+	Name string
+	As   string
+}
+
+func (f DistinctString) Apply(events []event.Event) []event.Event {
+	distinct := make(map[string]bool)
+	for i := range events {
+		v := events[i].String(f.Name)
+		distinct[v] = true
+	}
+
+	list := make([]string, 0)
+	for k := range distinct {
+		list = append(list, k)
+	}
+
+	e := event.Newest(events)
+	e.Record[f.As] = list
+
+	return events
+}
+
 type SelectString struct {
 	Name string
 	As   string

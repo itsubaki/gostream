@@ -20,7 +20,7 @@ func Newest(event []Event) Event {
 }
 
 func List(underlying ...interface{}) []Event {
-	out := []Event{}
+	out := make([]Event, 0)
 	for i := range underlying {
 		out = append(out, New(underlying[i]))
 	}
@@ -98,4 +98,8 @@ func (e *Event) RecordInt(name string) int {
 
 func (e *Event) RecordFloat(name string) float64 {
 	return e.Record[name].(float64)
+}
+
+func (e *Event) RecordStringSlice(name string) []string {
+	return e.Record[name].([]string)
 }
