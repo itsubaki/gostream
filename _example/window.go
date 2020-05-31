@@ -1,15 +1,11 @@
-package example
+package _example
 
 import (
 	"fmt"
-	"log"
-	"reflect"
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/builder"
 	"github.com/itsubaki/gostream/pkg/event"
 	"github.com/itsubaki/gostream/pkg/expr"
-	"github.com/itsubaki/gostream/pkg/parser"
 	"github.com/itsubaki/gostream/pkg/stream"
 )
 
@@ -122,38 +118,4 @@ func View() {
 			Value: i,
 		}
 	}
-}
-
-func Builder() {
-	b := builder.New()
-	b.SetField("Name", reflect.TypeOf(""))
-	b.SetField("Value", reflect.TypeOf(0))
-	s := b.Build()
-
-	i := s.NewInstance()
-	i.SetString("Name", "foobar")
-	i.SetInt("Value", 123)
-
-	fmt.Printf("%#v\n", i.Value())
-	fmt.Printf("%#v\n", i.Pointer())
-}
-
-func Query() {
-	type MyEvent struct {
-		Name  string
-		Value int
-	}
-
-	p := parser.New()
-	p.Register("MyEvent", MyEvent{})
-
-	query := "select * from MyEvent.length(10)"
-	statement, err := p.Parse(query)
-	if err != nil {
-		log.Println("failed.")
-		return
-	}
-
-	window := statement.New()
-	defer window.Close()
 }
