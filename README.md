@@ -82,7 +82,7 @@ type MyEvent struct {
 // limit 10 offset 5
 
 w := window.NewTime(MyEvent{}, 10 * time.Millisecond)
-w.Where().LargetThan().Int("Value", 97)
+w.Where().LargerThan().Int("Value", 97)
 w.Function().Select().String("Name", "n")
 w.Function().Select().Int("Value", "v")
 w.OrderBy().Int("Value", true)
