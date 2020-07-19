@@ -2,6 +2,35 @@ package stream
 
 import "github.com/itsubaki/gostream/pkg/clause"
 
+type Constructor interface {
+	Where() *Where
+	Function() *Function
+	OrderBy() *OrderBy
+	Limit(limit, offset int)
+}
+
+func (w *IdentityWindow) Where() *Where {
+	return &Where{w}
+}
+
+func (w *IdentityWindow) Function() *Function {
+	return &Function{w}
+}
+
+func (w *IdentityWindow) OrderBy() *OrderBy {
+	return &OrderBy{w}
+}
+
+func (w *IdentityWindow) Limit(limit, offset int) {
+	w.SetLimit(clause.Limit{Limit: limit, Offset: offset})
+}
+
+func (w *IdentityWindow) First() {
+}
+
+func (w *IdentityWindow) Last() {
+}
+
 type Where struct {
 	w *IdentityWindow
 }

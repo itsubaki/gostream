@@ -39,17 +39,4 @@ func TestView(t *testing.T) {
 	w.Limit(10, 5)
 
 	fmt.Printf("%#v\n", w)
-
-	go func() {
-		for {
-			fmt.Println(<-w.Output())
-		}
-	}()
-
-	for i := 0; i < 100; i++ {
-		w.Input() <- MyEvent{
-			Name:  "name",
-			Value: i,
-		}
-	}
 }

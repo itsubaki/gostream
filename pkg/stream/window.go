@@ -10,15 +10,12 @@ import (
 )
 
 type Window interface {
-	Where() *Where
-	Function() *Function
-	OrderBy() *OrderBy
-	Limit(limit, offset int)
+	Constructor
 
 	SetWhere(w ...clause.Where)
 	SetFunction(f ...clause.Function)
 	SetOrderBy(o ...clause.OrderBy)
-	SetLimit(l ...clause.LimitIF)
+	SetLimit(l clause.LimitIF)
 
 	Input() chan interface{}
 	Output() chan []event.Event
@@ -71,27 +68,6 @@ func NewIdentity(capacity ...int) Window {
 	return w
 }
 
-func (w *IdentityWindow) Where() *Where {
-	return &Where{w}
-}
-
-func (w *IdentityWindow) Function() *Function {
-	return &Function{w}
-}
-
-func (w *IdentityWindow) OrderBy() *OrderBy {
-	return &OrderBy{w}
-}
-
-func (w *IdentityWindow) Limit(limit, offset int) {
-	w.SetLimit(
-		clause.Limit{
-			Limit:  limit,
-			Offset: offset,
-		},
-	)
-}
-
 func (w *IdentityWindow) SetWhere(wh ...clause.Where) {
 	w.where = append(w.where, wh...)
 }
@@ -104,8 +80,12 @@ func (w *IdentityWindow) SetOrderBy(o ...clause.OrderBy) {
 	w.orderBy = append(w.orderBy, o...)
 }
 
-func (w *IdentityWindow) SetLimit(l ...clause.LimitIF) {
-	w.limit = append(w.limit, l...)
+func (w *IdentityWindow) SetLimit(l clause.LimitIF) {
+	if len(w.limit) < 1 {
+		w.limit = append(w.limit, l)
+	}
+
+	w.limit[0] = l
 }
 
 func (w *IdentityWindow) Input() chan interface{} {
@@ -200,17 +180,8 @@ func (w *IdentityWindow) IsClosed() bool {
 func NewLength(_type interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(
-		clause.EqualsType{
-			Accept: _type,
-		},
-	)
-
-	w.SetFunction(
-		&clause.Length{
-			Length: length,
-		},
-	)
+	w.SetWhere(clause.EqualsType{Accept: _type})
+	w.SetFunction(&clause.Length{Length: length})
 
 	return w
 }
@@ -218,18 +189,8 @@ func NewLength(_type interface{}, length int, capacity ...int) Window {
 func NewLengthBatch(_type interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(
-		clause.EqualsType{
-			Accept: _type,
-		},
-	)
-
-	w.SetFunction(
-		&clause.LengthBatch{
-			Length: length,
-			Batch:  event.List(),
-		},
-	)
+	w.SetWhere(clause.EqualsType{Accept: _type})
+	w.SetFunction(&clause.LengthBatch{Length: length, Batch: event.List()})
 
 	return w
 }
@@ -237,17 +198,8 @@ func NewLengthBatch(_type interface{}, length int, capacity ...int) Window {
 func NewTime(_type interface{}, expire time.Duration, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(
-		clause.EqualsType{
-			Accept: _type,
-		},
-	)
-
-	w.SetFunction(
-		&clause.TimeDuration{
-			Expire: expire,
-		},
-	)
+	w.SetWhere(clause.EqualsType{Accept: _type})
+	w.SetFunction(&clause.TimeDuration{Expire: expire})
 
 	return w
 }
@@ -255,20 +207,15 @@ func NewTime(_type interface{}, expire time.Duration, capacity ...int) Window {
 func NewTimeBatch(_type interface{}, expire time.Duration, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(
-		clause.EqualsType{
-			Accept: _type,
-		},
-	)
+	w.SetWhere(clause.EqualsType{Accept: _type})
 
 	start := time.Now()
 	end := start.Add(expire)
-	w.SetFunction(
-		&clause.TimeDurationBatch{
-			Start:  start,
-			End:    end,
-			Expire: expire,
-		},
+	w.SetFunction(&clause.TimeDurationBatch{
+		Start:  start,
+		End:    end,
+		Expire: expire,
+	},
 	)
 
 	return w
