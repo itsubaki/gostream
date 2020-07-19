@@ -1,6 +1,10 @@
-package stream
+package window
 
-import "github.com/itsubaki/gostream/pkg/clause"
+import (
+	"fmt"
+
+	"github.com/itsubaki/gostream/pkg/clause"
+)
 
 type Chain interface {
 	Where() *Where
@@ -29,8 +33,8 @@ type Function struct {
 	w *IdentityWindow
 }
 
-func (f *Function) Count(as string) {
-	f.w.SetFunction(clause.Count{As: as})
+func (f *Function) Count() {
+	f.w.SetFunction(clause.Count{As: "count(*)"})
 }
 
 type Select struct {
@@ -41,12 +45,12 @@ func (f *Function) Select() *Select {
 	return &Select{f}
 }
 
-func (s *Select) String(name, as string) {
-	s.f.w.SetFunction(clause.SelectString{Name: name, As: as})
+func (s *Select) String(name string) {
+	s.f.w.SetFunction(clause.SelectString{Name: name, As: name})
 }
 
-func (s *Select) Int(name, as string) {
-	s.f.w.SetFunction(clause.SelectInt{Name: name, As: as})
+func (s *Select) Int(name string) {
+	s.f.w.SetFunction(clause.SelectInt{Name: name, As: name})
 }
 
 type Average struct {
@@ -57,7 +61,8 @@ func (f *Function) Average() *Average {
 	return &Average{f}
 }
 
-func (a *Average) Int(name, as string) {
+func (a *Average) Int(name string) {
+	as := fmt.Sprintf("avg(%s)", name)
 	a.f.w.SetFunction(clause.AverageInt{Name: name, As: as})
 }
 
@@ -69,7 +74,8 @@ func (f *Function) Sum() *Sum {
 	return &Sum{f}
 }
 
-func (a *Sum) Int(name, as string) {
+func (a *Sum) Int(name string) {
+	as := fmt.Sprintf("sum(%s)", name)
 	a.f.w.SetFunction(clause.SumInt{Name: name, As: as})
 }
 

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/stream"
+	"github.com/itsubaki/gostream/pkg/window"
 )
 
 func TestTimeWindow(t *testing.T) {
@@ -15,11 +15,11 @@ func TestTimeWindow(t *testing.T) {
 		Message string
 	}
 
-	w := stream.NewTime(LogEvent{}, 10*time.Second)
+	w := window.NewTime(LogEvent{}, 10*time.Second)
 	defer w.Close()
 
 	w.Where().LargerThan().Int("Level", 2)
-	w.Function().Count("count")
+	w.Function().Count()
 
 	fmt.Printf("%#v\n", w)
 }
@@ -30,11 +30,11 @@ func TestLengthWindow(t *testing.T) {
 		Value int
 	}
 
-	w := stream.NewLength(MyEvent{}, 10)
+	w := window.NewLength(MyEvent{}, 10)
 	defer w.Close()
 
-	w.Function().Average().Int("Value", "avg(Value)")
-	w.Function().Sum().Int("Value", "sum(Value)")
+	w.Function().Average().Int("Value")
+	w.Function().Sum().Int("Value")
 
 	fmt.Printf("%#v\n", w)
 }
@@ -45,12 +45,12 @@ func TestView(t *testing.T) {
 		Value int
 	}
 
-	w := stream.NewTime(MyEvent{}, 10*time.Millisecond)
+	w := window.NewTime(MyEvent{}, 10*time.Millisecond)
 	defer w.Close()
 
 	w.Where().LargerThan().Int("Value", 97)
-	w.Function().Select().String("Name", "n")
-	w.Function().Select().Int("Value", "v")
+	w.Function().Select().String("Name")
+	w.Function().Select().Int("Value")
 	w.OrderBy().Int("Value", true)
 	w.Limit(10).Offset(5)
 

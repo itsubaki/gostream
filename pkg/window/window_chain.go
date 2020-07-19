@@ -1,4 +1,4 @@
-package stream
+package window
 
 import "github.com/itsubaki/gostream/pkg/clause"
 

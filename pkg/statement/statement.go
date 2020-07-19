@@ -5,7 +5,7 @@ import (
 
 	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/lexer"
-	"github.com/itsubaki/gostream/pkg/stream"
+	"github.com/itsubaki/gostream/pkg/window"
 )
 
 type Statement struct {
@@ -56,21 +56,21 @@ func (s *Statement) SetOrderBy(o ...clause.OrderBy) {
 	s.OrderBy = append(s.OrderBy, o...)
 }
 
-func (s *Statement) New(capacity ...int) (w stream.Window) {
+func (s *Statement) New(capacity ...int) (w window.Window) {
 	if s.Window == lexer.LENGTH {
-		w = stream.NewLength(s.EventType, s.Length, capacity...)
+		w = window.NewLength(s.EventType, s.Length, capacity...)
 	}
 
 	if s.Window == lexer.LENGTH_BATCH {
-		w = stream.NewLengthBatch(s.EventType, s.Length, capacity...)
+		w = window.NewLengthBatch(s.EventType, s.Length, capacity...)
 	}
 
 	if s.Window == lexer.TIME {
-		w = stream.NewTime(s.EventType, s.Time, capacity...)
+		w = window.NewTime(s.EventType, s.Time, capacity...)
 	}
 
 	if s.Window == lexer.TIME_BATCH {
-		w = stream.NewTimeBatch(s.EventType, s.Time, capacity...)
+		w = window.NewTimeBatch(s.EventType, s.Time, capacity...)
 	}
 
 	w.SetWhere(s.Where...)

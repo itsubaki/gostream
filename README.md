@@ -50,7 +50,7 @@ type LogEvent struct {
 // select count(*) from LogEvent.time(10sec) where Level > 2
 w := window.NewTime(LogEvent{}, 10*time.Second)
 w.Where().LargerThan().Int("Level", 2)
-w.Function().Count("count")
+w.Function().Count()
 defer w.Close()
 
 go func() {
@@ -75,7 +75,7 @@ type MyEvent struct {
   Value int
 }
 
-// select Name as n, Value as v
+// select Name, Value
 // from MyEvent.time(10msec)
 // where Value > 97
 // orderby Value DESC
@@ -83,8 +83,8 @@ type MyEvent struct {
 
 w := window.NewTime(MyEvent{}, 10 * time.Millisecond)
 w.Where().LargerThan().Int("Value", 97)
-w.Function().Select().String("Name", "n")
-w.Function().Select().Int("Value", "v")
+w.Function().Select().String("Name")
+w.Function().Select().Int("Value")
 w.OrderBy().Int("Value", true)
 w.Limit(10).Offset(5)
 defer w.Close()
@@ -106,8 +106,8 @@ for i := 0; i < 100; i++ {
 ```go
 // select avg(Value), sum(Value) from MyEvent.length(10)
 w := window.NewLength(MyEvent{}, 10)
-w.Function().Average().Int("Value", "avg(Value)")
-w.Function().Sum().Int("Value", "sum(Value)")
+w.Function().Average().Int("Value")
+w.Function().Sum().Int("Value")
 ```
 
 # RuntimeEventBuilder
