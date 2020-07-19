@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
 	"github.com/itsubaki/gostream/pkg/stream"
 )

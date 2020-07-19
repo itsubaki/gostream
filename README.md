@@ -7,30 +7,30 @@ A Stream Processing API for Go
 
 ## TODO
 
- - [x] Window
-    + [x] LengthWindow
-    + [x] LengthBatchWindow
-    + [x] TimeWindow
-    + [x] TimeBatchWindow
- - [x] Where
-    + [x] EqualsType, NotEqualsType
-    + [x] Equals, NotEquals
-    + [x] LargerThan, LessThan
- - [ ] GroupBy
- - [x] Function
-    + [x] Max, Min, Median
-    + [x] Count, Sum, Average
-    + [x] Cast
-    + [x] As
- - [ ] Having
- - [x] Select
-    + [ ] Distinct
- - [x] OrderBy
- - [x] Limit, First, Last
- - [ ] Tool
-    + [x] Builder
-    + [x] Lexer
-    + [ ] Parser
+- [x] Window
+  - [x] LengthWindow
+  - [x] LengthBatchWindow
+  - [x] TimeWindow
+  - [x] TimeBatchWindow
+- [x] Where
+  - [x] EqualsType, NotEqualsType
+  - [x] Equals, NotEquals
+  - [x] LargerThan, LessThan
+- [ ] GroupBy
+- [x] Function
+  - [x] Max, Min, Median
+  - [x] Count, Sum, Average
+  - [x] Cast
+  - [x] As
+- [ ] Having
+- [x] Select
+  - [ ] Distinct
+- [x] OrderBy
+- [x] Limit, First, Last
+- [ ] Tool
+  - [x] Builder
+  - [x] Lexer
+  - [ ] Parser
 
 ## Install
 
@@ -52,13 +52,13 @@ w := window.NewTime(LogEvent{}, 10*time.Second)
 defer w.Close()
 
 w.SetWhere(
-  expr.LargerThanInt{
+  clause.LargerThanInt{
     Name: "Level",
     Value: 2,
   },
 )
 w.SetFunction(
-  expr.Count{
+  clause.Count{
     As: "count",
   },
 )
@@ -95,29 +95,29 @@ w := window.NewTime(MyEvent{}, 10 * time.Millisecond)
 defer w.Close()
 
 w.SetWhere(
-  expr.LargerThanInt{
+  clause.LargerThanInt{
     Name: "Value",
     Value: 97,
   },
 )
 w.SetFunction(
-  expr.SelectString{
+  clause.SelectString{
     Name: "Name",
     As: "n",
   },
-  expr.SelectInt{
+  clause.SelectInt{
     Name: "Value",
     As: "v",
   },
 )
 w.SetOrderBy(
-  expr.OrderByInt{
+  clause.OrderByInt{
     Name: "Value",
     Reverse: true,
   },
 )
 w.SetLiimt(
-  expr.Limit{
+  clause.Limit{
     Limit: 10,
     Offset: 5,
   },
@@ -137,18 +137,17 @@ for i := 0; i < 100; i++ {
 }
 ```
 
-
 ```go
 // select avg(Value), sum(Value) from MyEvent.length(10)
 w := window.NewLength(MyEvent{}, 10)
 defer w.Close()
 
 w.SetFunction(
-  expr.AverageInt{
+  clause.AverageInt{
     Name: "Value",
     As:   "avg(Value)",
   },
-  expr.SumInt{
+  clause.SumInt{
     Name: "Value",
     As:   "sum(Value)",
   },
