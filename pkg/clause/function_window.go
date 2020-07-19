@@ -14,6 +14,7 @@ func (f *Length) Apply(events []event.Event) []event.Event {
 	if len(events) > f.Length {
 		events = events[1:]
 	}
+
 	return events
 }
 
@@ -28,6 +29,7 @@ func (f *TimeDuration) Apply(events []event.Event) []event.Event {
 			out = append(out, e)
 		}
 	}
+
 	return out
 }
 

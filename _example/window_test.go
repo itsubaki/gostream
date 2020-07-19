@@ -8,6 +8,22 @@ import (
 	"github.com/itsubaki/gostream/pkg/stream"
 )
 
+func TestTimeWindow(t *testing.T) {
+	type LogEvent struct {
+		Time    time.Time
+		Level   int
+		Message string
+	}
+
+	w := stream.NewTime(LogEvent{}, 10*time.Second)
+	defer w.Close()
+
+	w.Where().LargerThan().Int("Level", 2)
+	w.Function().Count("count")
+
+	fmt.Printf("%#v\n", w)
+}
+
 func TestLengthWindow(t *testing.T) {
 	type MyEvent struct {
 		Name  string

@@ -3,11 +3,12 @@ package _example
 import (
 	"fmt"
 	"reflect"
+	"testing"
 
 	"github.com/itsubaki/gostream/pkg/builder"
 )
 
-func Builder() {
+func TestBuilder(t *testing.T) {
 	b := builder.New()
 	b.SetField("Name", reflect.TypeOf(""))
 	b.SetField("Value", reflect.TypeOf(0))

@@ -10,7 +10,7 @@ import (
 )
 
 type Window interface {
-	Constructor
+	Chain
 
 	SetWhere(w ...clause.Where)
 	SetFunction(f ...clause.Function)

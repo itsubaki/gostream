@@ -2,11 +2,12 @@ package _example
 
 import (
 	"log"
+	"testing"
 
 	"github.com/itsubaki/gostream/pkg/parser"
 )
 
-func Query() {
+func TestQuery(t *testing.T) {
 	type MyEvent struct {
 		Name  string
 		Value int

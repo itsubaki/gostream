@@ -2,33 +2,11 @@ package stream
 
 import "github.com/itsubaki/gostream/pkg/clause"
 
-type Constructor interface {
+type Chain interface {
 	Where() *Where
 	Function() *Function
 	OrderBy() *OrderBy
 	Limit(limit, offset int)
-}
-
-func (w *IdentityWindow) Where() *Where {
-	return &Where{w}
-}
-
-func (w *IdentityWindow) Function() *Function {
-	return &Function{w}
-}
-
-func (w *IdentityWindow) OrderBy() *OrderBy {
-	return &OrderBy{w}
-}
-
-func (w *IdentityWindow) Limit(limit, offset int) {
-	w.SetLimit(clause.Limit{Limit: limit, Offset: offset})
-}
-
-func (w *IdentityWindow) First() {
-}
-
-func (w *IdentityWindow) Last() {
 }
 
 type Where struct {
@@ -44,12 +22,7 @@ func (w *Where) LargerThan() *LargerThan {
 }
 
 func (l *LargerThan) Int(name string, value int) {
-	l.w.w.SetWhere(
-		clause.LargerThanInt{
-			Name:  name,
-			Value: value,
-		},
-	)
+	l.w.w.SetWhere(clause.LargerThanInt{Name: name, Value: value})
 }
 
 type Function struct {
@@ -65,21 +38,11 @@ func (f *Function) Select() *Select {
 }
 
 func (s *Select) String(name, as string) {
-	s.f.w.SetFunction(
-		clause.SelectString{
-			Name: name,
-			As:   as,
-		},
-	)
+	s.f.w.SetFunction(clause.SelectString{Name: name, As: as})
 }
 
 func (s *Select) Int(name, as string) {
-	s.f.w.SetFunction(
-		clause.SelectInt{
-			Name: name,
-			As:   as,
-		},
-	)
+	s.f.w.SetFunction(clause.SelectInt{Name: name, As: as})
 }
 
 type Average struct {
@@ -91,12 +54,7 @@ func (f *Function) Average() *Average {
 }
 
 func (a *Average) Int(name, as string) {
-	a.f.w.SetFunction(
-		clause.AverageInt{
-			Name: name,
-			As:   as,
-		},
-	)
+	a.f.w.SetFunction(clause.AverageInt{Name: name, As: as})
 }
 
 type Sum struct {
@@ -108,12 +66,7 @@ func (f *Function) Sum() *Sum {
 }
 
 func (a *Sum) Int(name, as string) {
-	a.f.w.SetFunction(
-		clause.SumInt{
-			Name: name,
-			As:   as,
-		},
-	)
+	a.f.w.SetFunction(clause.SumInt{Name: name, As: as})
 }
 
 type OrderBy struct {
@@ -121,10 +74,5 @@ type OrderBy struct {
 }
 
 func (o *OrderBy) Int(name string, reverse bool) {
-	o.w.SetOrderBy(
-		clause.OrderByInt{
-			Name:    name,
-			Reverse: reverse,
-		},
-	)
+	o.w.SetOrderBy(clause.OrderByInt{Name: name, Reverse: reverse})
 }

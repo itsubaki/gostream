@@ -49,19 +49,9 @@ type LogEvent struct {
 
 // select count(*) from LogEvent.time(10sec) where Level > 2
 w := window.NewTime(LogEvent{}, 10*time.Second)
+w.Where().LargerThan().Int("Level", 2)
+w.Function().Count("count")
 defer w.Close()
-
-w.SetWhere(
-  clause.LargerThanInt{
-    Name: "Level",
-    Value: 2,
-  },
-)
-w.SetFunction(
-  clause.Count{
-    As: "count",
-  },
-)
 
 go func() {
   for {
@@ -86,42 +76,18 @@ type MyEvent struct {
 }
 
 // select Name as n, Value as v
-//  from MyEvent.time(10msec)
-//  where Value > 97
-//  orderby Value DESC
-//  limit 10 offset 5
+// from MyEvent.time(10msec)
+// where Value > 97
+// orderby Value DESC
+// limit 10 offset 5
 
 w := window.NewTime(MyEvent{}, 10 * time.Millisecond)
+w.Where().LargetThan().Int("Value", 97)
+w.Function().Select().String("Name", "n")
+w.Function().Select().Int("Value", "v")
+w.OrderBy().Int("Value", true)
+w.Limit(10, 5)
 defer w.Close()
-
-w.SetWhere(
-  clause.LargerThanInt{
-    Name: "Value",
-    Value: 97,
-  },
-)
-w.SetFunction(
-  clause.SelectString{
-    Name: "Name",
-    As: "n",
-  },
-  clause.SelectInt{
-    Name: "Value",
-    As: "v",
-  },
-)
-w.SetOrderBy(
-  clause.OrderByInt{
-    Name: "Value",
-    Reverse: true,
-  },
-)
-w.SetLiimt(
-  clause.Limit{
-    Limit: 10,
-    Offset: 5,
-  },
-)
 
 go func() {
   for {
@@ -140,18 +106,8 @@ for i := 0; i < 100; i++ {
 ```go
 // select avg(Value), sum(Value) from MyEvent.length(10)
 w := window.NewLength(MyEvent{}, 10)
-defer w.Close()
-
-w.SetFunction(
-  clause.AverageInt{
-    Name: "Value",
-    As:   "avg(Value)",
-  },
-  clause.SumInt{
-    Name: "Value",
-    As:   "sum(Value)",
-  },
-)
+w.Function().Average().Int("Value", "avg(Value)")
+w.Function().Sum().Int("Value", "sum(Value)")
 ```
 
 # RuntimeEventBuilder
