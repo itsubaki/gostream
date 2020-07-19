@@ -80,11 +80,17 @@ func (a *Sum) Int(name string) {
 }
 
 type OrderBy struct {
-	w *IdentityWindow
+	w    *IdentityWindow
+	desc bool
 }
 
-func (o *OrderBy) Int(name string, reverse bool) {
-	o.w.SetOrderBy(clause.OrderByInt{Name: name, Reverse: reverse})
+func (o *OrderBy) Desc() *OrderBy {
+	o.desc = true
+	return o
+}
+
+func (o *OrderBy) Int(name string) {
+	o.w.SetOrderBy(clause.OrderByInt{Name: name, Desc: o.desc})
 }
 
 type Limit struct {

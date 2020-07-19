@@ -25,14 +25,14 @@ func (s SortableMapInt) Swap(i, j int) {
 }
 
 type OrderByMapInt struct {
-	Name    string
-	Key     string
-	Reverse bool
+	Name string
+	Key  string
+	Desc bool
 }
 
 func (f OrderByMapInt) Apply(events []event.Event) []event.Event {
 	data := SortableMapInt{events, f.Name, f.Key}
-	if f.Reverse {
+	if f.Desc {
 		sort.Sort(sort.Reverse(data))
 		return data.event
 	}
@@ -59,14 +59,14 @@ func (s SortableMapFloat) Swap(i, j int) {
 }
 
 type OrderByMapFloat struct {
-	Name    string
-	Key     string
-	Reverse bool
+	Name string
+	Key  string
+	Desc bool
 }
 
 func (f OrderByMapFloat) Apply(events []event.Event) []event.Event {
 	data := SortableMapFloat{events, f.Name, f.Key}
-	if f.Reverse {
+	if f.Desc {
 		sort.Sort(sort.Reverse(data))
 		return data.event
 	}

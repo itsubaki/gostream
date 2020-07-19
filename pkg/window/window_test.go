@@ -221,9 +221,9 @@ func BenchmarkLengthWindowOrderByMap(b *testing.B) {
 
 	w.SetOrderBy(
 		clause.OrderByMapInt{
-			Name:    "Record",
-			Key:     "Value",
-			Reverse: false,
+			Name: "Record",
+			Key:  "Value",
+			Desc: false,
 		},
 	)
 
@@ -247,8 +247,8 @@ func BenchmarkLengthWindowOrderByInt(b *testing.B) {
 
 	w.SetOrderBy(
 		clause.OrderByInt{
-			Name:    "Value",
-			Reverse: false,
+			Name: "Value",
+			Desc: false,
 		},
 	)
 
@@ -268,9 +268,9 @@ func BenchmarkLengthWindowOrderByReverseMap(b *testing.B) {
 
 	w.SetOrderBy(
 		clause.OrderByMapInt{
-			Name:    "Record",
-			Key:     "Value",
-			Reverse: true,
+			Name: "Record",
+			Key:  "Value",
+			Desc: true,
 		},
 	)
 
@@ -293,8 +293,8 @@ func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
 
 	w.SetOrderBy(
 		clause.OrderByInt{
-			Name:    "Value",
-			Reverse: true,
+			Name: "Value",
+			Desc: true,
 		},
 	)
 
@@ -326,8 +326,8 @@ func TestConcurrency(t *testing.T) {
 	)
 	w.SetOrderBy(
 		clause.OrderByInt{
-			Name:    "Value",
-			Reverse: true,
+			Name: "Value",
+			Desc: true,
 		},
 	)
 
@@ -368,8 +368,8 @@ func TestLengthWindow(t *testing.T) {
 	)
 	w.SetOrderBy(
 		clause.OrderByInt{
-			Name:    "Value",
-			Reverse: true,
+			Name: "Value",
+			Desc: true,
 		},
 	)
 
@@ -432,9 +432,9 @@ func TestLengthWindowMap(t *testing.T) {
 	)
 	w.SetOrderBy(
 		clause.OrderByMapInt{
-			Name:    "Record",
-			Key:     "Value",
-			Reverse: true,
+			Name: "Record",
+			Key:  "Value",
+			Desc: true,
 		},
 	)
 

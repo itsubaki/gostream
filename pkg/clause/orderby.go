@@ -28,13 +28,13 @@ func (s SortableInt) Swap(i, j int) {
 }
 
 type OrderByInt struct {
-	Name    string
-	Reverse bool
+	Name string
+	Desc bool
 }
 
 func (f OrderByInt) Apply(events []event.Event) []event.Event {
 	data := SortableInt{events, f.Name}
-	if f.Reverse {
+	if f.Desc {
 		sort.Sort(sort.Reverse(data))
 		return data.events
 	}
@@ -60,13 +60,13 @@ func (s SortableFloat) Swap(i, j int) {
 }
 
 type OrderByFloat struct {
-	Name    string
-	Reverse bool
+	Name string
+	Desc bool
 }
 
 func (f OrderByFloat) Apply(events []event.Event) []event.Event {
 	data := SortableFloat{events, f.Name}
-	if f.Reverse {
+	if f.Desc {
 		sort.Sort(sort.Reverse(data))
 		return data.events
 	}

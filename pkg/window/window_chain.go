@@ -11,7 +11,7 @@ func (w *IdentityWindow) Function() *Function {
 }
 
 func (w *IdentityWindow) OrderBy() *OrderBy {
-	return &OrderBy{w}
+	return &OrderBy{w, false}
 }
 
 func (w *IdentityWindow) Limit(limit int) *Limit {

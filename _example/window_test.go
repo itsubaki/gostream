@@ -51,7 +51,7 @@ func TestView(t *testing.T) {
 	w.Where().LargerThan().Int("Value", 97)
 	w.Function().Select().String("Name")
 	w.Function().Select().Int("Value")
-	w.OrderBy().Int("Value", true)
+	w.OrderBy().Desc().Int("Value")
 	w.Limit(10).Offset(5)
 
 	fmt.Printf("%#v\n", w)
