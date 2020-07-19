@@ -3,7 +3,7 @@ package statement
 import (
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/expr"
+	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/lexer"
 	"github.com/itsubaki/gostream/pkg/stream"
 )
@@ -13,18 +13,18 @@ type Statement struct {
 	EventType interface{}
 	Length    int
 	Time      time.Duration
-	Where     []expr.Where
-	Function  []expr.Function
-	OrderBy   []expr.OrderBy
-	Limit     []expr.LimitIF
+	Where     []clause.Where
+	Function  []clause.Function
+	OrderBy   []clause.OrderBy
+	Limit     []clause.LimitIF
 }
 
 func New() *Statement {
 	return &Statement{
-		Where:    []expr.Where{},
-		Function: []expr.Function{},
-		OrderBy:  []expr.OrderBy{},
-		Limit:    []expr.LimitIF{},
+		Where:    []clause.Where{},
+		Function: []clause.Function{},
+		OrderBy:  []clause.OrderBy{},
+		Limit:    []clause.LimitIF{},
 	}
 }
 
@@ -44,15 +44,15 @@ func (s *Statement) SetTime(t time.Duration) {
 	s.Time = t
 }
 
-func (s *Statement) SetWhere(w ...expr.Where) {
+func (s *Statement) SetWhere(w ...clause.Where) {
 	s.Where = append(s.Where, w...)
 }
 
-func (s *Statement) SetFunction(f ...expr.Function) {
+func (s *Statement) SetFunction(f ...clause.Function) {
 	s.Function = append(s.Function, f...)
 }
 
-func (s *Statement) SetOrderBy(o ...expr.OrderBy) {
+func (s *Statement) SetOrderBy(o ...clause.OrderBy) {
 	s.OrderBy = append(s.OrderBy, o...)
 }
 

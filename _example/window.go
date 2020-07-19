@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/itsubaki/gostream/pkg/event"
-	"github.com/itsubaki/gostream/pkg/expr"
 	"github.com/itsubaki/gostream/pkg/stream"
 )
 
@@ -20,14 +19,14 @@ func TimeWindow() {
 	defer w.Close()
 
 	w.SetWhere(
-		expr.LargerThanInt{
+		clause.LargerThanInt{
 			Name:  "Level",
 			Value: 2,
 		},
 	)
 
 	w.SetFunction(
-		expr.Count{
+		clause.Count{
 			As: "count",
 		},
 	)
@@ -58,11 +57,11 @@ func LengthWindow() {
 	defer w.Close()
 
 	w.SetFunction(
-		expr.AverageInt{
+		clause.AverageInt{
 			Name: "Value",
 			As:   "avg(Value)",
 		},
-		expr.SumInt{
+		clause.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -79,29 +78,29 @@ func View() {
 	defer w.Close()
 
 	w.SetWhere(
-		expr.LargerThanInt{
+		clause.LargerThanInt{
 			Name:  "Value",
 			Value: 97,
 		},
 	)
 	w.SetFunction(
-		expr.SelectString{
+		clause.SelectString{
 			Name: "Name",
 			As:   "n",
 		},
-		expr.SelectInt{
+		clause.SelectInt{
 			Name: "Value",
 			As:   "v",
 		},
 	)
 	w.SetOrderBy(
-		expr.OrderByInt{
+		clause.OrderByInt{
 			Name:    "Value",
 			Reverse: true,
 		},
 	)
 	w.SetLimit(
-		expr.Limit{
+		clause.Limit{
 			Limit:  10,
 			Offset: 5,
 		})

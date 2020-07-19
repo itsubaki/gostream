@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/expr"
+	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/lexer"
 	"github.com/itsubaki/gostream/pkg/statement"
 )
@@ -34,48 +34,48 @@ func (p *Parser) ParseFunction(s *statement.Statement, l *lexer.Lexer) error {
 		case lexer.FROM:
 			return nil
 		case lexer.ASTERISK:
-			s.SetFunction(expr.SelectAll{})
+			s.SetFunction(clause.SelectAll{})
 		case lexer.COUNT:
-			s.SetFunction(expr.Count{As: "count(*)"})
+			s.SetFunction(clause.Count{As: "count(*)"})
 		case lexer.MAX:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(expr.MaxInt{Name: name, As: fmt.Sprintf("max(%s)", name)})
+				s.SetFunction(clause.MaxInt{Name: name, As: fmt.Sprintf("max(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(expr.MaxFloat{Name: name, As: fmt.Sprintf("max(%s)", name)})
+				s.SetFunction(clause.MaxFloat{Name: name, As: fmt.Sprintf("max(%s)", name)})
 			}
 		case lexer.MIN:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(expr.MinInt{Name: name, As: fmt.Sprintf("min(%s)", name)})
+				s.SetFunction(clause.MinInt{Name: name, As: fmt.Sprintf("min(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(expr.MinFloat{Name: name, As: fmt.Sprintf("min(%s)", name)})
+				s.SetFunction(clause.MinFloat{Name: name, As: fmt.Sprintf("min(%s)", name)})
 			}
 		case lexer.MED:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(expr.MedianInt{Name: name, As: fmt.Sprintf("med(%s)", name)})
+				s.SetFunction(clause.MedianInt{Name: name, As: fmt.Sprintf("med(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(expr.MedianFloat{Name: name, As: fmt.Sprintf("med(%s)", name)})
+				s.SetFunction(clause.MedianFloat{Name: name, As: fmt.Sprintf("med(%s)", name)})
 			}
 		case lexer.SUM:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(expr.SumInt{Name: name, As: fmt.Sprintf("sum(%s)", name)})
+				s.SetFunction(clause.SumInt{Name: name, As: fmt.Sprintf("sum(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(expr.SumFloat{Name: name, As: fmt.Sprintf("sum(%s)", name)})
+				s.SetFunction(clause.SumFloat{Name: name, As: fmt.Sprintf("sum(%s)", name)})
 			}
 		case lexer.AVG:
 			_, name := l.TokenizeIdentifier()
 			if IntField(s.EventType, name) {
-				s.SetFunction(expr.AverageInt{Name: name, As: fmt.Sprintf("avg(%s)", name)})
+				s.SetFunction(clause.AverageInt{Name: name, As: fmt.Sprintf("avg(%s)", name)})
 			}
 			if FloatField(s.EventType, name) {
-				s.SetFunction(expr.AverageFloat{Name: name, As: fmt.Sprintf("avg(%s)", name)})
+				s.SetFunction(clause.AverageFloat{Name: name, As: fmt.Sprintf("avg(%s)", name)})
 			}
 		}
 	}
@@ -161,7 +161,7 @@ func (p *Parser) ParseWhere(s *statement.Statement, l *lexer.Lexer) error {
 		}
 	}
 
-	list := make([]expr.Where, 0)
+	list := make([]clause.Where, 0)
 	for {
 		token, _ := l.Tokenize()
 		if token == lexer.EOF {
@@ -184,9 +184,9 @@ func (p *Parser) ParseWhere(s *statement.Statement, l *lexer.Lexer) error {
 
 			switch sel {
 			case lexer.LARGER:
-				list = append(list, expr.LargerThanInt{Name: name, Value: val})
+				list = append(list, clause.LargerThanInt{Name: name, Value: val})
 			case lexer.LESS:
-				list = append(list, expr.LessThanInt{Name: name, Value: val})
+				list = append(list, clause.LessThanInt{Name: name, Value: val})
 			}
 		}
 
@@ -201,9 +201,9 @@ func (p *Parser) ParseWhere(s *statement.Statement, l *lexer.Lexer) error {
 
 			switch sel {
 			case lexer.LARGER:
-				list = append(list, expr.LargerThanFloat{Name: name, Value: val})
+				list = append(list, clause.LargerThanFloat{Name: name, Value: val})
 			case lexer.LESS:
-				list = append(list, expr.LessThanFloat{Name: name, Value: val})
+				list = append(list, clause.LessThanFloat{Name: name, Value: val})
 			}
 		}
 	}

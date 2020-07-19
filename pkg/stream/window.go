@@ -5,20 +5,20 @@ import (
 	"sync"
 	"time"
 
+	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
-	"github.com/itsubaki/gostream/pkg/expr"
 )
 
 type Window interface {
-	Where() []expr.Where
-	Function() []expr.Function
-	OrderBy() []expr.OrderBy
-	Limit() []expr.LimitIF
+	Where() []clause.Where
+	Function() []clause.Function
+	OrderBy() []clause.OrderBy
+	Limit() []clause.LimitIF
 
-	SetWhere(w ...expr.Where)
-	SetFunction(f ...expr.Function)
-	SetOrderBy(o ...expr.OrderBy)
-	SetLimit(l ...expr.LimitIF)
+	SetWhere(w ...clause.Where)
+	SetFunction(f ...clause.Function)
+	SetOrderBy(o ...clause.OrderBy)
+	SetLimit(l ...clause.LimitIF)
 
 	Input() chan interface{}
 	Output() chan []event.Event
@@ -36,10 +36,10 @@ type IdentityWindow struct {
 	in       chan interface{}
 	out      chan []event.Event
 	event    []event.Event
-	where    []expr.Where
-	function []expr.Function
-	orderBy  []expr.OrderBy
-	limit    []expr.LimitIF
+	where    []clause.Where
+	function []clause.Function
+	orderBy  []clause.OrderBy
+	limit    []clause.LimitIF
 	closed   bool
 	mutex    sync.RWMutex
 }
@@ -59,10 +59,10 @@ func NewIdentity(capacity ...int) Window {
 		in:       make(chan interface{}, cap),
 		out:      make(chan []event.Event, cap),
 		event:    []event.Event{},
-		where:    []expr.Where{},
-		function: []expr.Function{},
-		orderBy:  []expr.OrderBy{},
-		limit:    []expr.LimitIF{},
+		where:    []clause.Where{},
+		function: []clause.Function{},
+		orderBy:  []clause.OrderBy{},
+		limit:    []clause.LimitIF{},
 		closed:   false,
 		mutex:    sync.RWMutex{},
 	}
@@ -71,35 +71,35 @@ func NewIdentity(capacity ...int) Window {
 	return w
 }
 
-func (w *IdentityWindow) Where() []expr.Where {
+func (w *IdentityWindow) Where() []clause.Where {
 	return w.where
 }
 
-func (w *IdentityWindow) Function() []expr.Function {
+func (w *IdentityWindow) Function() []clause.Function {
 	return w.function
 }
 
-func (w *IdentityWindow) OrderBy() []expr.OrderBy {
+func (w *IdentityWindow) OrderBy() []clause.OrderBy {
 	return w.orderBy
 }
 
-func (w *IdentityWindow) Limit() []expr.LimitIF {
+func (w *IdentityWindow) Limit() []clause.LimitIF {
 	return w.limit
 }
 
-func (w *IdentityWindow) SetWhere(wh ...expr.Where) {
+func (w *IdentityWindow) SetWhere(wh ...clause.Where) {
 	w.where = append(w.where, wh...)
 }
 
-func (w *IdentityWindow) SetFunction(f ...expr.Function) {
+func (w *IdentityWindow) SetFunction(f ...clause.Function) {
 	w.function = append(w.function, f...)
 }
 
-func (w *IdentityWindow) SetOrderBy(o ...expr.OrderBy) {
+func (w *IdentityWindow) SetOrderBy(o ...clause.OrderBy) {
 	w.orderBy = append(w.orderBy, o...)
 }
 
-func (w *IdentityWindow) SetLimit(l ...expr.LimitIF) {
+func (w *IdentityWindow) SetLimit(l ...clause.LimitIF) {
 	w.limit = append(w.limit, l...)
 }
 
@@ -196,13 +196,13 @@ func NewLength(_type interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
 	w.SetWhere(
-		expr.EqualsType{
+		clause.EqualsType{
 			Accept: _type,
 		},
 	)
 
 	w.SetFunction(
-		&expr.Length{
+		&clause.Length{
 			Length: length,
 		},
 	)
@@ -214,13 +214,13 @@ func NewLengthBatch(_type interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
 	w.SetWhere(
-		expr.EqualsType{
+		clause.EqualsType{
 			Accept: _type,
 		},
 	)
 
 	w.SetFunction(
-		&expr.LengthBatch{
+		&clause.LengthBatch{
 			Length: length,
 			Batch:  event.List(),
 		},
@@ -233,13 +233,13 @@ func NewTime(_type interface{}, expire time.Duration, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
 	w.SetWhere(
-		expr.EqualsType{
+		clause.EqualsType{
 			Accept: _type,
 		},
 	)
 
 	w.SetFunction(
-		&expr.TimeDuration{
+		&clause.TimeDuration{
 			Expire: expire,
 		},
 	)
@@ -251,7 +251,7 @@ func NewTimeBatch(_type interface{}, expire time.Duration, capacity ...int) Wind
 	w := NewIdentity(capacity...)
 
 	w.SetWhere(
-		expr.EqualsType{
+		clause.EqualsType{
 			Accept: _type,
 		},
 	)
@@ -259,7 +259,7 @@ func NewTimeBatch(_type interface{}, expire time.Duration, capacity ...int) Wind
 	start := time.Now()
 	end := start.Add(expire)
 	w.SetFunction(
-		&expr.TimeDurationBatch{
+		&clause.TimeDurationBatch{
 			Start:  start,
 			End:    end,
 			Expire: expire,

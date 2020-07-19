@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
-	"github.com/itsubaki/gostream/pkg/expr"
 )
 
 func BenchmarkLengthWindowNoFunction128(b *testing.B) {
@@ -38,7 +38,7 @@ func BenchmarkLengthWindowSumInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		expr.SumInt{
+		clause.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -60,7 +60,7 @@ func BenchmarkLengthWindowSumInt64(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		expr.SumInt{
+		clause.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -82,7 +82,7 @@ func BenchmarkLengthWindowSumInt128(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		expr.SumInt{
+		clause.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -104,7 +104,7 @@ func BenchmarkLengthWindowSumInt256(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		expr.SumInt{
+		clause.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -125,7 +125,7 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		expr.AverageMapInt{
+		clause.AverageMapInt{
 			Name: "Record",
 			Key:  "Value",
 			As:   "avg(Value)",
@@ -152,7 +152,7 @@ func BenchmarkLengthWindowAverageInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		expr.AverageInt{
+		clause.AverageInt{
 			Name: "Value",
 			As:   "avg(Value)",
 		},
@@ -173,7 +173,7 @@ func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
 	defer w.Close()
 
 	w.SetWhere(
-		expr.LargerThanMapInt{
+		clause.LargerThanMapInt{
 			Name:  "Record",
 			Key:   "Value",
 			Value: 100,
@@ -199,7 +199,7 @@ func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetWhere(
-		expr.LargerThanInt{
+		clause.LargerThanInt{
 			Name:  "Value",
 			Value: 100,
 		},
@@ -220,7 +220,7 @@ func BenchmarkLengthWindowOrderByMap(b *testing.B) {
 	defer w.Close()
 
 	w.SetOrderBy(
-		expr.OrderByMapInt{
+		clause.OrderByMapInt{
 			Name:    "Record",
 			Key:     "Value",
 			Reverse: false,
@@ -246,7 +246,7 @@ func BenchmarkLengthWindowOrderByInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetOrderBy(
-		expr.OrderByInt{
+		clause.OrderByInt{
 			Name:    "Value",
 			Reverse: false,
 		},
@@ -267,7 +267,7 @@ func BenchmarkLengthWindowOrderByReverseMap(b *testing.B) {
 	defer w.Close()
 
 	w.SetOrderBy(
-		expr.OrderByMapInt{
+		clause.OrderByMapInt{
 			Name:    "Record",
 			Key:     "Value",
 			Reverse: true,
@@ -292,7 +292,7 @@ func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetOrderBy(
-		expr.OrderByInt{
+		clause.OrderByInt{
 			Name:    "Value",
 			Reverse: true,
 		},
@@ -314,18 +314,18 @@ func TestConcurrency(t *testing.T) {
 	defer w.Close()
 
 	w.SetWhere(
-		expr.LargerThanInt{
+		clause.LargerThanInt{
 			Name:  "Value",
 			Value: 1,
 		},
 	)
 	w.SetFunction(
-		expr.Count{
+		clause.Count{
 			As: "count",
 		},
 	)
 	w.SetOrderBy(
-		expr.OrderByInt{
+		clause.OrderByInt{
 			Name:    "Value",
 			Reverse: true,
 		},
@@ -356,18 +356,18 @@ func TestLengthWindow(t *testing.T) {
 	defer w.Close()
 
 	w.SetWhere(
-		expr.LargerThanInt{
+		clause.LargerThanInt{
 			Name:  "Value",
 			Value: 1,
 		},
 	)
 	w.SetFunction(
-		expr.Count{
+		clause.Count{
 			As: "count",
 		},
 	)
 	w.SetOrderBy(
-		expr.OrderByInt{
+		clause.OrderByInt{
 			Name:    "Value",
 			Reverse: true,
 		},
@@ -414,24 +414,24 @@ func TestLengthWindowMap(t *testing.T) {
 	defer w.Close()
 
 	w.SetWhere(
-		expr.LargerThanMapInt{
+		clause.LargerThanMapInt{
 			Name:  "Record",
 			Key:   "Value",
 			Value: 1,
 		},
 	)
 	w.SetFunction(
-		expr.Count{
+		clause.Count{
 			As: "count",
 		},
-		expr.AverageMapInt{
+		clause.AverageMapInt{
 			Name: "Record",
 			Key:  "Value",
 			As:   "avg(Record:Value)",
 		},
 	)
 	w.SetOrderBy(
-		expr.OrderByMapInt{
+		clause.OrderByMapInt{
 			Name:    "Record",
 			Key:     "Value",
 			Reverse: true,
@@ -572,7 +572,7 @@ func TestLengthWindowPanic(t *testing.T) {
 
 	// IntEvent and Map Function -> panic!!
 	w.SetFunction(
-		expr.AverageMapInt{
+		clause.AverageMapInt{
 			Name: "Record",
 			Key:  "Value",
 			As:   "avg(Record:Value)",
