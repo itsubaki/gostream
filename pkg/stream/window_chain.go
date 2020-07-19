@@ -14,8 +14,9 @@ func (w *IdentityWindow) OrderBy() *OrderBy {
 	return &OrderBy{w}
 }
 
-func (w *IdentityWindow) Limit(limit, offset int) {
-	w.SetLimit(clause.Limit{Limit: limit, Offset: offset})
+func (w *IdentityWindow) Limit(limit int) *Limit {
+	w.SetLimit(clause.Limit{Limit: limit, Offset: 0})
+	return &Limit{w, limit}
 }
 
 func (w *IdentityWindow) First() {

@@ -52,7 +52,7 @@ func TestView(t *testing.T) {
 	w.Function().Select().String("Name", "n")
 	w.Function().Select().Int("Value", "v")
 	w.OrderBy().Int("Value", true)
-	w.Limit(10, 5)
+	w.Limit(10).Offset(5)
 
 	fmt.Printf("%#v\n", w)
 }

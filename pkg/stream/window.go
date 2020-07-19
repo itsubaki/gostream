@@ -15,7 +15,7 @@ type Window interface {
 	SetWhere(w ...clause.Where)
 	SetFunction(f ...clause.Function)
 	SetOrderBy(o ...clause.OrderBy)
-	SetLimit(l clause.LimitIF)
+	SetLimit(l ...clause.LimitIF)
 
 	Input() chan interface{}
 	Output() chan []event.Event
@@ -80,12 +80,16 @@ func (w *IdentityWindow) SetOrderBy(o ...clause.OrderBy) {
 	w.orderBy = append(w.orderBy, o...)
 }
 
-func (w *IdentityWindow) SetLimit(l clause.LimitIF) {
-	if len(w.limit) < 1 {
-		w.limit = append(w.limit, l)
+func (w *IdentityWindow) SetLimit(l ...clause.LimitIF) {
+	if len(l) < 1 {
+		return
 	}
 
-	w.limit[0] = l
+	if len(w.limit) < 1 {
+		w.limit = append(w.limit, l[0])
+	}
+
+	w.limit[0] = l[0]
 }
 
 func (w *IdentityWindow) Input() chan interface{} {

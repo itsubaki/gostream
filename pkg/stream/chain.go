@@ -6,7 +6,7 @@ type Chain interface {
 	Where() *Where
 	Function() *Function
 	OrderBy() *OrderBy
-	Limit(limit, offset int)
+	Limit(limit int) *Limit
 }
 
 type Where struct {
@@ -27,6 +27,10 @@ func (l *LargerThan) Int(name string, value int) {
 
 type Function struct {
 	w *IdentityWindow
+}
+
+func (f *Function) Count(as string) {
+	f.w.SetFunction(clause.Count{As: as})
 }
 
 type Select struct {
@@ -75,4 +79,13 @@ type OrderBy struct {
 
 func (o *OrderBy) Int(name string, reverse bool) {
 	o.w.SetOrderBy(clause.OrderByInt{Name: name, Reverse: reverse})
+}
+
+type Limit struct {
+	w     *IdentityWindow
+	limit int
+}
+
+func (l *Limit) Offset(offset int) {
+	l.w.SetLimit(clause.Limit{Limit: l.limit, Offset: offset})
 }
