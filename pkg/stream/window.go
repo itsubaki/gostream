@@ -10,10 +10,10 @@ import (
 )
 
 type Window interface {
-	Where() []clause.Where
-	Function() []clause.Function
-	OrderBy() []clause.OrderBy
-	Limit() []clause.LimitIF
+	Where() *Where
+	Function() *Function
+	OrderBy() *OrderBy
+	Limit(limit, offset int)
 
 	SetWhere(w ...clause.Where)
 	SetFunction(f ...clause.Function)
@@ -71,20 +71,25 @@ func NewIdentity(capacity ...int) Window {
 	return w
 }
 
-func (w *IdentityWindow) Where() []clause.Where {
-	return w.where
+func (w *IdentityWindow) Where() *Where {
+	return &Where{w}
 }
 
-func (w *IdentityWindow) Function() []clause.Function {
-	return w.function
+func (w *IdentityWindow) Function() *Function {
+	return &Function{w}
 }
 
-func (w *IdentityWindow) OrderBy() []clause.OrderBy {
-	return w.orderBy
+func (w *IdentityWindow) OrderBy() *OrderBy {
+	return &OrderBy{w}
 }
 
-func (w *IdentityWindow) Limit() []clause.LimitIF {
-	return w.limit
+func (w *IdentityWindow) Limit(limit, offset int) {
+	w.SetLimit(
+		clause.Limit{
+			Limit:  limit,
+			Offset: offset,
+		},
+	)
 }
 
 func (w *IdentityWindow) SetWhere(wh ...clause.Where) {
