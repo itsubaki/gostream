@@ -1,4 +1,4 @@
-package window
+package window_test
 
 import (
 	"math/rand"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
+	"github.com/itsubaki/gostream/pkg/window"
 )
 
 func BenchmarkLengthWindowNoFunction128(b *testing.B) {
@@ -15,7 +16,7 @@ func BenchmarkLengthWindowNoFunction128(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(MapEvent{}, 128)
+	w := window.NewLength(MapEvent{}, 128)
 	defer w.Close()
 
 	b.ResetTimer()
@@ -34,7 +35,7 @@ func BenchmarkLengthWindowSumInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 1)
+	w := window.NewLength(IntEvent{}, 1)
 	defer w.Close()
 
 	w.SetFunction(
@@ -56,7 +57,7 @@ func BenchmarkLengthWindowSumInt64(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 64)
+	w := window.NewLength(IntEvent{}, 64)
 	defer w.Close()
 
 	w.SetFunction(
@@ -78,7 +79,7 @@ func BenchmarkLengthWindowSumInt128(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 128)
+	w := window.NewLength(IntEvent{}, 128)
 	defer w.Close()
 
 	w.SetFunction(
@@ -100,7 +101,7 @@ func BenchmarkLengthWindowSumInt256(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 256)
+	w := window.NewLength(IntEvent{}, 256)
 	defer w.Close()
 
 	w.SetFunction(
@@ -121,7 +122,7 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(MapEvent{}, 128)
+	w := window.NewLength(MapEvent{}, 128)
 	defer w.Close()
 
 	w.SetFunction(
@@ -148,7 +149,7 @@ func BenchmarkLengthWindowAverageInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 128)
+	w := window.NewLength(IntEvent{}, 128)
 	defer w.Close()
 
 	w.SetFunction(
@@ -169,7 +170,7 @@ func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(MapEvent{}, 128)
+	w := window.NewLength(MapEvent{}, 128)
 	defer w.Close()
 
 	w.SetWhere(
@@ -195,7 +196,7 @@ func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 128)
+	w := window.NewLength(IntEvent{}, 128)
 	defer w.Close()
 
 	w.SetWhere(
@@ -216,7 +217,7 @@ func BenchmarkLengthWindowOrderByMap(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(MapEvent{}, 128)
+	w := window.NewLength(MapEvent{}, 128)
 	defer w.Close()
 
 	w.SetOrderBy(
@@ -242,7 +243,7 @@ func BenchmarkLengthWindowOrderByInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 128)
+	w := window.NewLength(IntEvent{}, 128)
 	defer w.Close()
 
 	w.SetOrderBy(
@@ -263,7 +264,7 @@ func BenchmarkLengthWindowOrderByReverseMap(b *testing.B) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(MapEvent{}, 128)
+	w := window.NewLength(MapEvent{}, 128)
 	defer w.Close()
 
 	w.SetOrderBy(
@@ -288,7 +289,7 @@ func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 128)
+	w := window.NewLength(IntEvent{}, 128)
 	defer w.Close()
 
 	w.SetOrderBy(
@@ -310,7 +311,7 @@ func TestConcurrency(t *testing.T) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 2)
+	w := window.NewLength(IntEvent{}, 2)
 	defer w.Close()
 
 	w.SetWhere(
@@ -352,7 +353,7 @@ func TestLengthWindow(t *testing.T) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 2)
+	w := window.NewLength(IntEvent{}, 2)
 	defer w.Close()
 
 	w.SetWhere(
@@ -410,7 +411,7 @@ func TestLengthWindowMap(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	w := NewLength(MapEvent{}, 2)
+	w := window.NewLength(MapEvent{}, 2)
 	defer w.Close()
 
 	w.SetWhere(
@@ -474,7 +475,7 @@ func TestLengthWindowListen(t *testing.T) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 2)
+	w := window.NewLength(IntEvent{}, 2)
 	defer w.Close()
 
 	w.Listen("")
@@ -486,7 +487,7 @@ func TestLengthBatchWindow(t *testing.T) {
 		Value int
 	}
 
-	w := NewLengthBatch(IntEvent{}, 2)
+	w := window.NewLengthBatch(IntEvent{}, 2)
 	defer w.Close()
 
 	events := event.List()
@@ -509,7 +510,7 @@ func TestTimeWindow0ms(t *testing.T) {
 		Value int
 	}
 
-	w := NewTime(IntEvent{}, 0*time.Millisecond)
+	w := window.NewTime(IntEvent{}, 0*time.Millisecond)
 	defer w.Close()
 
 	events := event.List()
@@ -528,7 +529,7 @@ func TestTimeWindow10ms(t *testing.T) {
 		Value int
 	}
 
-	w := NewTime(IntEvent{}, 1*time.Millisecond)
+	w := window.NewTime(IntEvent{}, 1*time.Millisecond)
 	defer w.Close()
 
 	events := event.List()
@@ -547,7 +548,7 @@ func TestTimeBatchWindow10ms(t *testing.T) {
 		Value int
 	}
 
-	w := NewTimeBatch(IntEvent{}, 4*time.Millisecond)
+	w := window.NewTimeBatch(IntEvent{}, 4*time.Millisecond)
 	defer w.Close()
 
 	for i := 0; i < 10; i++ {
@@ -567,7 +568,7 @@ func TestLengthWindowPanic(t *testing.T) {
 		Value int
 	}
 
-	w := NewLength(IntEvent{}, 10)
+	w := window.NewLength(IntEvent{}, 10)
 	defer w.Close()
 
 	// IntEvent and Map Function -> panic!!

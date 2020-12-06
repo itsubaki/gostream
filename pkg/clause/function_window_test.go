@@ -1,9 +1,10 @@
-package clause
+package clause_test
 
 import (
 	"testing"
 	"time"
 
+	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
 )
 
@@ -15,7 +16,7 @@ func TestTimeDurationBatch(t *testing.T) {
 
 	start := time.Now()
 	duration := 10 * time.Millisecond
-	f := &TimeDurationBatch{start, start.Add(duration), duration}
+	f := &clause.TimeDurationBatch{start, start.Add(duration), duration}
 
 	events := append(event.List(), event.New(IntEvent{"foo", 1}))
 	events = f.Apply(events)

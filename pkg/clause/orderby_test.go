@@ -1,8 +1,9 @@
-package clause
+package clause_test
 
 import (
 	"testing"
 
+	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
 )
 
@@ -20,7 +21,7 @@ func TestOrderByInt(t *testing.T) {
 	events = append(events, event.New(IntEvent{"foo", 60}))
 	events = append(events, event.New(IntEvent{"foo", 50}))
 
-	v := OrderByInt{"Value", false}
+	v := clause.OrderByInt{"Value", false}
 	result := v.Apply(events)
 
 	var test = []struct {
@@ -56,7 +57,7 @@ func TestOrderByIntReverse(t *testing.T) {
 	events = append(events, event.New(IntEvent{"foo", 60}))
 	events = append(events, event.New(IntEvent{"foo", 50}))
 
-	v := OrderByInt{"Value", true}
+	v := clause.OrderByInt{"Value", true}
 	result := v.Apply(events)
 
 	var test = []struct {
@@ -92,7 +93,7 @@ func TestOrderByFloat(t *testing.T) {
 	events = append(events, event.New(FloatEvent{"foo", 60.0}))
 	events = append(events, event.New(FloatEvent{"foo", 50.0}))
 
-	v := OrderByFloat{"Value", false}
+	v := clause.OrderByFloat{"Value", false}
 	result := v.Apply(events)
 
 	var test = []struct {
@@ -128,7 +129,7 @@ func TestOrderByFloatReverse(t *testing.T) {
 	events = append(events, event.New(FloatEvent{"foo", 60.0}))
 	events = append(events, event.New(FloatEvent{"foo", 50.0}))
 
-	v := OrderByFloat{"Value", true}
+	v := clause.OrderByFloat{"Value", true}
 	result := v.Apply(events)
 
 	var test = []struct {

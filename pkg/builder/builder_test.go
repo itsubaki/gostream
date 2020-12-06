@@ -1,14 +1,15 @@
-package builder
+package builder_test
 
 import (
 	"reflect"
 	"testing"
 
+	"github.com/itsubaki/gostream/pkg/builder"
 	"github.com/itsubaki/gostream/pkg/event"
 )
 
 func TestStructBuilder(t *testing.T) {
-	b := New()
+	b := builder.New()
 	b.SetField("Name", reflect.TypeOf(""))
 
 	b.SetField("Bool", reflect.TypeOf(true))

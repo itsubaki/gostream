@@ -1,9 +1,11 @@
-package parser
+package parser_test
 
 import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/itsubaki/gostream/pkg/parser"
 )
 
 func TestParserFloat(t *testing.T) {
@@ -14,7 +16,7 @@ func TestParserFloat(t *testing.T) {
 		Message string
 	}
 
-	p := New()
+	p := parser.New()
 	p.Register("LogEvent", LogEvent{})
 
 	q := "select avg(Level), sum(Level), max(Level), min(Level), med(Level), count(*) from LogEvent.length(10) where Level > 2.5 and Level < 10.5"
@@ -72,7 +74,7 @@ func TestParserInt(t *testing.T) {
 		Message string
 	}
 
-	p := New()
+	p := parser.New()
 	p.Register("LogEvent", LogEvent{})
 
 	q := "select avg(Level), sum(Level), max(Level), min(Level), med(Level), count(*) from LogEvent.time(10 sec) where Level > 2 and Level < 10"
@@ -123,7 +125,7 @@ func TestParserInt(t *testing.T) {
 }
 
 func TestParserError(t *testing.T) {
-	p := New()
+	p := parser.New()
 
 	q := "select * from MapEvent.length(10)"
 	_, err := p.Parse(q)
@@ -141,7 +143,7 @@ func TestNewStatementLength(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	p := New()
+	p := parser.New()
 	p.Register("MapEvent", MapEvent{})
 
 	q := "select * from MapEvent.length(10)"
@@ -168,7 +170,7 @@ func TestNewStatementTime(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	p := New()
+	p := parser.New()
 	p.Register("MapEvent", MapEvent{})
 
 	q := "select * from MapEvent.time(10 min)"
