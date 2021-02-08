@@ -49,8 +49,8 @@ type LogEvent struct {
 
 // select count(*) from LogEvent.time(10sec) where Level > 2
 w := window.NewTime(LogEvent{}, 10*time.Second)
-w.Where().LargerThan().Int("Level", 2)
 w.Function().Count()
+w.Where().LargerThan().Int("Level", 2)
 defer w.Close()
 
 go func() {
@@ -82,9 +82,9 @@ type MyEvent struct {
 // limit 10 offset 5
 
 w := window.NewTime(MyEvent{}, 10 * time.Millisecond)
-w.Where().LargerThan().Int("Value", 97)
 w.Function().Select().String("Name")
 w.Function().Select().Int("Value")
+w.Where().LargerThan().Int("Value", 97)
 w.OrderBy().Desc().Int("Value")
 w.Limit(10).Offset(5)
 defer w.Close()
