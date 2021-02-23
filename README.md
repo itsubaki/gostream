@@ -28,7 +28,6 @@ A Stream Processing API for Go
 - [x] OrderBy
 - [x] Limit, First, Last
 - [ ] Tool
-  - [x] Builder
   - [x] Lexer
   - [ ] Parser
 
@@ -108,30 +107,6 @@ for i := 0; i < 100; i++ {
 w := window.NewLength(MyEvent{}, 10)
 w.Function().Average().Int("Value")
 w.Function().Sum().Int("Value")
-```
-
-# RuntimeEventBuilder
-
-```go
-// type RuntimeEvent struct {
-//  Name string
-//  Value int
-// }
-b := builder.New()
-b.SetField("Name", reflect.TypeOf(""))
-b.SetField("Value", reflect.TypeOf(0))
-s := b.Build()
-
-
-// i.Value()
-// -> RuntimeEvent{Name: "foobar", Value: 123}
-// i.Pointer()
-// -> &RuntimeEvent{Name: "foobar", Value: 123}
-i := s.NewInstance()
-i.SetString("Name", "foobar")
-i.SetInt("Value", 123)
-
-w.Input() <-i.Value()
 ```
 
 # (WIP) Query
