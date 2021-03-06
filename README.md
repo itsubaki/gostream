@@ -3,7 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/itsubaki/gostream?style=flat-square)](https://goreportcard.com/report/github.com/itsubaki/gostream)
 [![tests](https://github.com/itsubaki/gostream/workflows/tests/badge.svg?branch=develop)](https://github.com/itsubaki/gostream/actions)
 
-A Stream Processing API for Go
+Stream Processing Library for Go
 
 ## TODO
 
