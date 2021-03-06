@@ -28,8 +28,8 @@ func New() *Statement {
 	}
 }
 
-func (s *Statement) SetEventType(_type interface{}) {
-	s.EventType = _type
+func (s *Statement) SetEventType(accept interface{}) {
+	s.EventType = accept
 }
 
 func (s *Statement) SetWindow(token lexer.Token) {

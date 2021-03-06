@@ -181,37 +181,37 @@ func (w *IdentityWindow) IsClosed() bool {
 	return w.closed
 }
 
-func NewLength(_type interface{}, length int, capacity ...int) Window {
+func NewLength(accept interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(clause.EqualsType{Accept: _type})
+	w.SetWhere(clause.EqualsType{Accept: accept})
 	w.SetFunction(&clause.Length{Length: length})
 
 	return w
 }
 
-func NewLengthBatch(_type interface{}, length int, capacity ...int) Window {
+func NewLengthBatch(accept interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(clause.EqualsType{Accept: _type})
+	w.SetWhere(clause.EqualsType{Accept: accept})
 	w.SetFunction(&clause.LengthBatch{Length: length, Batch: event.List()})
 
 	return w
 }
 
-func NewTime(_type interface{}, expire time.Duration, capacity ...int) Window {
+func NewTime(accept interface{}, expire time.Duration, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(clause.EqualsType{Accept: _type})
+	w.SetWhere(clause.EqualsType{Accept: accept})
 	w.SetFunction(&clause.TimeDuration{Expire: expire})
 
 	return w
 }
 
-func NewTimeBatch(_type interface{}, expire time.Duration, capacity ...int) Window {
+func NewTimeBatch(accept interface{}, expire time.Duration, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(clause.EqualsType{Accept: _type})
+	w.SetWhere(clause.EqualsType{Accept: accept})
 
 	start := time.Now()
 	end := start.Add(expire)
