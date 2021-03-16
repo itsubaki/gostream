@@ -1,16 +1,13 @@
 package gostream_test
 
 import (
-	"fmt"
-	"log"
-	"testing"
 	"time"
 
 	"github.com/itsubaki/gostream/pkg/parser"
 	"github.com/itsubaki/gostream/pkg/window"
 )
 
-func TestQuery(t *testing.T) {
+func Example_parser() {
 	type MyEvent struct {
 		Name  string
 		Value int
@@ -22,15 +19,16 @@ func TestQuery(t *testing.T) {
 	query := "select * from MyEvent.length(10)"
 	statement, err := p.Parse(query)
 	if err != nil {
-		log.Println("failed.")
 		return
 	}
 
 	window := statement.New()
 	defer window.Close()
+
+	// Output:
 }
 
-func TestTimeWindow(t *testing.T) {
+func Example_timeWindow() {
 	type LogEvent struct {
 		Time    time.Time
 		Level   int
@@ -43,10 +41,10 @@ func TestTimeWindow(t *testing.T) {
 	w.Where().LargerThan().Int("Level", 2)
 	w.Function().Count()
 
-	fmt.Printf("%#v\n", w)
+	// Output:
 }
 
-func TestLengthWindow(t *testing.T) {
+func Example_lengthWindow() {
 	type MyEvent struct {
 		Name  string
 		Value int
@@ -58,10 +56,10 @@ func TestLengthWindow(t *testing.T) {
 	w.Function().Average().Int("Value")
 	w.Function().Sum().Int("Value")
 
-	fmt.Printf("%#v\n", w)
+	// Output:
 }
 
-func TestView(t *testing.T) {
+func Example_view() {
 	type MyEvent struct {
 		Name  string
 		Value int
@@ -76,5 +74,5 @@ func TestView(t *testing.T) {
 	w.OrderBy().Desc().Int("Value")
 	w.Limit(10).Offset(5)
 
-	fmt.Printf("%#v\n", w)
+	// Output:
 }
