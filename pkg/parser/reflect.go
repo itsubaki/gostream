@@ -18,7 +18,7 @@ func FieldType(event interface{}, fieldname string) reflect.Type {
 	panic(fmt.Sprintf("field name=%s not found in event= %v", fieldname, event))
 }
 
-func IntField(event interface{}, fieldname string) bool {
+func IsIntField(event interface{}, fieldname string) bool {
 	switch FieldType(event, fieldname) {
 	case
 		reflect.TypeOf(int(0)),
@@ -32,7 +32,7 @@ func IntField(event interface{}, fieldname string) bool {
 	}
 }
 
-func FloatField(event interface{}, fieldname string) bool {
+func IsFloatField(event interface{}, fieldname string) bool {
 	switch FieldType(event, fieldname) {
 	case
 		reflect.TypeOf(float32(0)),

@@ -25,6 +25,20 @@ func (p *Parser) Register(name string, t interface{}) {
 	p.Registry[name] = t
 }
 
+func (p *Parser) SetFunction(s *statement.Statement, fieldname string, intFunc, floatFunc clause.Function) error {
+	if IsIntField(s.EventType, fieldname) {
+		s.SetFunction(intFunc)
+		return nil
+	}
+
+	if IsFloatField(s.EventType, fieldname) {
+		s.SetFunction(floatFunc)
+		return nil
+	}
+
+	return fmt.Errorf("invalid parameter event type=%v fieldname=%v", s.EventType, fieldname)
+}
+
 func (p *Parser) ParseFunction(s *statement.Statement, l *lexer.Lexer) error {
 	for {
 		token, literal := l.Tokenize()
@@ -39,43 +53,43 @@ func (p *Parser) ParseFunction(s *statement.Statement, l *lexer.Lexer) error {
 			s.SetFunction(clause.Count{As: "count(*)"})
 		case lexer.MAX:
 			_, name := l.TokenizeIdentifier()
-			if IntField(s.EventType, name) {
-				s.SetFunction(clause.MaxInt{Name: name, As: fmt.Sprintf("max(%s)", name)})
-			}
-			if FloatField(s.EventType, name) {
-				s.SetFunction(clause.MaxFloat{Name: name, As: fmt.Sprintf("max(%s)", name)})
+			if err := p.SetFunction(s, name,
+				clause.MaxInt{Name: name, As: fmt.Sprintf("max(%s)", name)},
+				clause.MaxFloat{Name: name, As: fmt.Sprintf("max(%s)", name)},
+			); err != nil {
+				return fmt.Errorf("set function: %v", err)
 			}
 		case lexer.MIN:
 			_, name := l.TokenizeIdentifier()
-			if IntField(s.EventType, name) {
-				s.SetFunction(clause.MinInt{Name: name, As: fmt.Sprintf("min(%s)", name)})
-			}
-			if FloatField(s.EventType, name) {
-				s.SetFunction(clause.MinFloat{Name: name, As: fmt.Sprintf("min(%s)", name)})
+			if err := p.SetFunction(s, name,
+				clause.MinInt{Name: name, As: fmt.Sprintf("min(%s)", name)},
+				clause.MinFloat{Name: name, As: fmt.Sprintf("min(%s)", name)},
+			); err != nil {
+				return fmt.Errorf("set function: %v", err)
 			}
 		case lexer.MED:
 			_, name := l.TokenizeIdentifier()
-			if IntField(s.EventType, name) {
-				s.SetFunction(clause.MedianInt{Name: name, As: fmt.Sprintf("med(%s)", name)})
-			}
-			if FloatField(s.EventType, name) {
-				s.SetFunction(clause.MedianFloat{Name: name, As: fmt.Sprintf("med(%s)", name)})
+			if err := p.SetFunction(s, name,
+				clause.MedianInt{Name: name, As: fmt.Sprintf("med(%s)", name)},
+				clause.MedianFloat{Name: name, As: fmt.Sprintf("med(%s)", name)},
+			); err != nil {
+				return fmt.Errorf("set function: %v", err)
 			}
 		case lexer.SUM:
 			_, name := l.TokenizeIdentifier()
-			if IntField(s.EventType, name) {
-				s.SetFunction(clause.SumInt{Name: name, As: fmt.Sprintf("sum(%s)", name)})
-			}
-			if FloatField(s.EventType, name) {
-				s.SetFunction(clause.SumFloat{Name: name, As: fmt.Sprintf("sum(%s)", name)})
+			if err := p.SetFunction(s, name,
+				clause.SumInt{Name: name, As: fmt.Sprintf("sum(%s)", name)},
+				clause.SumFloat{Name: name, As: fmt.Sprintf("sum(%s)", name)},
+			); err != nil {
+				return fmt.Errorf("set function: %v", err)
 			}
 		case lexer.AVG:
 			_, name := l.TokenizeIdentifier()
-			if IntField(s.EventType, name) {
-				s.SetFunction(clause.AverageInt{Name: name, As: fmt.Sprintf("avg(%s)", name)})
-			}
-			if FloatField(s.EventType, name) {
-				s.SetFunction(clause.AverageFloat{Name: name, As: fmt.Sprintf("avg(%s)", name)})
+			if err := p.SetFunction(s, name,
+				clause.AverageInt{Name: name, As: fmt.Sprintf("avg(%s)", name)},
+				clause.AverageFloat{Name: name, As: fmt.Sprintf("avg(%s)", name)},
+			); err != nil {
+				return fmt.Errorf("set function: %v", err)
 			}
 		}
 	}
@@ -96,12 +110,12 @@ func (p *Parser) ParseEventType(s *statement.Statement, l *lexer.Lexer) error {
 		case lexer.DOT:
 			return nil
 		case lexer.IDENTIFIER:
-			v, ok := p.Registry[literal]
-			if !ok {
-				return fmt.Errorf("EventType [%s] is not registered", literal)
+			if v, ok := p.Registry[literal]; ok {
+				s.SetEventType(v)
+				continue
 			}
 
-			s.SetEventType(v)
+			return fmt.Errorf("EventType [%v] is not registered", literal)
 		}
 	}
 }
@@ -117,10 +131,9 @@ func (p *Parser) ParseWindow(s *statement.Statement, l *lexer.Lexer) error {
 	if token == lexer.EOF {
 		return fmt.Errorf("invalid token=%s", literal)
 	}
+	s.SetWindow(token)
 
 	if token == lexer.LENGTH {
-		s.SetWindow(token)
-
 		_, lex := l.TokenizeIdentifier()
 		length, err := strconv.Atoi(lex)
 		if err != nil {
@@ -132,10 +145,8 @@ func (p *Parser) ParseWindow(s *statement.Statement, l *lexer.Lexer) error {
 	}
 
 	if token == lexer.TIME {
-		s.SetWindow(token)
-
 		_, lex := l.TokenizeIdentifier()
-		ct, err := strconv.Atoi(lex)
+		d, err := strconv.Atoi(lex)
 		if err != nil {
 			return fmt.Errorf("atoi=%s: %v", lex, err)
 		}
@@ -143,15 +154,48 @@ func (p *Parser) ParseWindow(s *statement.Statement, l *lexer.Lexer) error {
 		t, _ := l.TokenizeIgnoreWhiteSpace()
 		switch t {
 		case lexer.SEC:
-			s.SetTime(time.Duration(ct) * time.Second)
+			s.SetTime(time.Duration(d) * time.Second)
 		case lexer.MIN:
-			s.SetTime(time.Duration(ct) * time.Minute)
+			s.SetTime(time.Duration(d) * time.Minute)
 		}
 
 		return nil
 	}
 
 	return fmt.Errorf("invalid token=%s", literal)
+}
+
+func (p *Parser) GetWhere(eventType interface{}, name, value string, t lexer.Token, l *lexer.Lexer) (clause.Where, error) {
+	if IsIntField(eventType, name) {
+		v, err := strconv.Atoi(value)
+		if err != nil {
+			return nil, fmt.Errorf("atoi=%v", v)
+		}
+
+		switch t {
+		case lexer.LARGER:
+			return clause.LargerThanInt{Name: name, Value: v}, nil
+		case lexer.LESS:
+			return clause.LessThanInt{Name: name, Value: v}, nil
+		}
+	}
+
+	if IsFloatField(eventType, name) {
+		_, val := l.TokenizeIdentifier()
+		v, err := strconv.ParseFloat(fmt.Sprintf("%s.%s", value, val), 64)
+		if err != nil {
+			return nil, fmt.Errorf("parse float=%s.%s", value, val)
+		}
+
+		switch t {
+		case lexer.LARGER:
+			return clause.LargerThanFloat{Name: name, Value: v}, nil
+		case lexer.LESS:
+			return clause.LessThanFloat{Name: name, Value: v}, nil
+		}
+	}
+
+	return nil, fmt.Errorf("invalid parameter event type=%v fieldname=%v", eventType, name)
 }
 
 func (p *Parser) ParseWhere(s *statement.Statement, l *lexer.Lexer) error {
@@ -173,39 +217,15 @@ func (p *Parser) ParseWhere(s *statement.Statement, l *lexer.Lexer) error {
 		}
 
 		_, name := l.TokenizeIdentifier()
-		sel, _ := l.TokenizeIgnoreIdentifier()
+		t, _ := l.TokenizeIgnoreIdentifier()
 		_, value := l.TokenizeIdentifier()
 
-		if IntField(s.EventType, name) {
-			val, err := strconv.Atoi(value)
-			if err != nil {
-				return fmt.Errorf("atoi=%s", value)
-			}
-
-			switch sel {
-			case lexer.LARGER:
-				list = append(list, clause.LargerThanInt{Name: name, Value: val})
-			case lexer.LESS:
-				list = append(list, clause.LessThanInt{Name: name, Value: val})
-			}
+		w, err := p.GetWhere(s.EventType, name, value, t, l)
+		if err != nil {
+			return fmt.Errorf("get where: %v", err)
 		}
 
-		if FloatField(s.EventType, name) {
-			_, value2 := l.TokenizeIdentifier()
-			fvalue := fmt.Sprintf("%s.%s", value, value2)
-
-			val, err := strconv.ParseFloat(fvalue, 64)
-			if err != nil {
-				return fmt.Errorf("parse float=%s", fvalue)
-			}
-
-			switch sel {
-			case lexer.LARGER:
-				list = append(list, clause.LargerThanFloat{Name: name, Value: val})
-			case lexer.LESS:
-				list = append(list, clause.LessThanFloat{Name: name, Value: val})
-			}
-		}
+		list = append(list, w)
 	}
 
 	s.SetWhere(list...)
