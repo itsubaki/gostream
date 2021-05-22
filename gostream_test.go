@@ -38,8 +38,8 @@ func Example_timeWindow() {
 	w := window.NewTime(LogEvent{}, 10*time.Second)
 	defer w.Close()
 
+	w.Count()
 	w.Where().LargerThan().Int("Level", 2)
-	w.Function().Count()
 
 	// Output:
 }
@@ -53,8 +53,8 @@ func Example_lengthWindow() {
 	w := window.NewLength(MyEvent{}, 10)
 	defer w.Close()
 
-	w.Function().Average().Int("Value")
-	w.Function().Sum().Int("Value")
+	w.Average().Int("Value")
+	w.Sum().Int("Value")
 
 	// Output:
 }
@@ -68,9 +68,9 @@ func Example_view() {
 	w := window.NewTime(MyEvent{}, 10*time.Millisecond)
 	defer w.Close()
 
+	w.Select().String("Name")
+	w.Select().Int("Value")
 	w.Where().LargerThan().Int("Value", 97)
-	w.Function().Select().String("Name")
-	w.Function().Select().Int("Value")
 	w.OrderBy().Desc().Int("Value")
 	w.Limit(10).Offset(5)
 

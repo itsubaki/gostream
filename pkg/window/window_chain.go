@@ -2,6 +2,22 @@ package window
 
 import "github.com/itsubaki/gostream/pkg/clause"
 
+func (w *IdentityWindow) Select() *Select {
+	return w.Function().Select()
+}
+
+func (w *IdentityWindow) Sum() *Sum {
+	return w.Function().Sum()
+}
+
+func (w *IdentityWindow) Average() *Average {
+	return w.Function().Average()
+}
+
+func (w *IdentityWindow) Count() {
+	w.Function().Count()
+}
+
 func (w *IdentityWindow) Where() *Where {
 	return &Where{w}
 }

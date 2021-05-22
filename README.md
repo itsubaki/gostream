@@ -48,7 +48,7 @@ type LogEvent struct {
 
 // select count(*) from LogEvent.time(10sec) where Level > 2
 w := window.NewTime(LogEvent{}, 10*time.Second)
-w.Function().Count()
+w.Count()
 w.Where().LargerThan().Int("Level", 2)
 defer w.Close()
 
@@ -81,8 +81,8 @@ type MyEvent struct {
 // limit 10 offset 5
 
 w := window.NewTime(MyEvent{}, 10 * time.Millisecond)
-w.Function().Select().String("Name")
-w.Function().Select().Int("Value")
+w.Select().String("Name")
+w.Select().Int("Value")
 w.Where().LargerThan().Int("Value", 97)
 w.OrderBy().Desc().Int("Value")
 w.Limit(10).Offset(5)
@@ -105,8 +105,8 @@ for i := 0; i < 100; i++ {
 ```go
 // select avg(Value), sum(Value) from MyEvent.length(10)
 w := window.NewLength(MyEvent{}, 10)
-w.Function().Average().Int("Value")
-w.Function().Sum().Int("Value")
+w.Average().Int("Value")
+w.Sum().Int("Value")
 ```
 
 # (WIP) Query

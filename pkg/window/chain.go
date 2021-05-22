@@ -7,8 +7,12 @@ import (
 )
 
 type Chain interface {
-	Where() *Where
 	Function() *Function
+	Select() *Select
+	Sum() *Sum
+	Average() *Average
+	Count()
+	Where() *Where
 	OrderBy() *OrderBy
 	Limit(limit int) *Limit
 }
