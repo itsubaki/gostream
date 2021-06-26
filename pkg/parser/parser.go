@@ -50,6 +50,13 @@ func (p *Parser) ParseFunction(s *statement.Statement, l *lexer.Lexer) error {
 		case lexer.ASTERISK:
 			s.SetFunction(clause.SelectAll{})
 		case lexer.COUNT:
+			lp, lpl := l.Tokenize()
+			ast, astl := l.Tokenize()
+			rp, rpl := l.Tokenize()
+			if lp != lexer.LPAREN || ast != lexer.ASTERISK || rp != lexer.RPAREN {
+				return fmt.Errorf("invalid token=%s%s%s", lpl, astl, rpl)
+			}
+
 			s.SetFunction(clause.Count{As: "count(*)"})
 		case lexer.MAX:
 			_, name := l.TokenizeIdentifier()
