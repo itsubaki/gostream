@@ -13,9 +13,9 @@ const (
 	ILLEGAL Token = iota
 	EOF
 	WHITESPACE
-
 	IDENTIFIER
 
+	ASTERISK
 	DOT
 	COMMA
 	SEMICOLON
@@ -25,7 +25,6 @@ const (
 	RBRACE
 
 	SELECT
-	ASTERISK
 	COUNT
 	SUM
 	AVG
@@ -47,12 +46,48 @@ const (
 )
 
 type Lexer struct {
-	eof rune
-	r   *bufio.Reader
+	eof     rune
+	r       *bufio.Reader
+	Symbol  map[rune]Token
+	Literal map[string]Token
 }
 
 func New(r io.Reader) *Lexer {
-	return &Lexer{rune(0), bufio.NewReader(r)}
+	lex := &Lexer{
+		eof:     rune(-1),
+		r:       bufio.NewReader(r),
+		Symbol:  make(map[rune]Token),
+		Literal: make(map[string]Token),
+	}
+
+	lex.Symbol['*'] = ASTERISK
+	lex.Symbol[','] = COMMA
+	lex.Symbol['.'] = DOT
+	lex.Symbol['>'] = LARGER
+	lex.Symbol['<'] = LESS
+	lex.Symbol['('] = LPAREN
+	lex.Symbol[')'] = RPAREN
+	lex.Symbol['{'] = LBRACE
+	lex.Symbol['}'] = RBRACE
+
+	lex.Literal["SELECT"] = SELECT
+	lex.Literal["COUNT"] = COUNT
+	lex.Literal["SUM"] = SUM
+	lex.Literal["AVG"] = AVG
+	lex.Literal["MAX"] = MAX
+	lex.Literal["MED"] = MED
+	lex.Literal["FROM"] = FROM
+	lex.Literal["WHERE"] = WHERE
+	lex.Literal["TIME"] = TIME
+	lex.Literal["LENGTH"] = LENGTH
+	lex.Literal["TIME_BATCH"] = TIME_BATCH
+	lex.Literal["LENGTH_BATCH"] = LENGTH_BATCH
+	lex.Literal["SEC"] = SEC
+	lex.Literal["MIN"] = MIN
+	lex.Literal["AND"] = AND
+	lex.Literal["OR"] = OR
+
+	return lex
 }
 
 func (l *Lexer) TokenizeIgnoreWhiteSpace() (Token, string) {
@@ -61,6 +96,7 @@ func (l *Lexer) TokenizeIgnoreWhiteSpace() (Token, string) {
 		if token == WHITESPACE {
 			continue
 		}
+
 		return token, literal
 	}
 }
@@ -71,6 +107,7 @@ func (l *Lexer) TokenizeIgnoreIdentifier() (Token, string) {
 		if token == IDENTIFIER {
 			continue
 		}
+
 		return token, literal
 	}
 }
@@ -81,6 +118,7 @@ func (l *Lexer) TokenizeIdentifier() (Token, string) {
 		if token != IDENTIFIER {
 			continue
 		}
+
 		return token, literal
 	}
 }
@@ -102,66 +140,22 @@ func (l *Lexer) Tokenize() (Token, string) {
 }
 
 func (l *Lexer) symbol(ch rune) (Token, string) {
-	switch ch {
-	case l.eof:
+	if ch == l.eof {
 		return EOF, ""
-	case '*':
-		return ASTERISK, string(ch)
-	case ',':
-		return COMMA, string(ch)
-	case '.':
-		return DOT, string(ch)
-	case '>':
-		return LARGER, string(ch)
-	case '<':
-		return LESS, string(ch)
-	case '(':
-		return LPAREN, string(ch)
-	case ')':
-		return RPAREN, string(ch)
-	case '{':
-		return LBRACE, string(ch)
-	case '}':
-		return RBRACE, string(ch)
+	}
+
+	v, ok := l.Symbol[ch]
+	if ok {
+		return v, string(ch)
 	}
 
 	return ILLEGAL, string(ch)
 }
 
 func (l *Lexer) literal(literal string) (Token, string) {
-	switch strings.ToUpper(literal) {
-	case "SELECT":
-		return SELECT, literal
-	case "COUNT":
-		return COUNT, literal
-	case "SUM":
-		return SUM, literal
-	case "AVG":
-		return AVG, literal
-	case "MAX":
-		return MAX, literal
-	case "MED":
-		return MED, literal
-	case "FROM":
-		return FROM, literal
-	case "WHERE":
-		return WHERE, literal
-	case "TIME":
-		return TIME, literal
-	case "LENGTH":
-		return LENGTH, literal
-	case "TIME_BATCH":
-		return TIME_BATCH, literal
-	case "LENGTH_BATCH":
-		return LENGTH_BATCH, literal
-	case "SEC":
-		return SEC, literal
-	case "MIN":
-		return MIN, literal
-	case "AND":
-		return AND, literal
-	case "OR":
-		return OR, literal
+	v, ok := l.Literal[strings.ToUpper(literal)]
+	if ok {
+		return v, literal
 	}
 
 	return IDENTIFIER, literal
@@ -210,6 +204,7 @@ func (l *Lexer) read() rune {
 	if err != nil {
 		return l.eof
 	}
+
 	return ch
 }
 
@@ -227,6 +222,7 @@ func (l *Lexer) isWhitespace(ch rune) bool {
 	if ch == '\n' {
 		return true
 	}
+
 	return false
 }
 
@@ -237,6 +233,7 @@ func (l *Lexer) isLetter(ch rune) bool {
 	if ch >= 'A' && ch <= 'Z' {
 		return true
 	}
+
 	return false
 }
 
@@ -244,5 +241,6 @@ func (l *Lexer) isDigit(ch rune) bool {
 	if ch >= '0' && ch <= '9' {
 		return true
 	}
+
 	return false
 }
