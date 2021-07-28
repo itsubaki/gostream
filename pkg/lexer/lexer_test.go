@@ -7,7 +7,7 @@ import (
 	"github.com/itsubaki/gostream/pkg/lexer"
 )
 
-func TestLexerIgnoreSpace(t *testing.T) {
+func TestLexerIgnore(t *testing.T) {
 	type token struct {
 		token   lexer.Token
 		literal string
@@ -124,7 +124,7 @@ func TestLexerIgnoreSpace(t *testing.T) {
 	for _, c := range cases {
 		lex := lexer.New(strings.NewReader(c.q))
 		for _, oo := range c.o {
-			token, literal := lex.TokenizeIgnoreWhiteSpace()
+			token, literal := lex.TokenizeIgnore(lexer.WHITESPACE)
 			if token != oo.token || literal != oo.literal {
 				t.Error(token, literal)
 			}

@@ -158,7 +158,7 @@ func (p *Parser) ParseWindow(s *statement.Statement, l *lexer.Lexer) error {
 			return fmt.Errorf("atoi=%s: %v", lex, err)
 		}
 
-		t, _ := l.TokenizeIgnoreWhiteSpace()
+		t, _ := l.TokenizeIgnore(lexer.WHITESPACE)
 		switch t {
 		case lexer.SEC:
 			s.SetTime(time.Duration(d) * time.Second)
@@ -224,7 +224,7 @@ func (p *Parser) ParseWhere(s *statement.Statement, l *lexer.Lexer) error {
 		}
 
 		_, name := l.TokenizeIdentifier()
-		t, _ := l.TokenizeIgnoreIdentifier()
+		t, _ := l.TokenizeIgnore(lexer.WHITESPACE, lexer.IDENTIFIER)
 		_, value := l.TokenizeIdentifier()
 
 		w, err := p.GetWhere(s.EventType, name, value, t, l)
