@@ -9,17 +9,17 @@ import (
 
 func TestLexerIgnore(t *testing.T) {
 	type token struct {
-		token   lexer.Token
-		literal string
+		token lexer.Token
+		str   string
 	}
 
 	var cases = []struct {
-		q string
-		o []token
+		in   string
+		want []token
 	}{
 		{
-			q: "select min(Level) from LogEvent.time(10 sec) where Level > 2",
-			o: []token{
+			in: "select min(Level) from LogEvent.time(10 sec) where Level > 2",
+			want: []token{
 				{lexer.SELECT, "select"},
 				{lexer.MIN, "min"},
 				{lexer.LPAREN, "("},
@@ -40,8 +40,8 @@ func TestLexerIgnore(t *testing.T) {
 			},
 		},
 		{
-			q: "select count(*) from LogEvent.time(10 sec) where Level > 2.5",
-			o: []token{
+			in: "select count(*) from LogEvent.time(10 sec) where Level > 2.5",
+			want: []token{
 				{lexer.SELECT, "select"},
 				{lexer.COUNT, "count"},
 				{lexer.LPAREN, "("},
@@ -64,8 +64,8 @@ func TestLexerIgnore(t *testing.T) {
 			},
 		},
 		{
-			q: "select count(*) from LogEvent.time(10 sec) where Level > 2",
-			o: []token{
+			in: "select count(*) from LogEvent.time(10 sec) where Level > 2",
+			want: []token{
 				{lexer.SELECT, "select"},
 				{lexer.COUNT, "count"},
 				{lexer.LPAREN, "("},
@@ -86,8 +86,8 @@ func TestLexerIgnore(t *testing.T) {
 			},
 		},
 		{
-			q: "select Value, count(*), avg(Value), sum(Value) from MyEvent.time(10 sec) where Value > 97",
-			o: []token{
+			in: "select Value, count(*), avg(Value), sum(Value) from MyEvent.time(10 sec) where Value > 97",
+			want: []token{
 				{lexer.SELECT, "select"},
 				{lexer.IDENTIFIER, "Value"},
 				{lexer.COMMA, ","},
@@ -122,11 +122,11 @@ func TestLexerIgnore(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		lex := lexer.New(strings.NewReader(c.q))
-		for _, oo := range c.o {
-			token, literal := lex.TokenizeIgnore(lexer.WHITESPACE)
-			if token != oo.token || literal != oo.literal {
-				t.Error(token, literal)
+		lex := lexer.New(strings.NewReader(c.in))
+		for _, w := range c.want {
+			token, str := lex.TokenizeIgnore(lexer.WHITESPACE)
+			if token != w.token || str != w.str {
+				t.Fail()
 			}
 		}
 	}
@@ -134,17 +134,17 @@ func TestLexerIgnore(t *testing.T) {
 
 func TestLexerTokenize(t *testing.T) {
 	type token struct {
-		token   lexer.Token
-		literal string
+		token lexer.Token
+		str   string
 	}
 
 	var cases = []struct {
-		q string
-		o []token
+		in   string
+		want []token
 	}{
 		{
-			q: "select Value, count(*), avg(Value), sum(Value) from MyEvent.time(10 sec) where Value > 97",
-			o: []token{
+			in: "select Value, count(*), avg(Value), sum(Value) from MyEvent.time(10 sec) where Value > 97",
+			want: []token{
 				{lexer.SELECT, "select"},
 				{lexer.WHITESPACE, " "},
 				{lexer.IDENTIFIER, "Value"},
@@ -190,11 +190,11 @@ func TestLexerTokenize(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		lex := lexer.New(strings.NewReader(c.q))
-		for _, oo := range c.o {
-			token, literal := lex.Tokenize()
-			if token != oo.token || literal != oo.literal {
-				t.Error(token, literal)
+		lex := lexer.New(strings.NewReader(c.in))
+		for _, w := range c.want {
+			token, str := lex.Tokenize()
+			if token != w.token || str != w.str {
+				t.Fail()
 			}
 		}
 	}

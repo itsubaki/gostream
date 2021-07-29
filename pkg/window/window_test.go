@@ -383,7 +383,7 @@ func TestLengthWindow(t *testing.T) {
 		t.Error(w.Capacity())
 	}
 
-	var test = []struct {
+	var cases = []struct {
 		index int
 		count int
 		value int
@@ -392,11 +392,12 @@ func TestLengthWindow(t *testing.T) {
 		{1, 2, 8},
 	}
 
-	for _, tt := range test {
-		if events[tt.index].Record["count"] != tt.count {
+	for _, c := range cases {
+		if events[c.index].Record["count"] != c.count {
 			t.Error(events)
 		}
-		if events[tt.index].Int("Value") != tt.value {
+
+		if events[c.index].Int("Value") != c.value {
 			t.Error(events)
 		}
 	}
@@ -446,7 +447,7 @@ func TestLengthWindowMap(t *testing.T) {
 		events = w.Update(MapEvent{m})
 	}
 
-	var test = []struct {
+	var cases = []struct {
 		index int
 		count int
 		value int
@@ -456,14 +457,14 @@ func TestLengthWindowMap(t *testing.T) {
 		{1, 2, 8, 7.5},
 	}
 
-	for _, tt := range test {
-		if events[tt.index].Record["count"] != tt.count {
+	for _, c := range cases {
+		if events[c.index].Record["count"] != c.count {
 			t.Error(events)
 		}
-		if events[tt.index].MapInt("Record", "Value") != tt.value {
+		if events[c.index].MapInt("Record", "Value") != c.value {
 			t.Error(events)
 		}
-		if events[tt.index].Record["avg(Record:Value)"] != tt.avg {
+		if events[c.index].Record["avg(Record:Value)"] != c.avg {
 			t.Error(events)
 		}
 	}

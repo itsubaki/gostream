@@ -196,17 +196,17 @@ func TestSumMapInt(t *testing.T) {
 	events = append(events, event.New(MapEvent{m}))
 	events = f.Apply(events)
 
-	var test = []struct {
-		index int
-		sum   int
+	var cases = []struct {
+		in   int
+		want int
 	}{
 		{0, 123},
 		{1, 246},
 	}
 
-	for _, tt := range test {
-		if events[tt.index].Record["sum(Record:piyo)"] != tt.sum {
-			t.Error(events)
+	for _, c := range cases {
+		if events[c.in].Record["sum(Record:piyo)"] != c.want {
+			t.Fail()
 		}
 	}
 }
@@ -229,17 +229,17 @@ func TestSumMapFloat(t *testing.T) {
 	events = append(events, event.New(MapEvent{m}))
 	events = f.Apply(events)
 
-	var test = []struct {
-		index int
-		sum   float64
+	var cases = []struct {
+		in   int
+		want float64
 	}{
 		{0, 12.3},
 		{1, 24.6},
 	}
 
-	for _, tt := range test {
-		if events[tt.index].Record["sum(Record:piyo)"] != tt.sum {
-			t.Error(events)
+	for _, c := range cases {
+		if events[c.in].Record["sum(Record:piyo)"] != c.want {
+			t.Fail()
 		}
 	}
 }
@@ -262,17 +262,17 @@ func TestAverageMapInt(t *testing.T) {
 	events = append(events, event.New(MapEvent{m}))
 	events = f.Apply(events)
 
-	var test = []struct {
-		index int
-		avg   float64
+	var cases = []struct {
+		in   int
+		want float64
 	}{
 		{0, 15.0},
 		{1, 15.0},
 	}
 
-	for _, tt := range test {
-		if events[tt.index].Record["avg(Record:piyo)"] != tt.avg {
-			t.Error(events)
+	for _, c := range cases {
+		if events[c.in].Record["avg(Record:piyo)"] != c.want {
+			t.Fail()
 		}
 	}
 }
@@ -295,16 +295,16 @@ func TestAverageMapFloat(t *testing.T) {
 	events = append(events, event.New(MapEvent{m}))
 	events = f.Apply(events)
 
-	var test = []struct {
-		index int
-		avg   float64
+	var cases = []struct {
+		in   int
+		want float64
 	}{
 		{0, 15.0},
 		{1, 15.0},
 	}
 
-	for _, tt := range test {
-		if events[tt.index].Record["avg(Record:piyo)"] != tt.avg {
+	for _, c := range cases {
+		if events[c.in].Record["avg(Record:piyo)"] != c.want {
 			t.Error(events)
 		}
 	}

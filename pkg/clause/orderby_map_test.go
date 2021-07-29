@@ -22,9 +22,9 @@ func TestOrderByMapInt(t *testing.T) {
 	v := clause.OrderByMapInt{"Record", "foo", false}
 	result := v.Apply(events)
 
-	var test = []struct {
-		index int
-		value int
+	var cases = []struct {
+		in   int
+		want int
 	}{
 		{0, 10},
 		{1, 20},
@@ -34,9 +34,9 @@ func TestOrderByMapInt(t *testing.T) {
 		{5, 60},
 	}
 
-	for _, tt := range test {
-		if result[tt.index].MapInt("Record", "foo") != tt.value {
-			t.Error(result)
+	for _, c := range cases {
+		if result[c.in].MapInt("Record", "foo") != c.want {
+			t.Fail()
 		}
 	}
 }
@@ -57,9 +57,9 @@ func TestOrderByMapIntReverse(t *testing.T) {
 	v := clause.OrderByMapInt{"Record", "foo", true}
 	result := v.Apply(events)
 
-	var test = []struct {
-		index int
-		value int
+	var cases = []struct {
+		in   int
+		want int
 	}{
 		{0, 60},
 		{1, 50},
@@ -69,9 +69,9 @@ func TestOrderByMapIntReverse(t *testing.T) {
 		{5, 10},
 	}
 
-	for _, tt := range test {
-		if result[tt.index].MapInt("Record", "foo") != tt.value {
-			t.Error(result)
+	for _, c := range cases {
+		if result[c.in].MapInt("Record", "foo") != c.want {
+			t.Fail()
 		}
 	}
 }
@@ -91,9 +91,9 @@ func TestOrderByMapFloat(t *testing.T) {
 	v := clause.OrderByMapFloat{"Record", "foo", false}
 	result := v.Apply(events)
 
-	var test = []struct {
-		index int
-		value float64
+	var cases = []struct {
+		in   int
+		want float64
 	}{
 		{0, 10.0},
 		{1, 20.0},
@@ -103,9 +103,9 @@ func TestOrderByMapFloat(t *testing.T) {
 		{5, 60.0},
 	}
 
-	for _, tt := range test {
-		if result[tt.index].MapFloat("Record", "foo") != tt.value {
-			t.Error(result)
+	for _, c := range cases {
+		if result[c.in].MapFloat("Record", "foo") != c.want {
+			t.Fail()
 		}
 	}
 }
@@ -125,9 +125,9 @@ func TestOrderByMapFloatReverse(t *testing.T) {
 	v := clause.OrderByMapFloat{"Record", "foo", true}
 	result := v.Apply(events)
 
-	var test = []struct {
-		index int
-		value float64
+	var cases = []struct {
+		in   int
+		want float64
 	}{
 		{0, 60.0},
 		{1, 50.0},
@@ -137,9 +137,9 @@ func TestOrderByMapFloatReverse(t *testing.T) {
 		{5, 10.0},
 	}
 
-	for _, tt := range test {
-		if result[tt.index].MapFloat("Record", "foo") != tt.value {
-			t.Error(result)
+	for _, c := range cases {
+		if result[c.in].MapFloat("Record", "foo") != c.want {
+			t.Fail()
 		}
 	}
 }

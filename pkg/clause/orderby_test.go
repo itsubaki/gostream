@@ -24,9 +24,9 @@ func TestOrderByInt(t *testing.T) {
 	v := clause.OrderByInt{"Value", false}
 	result := v.Apply(events)
 
-	var test = []struct {
-		index int
-		value int
+	var cases = []struct {
+		in   int
+		want int
 	}{
 		{0, 10},
 		{1, 20},
@@ -36,9 +36,9 @@ func TestOrderByInt(t *testing.T) {
 		{5, 60},
 	}
 
-	for _, tt := range test {
-		if result[tt.index].Int("Value") != tt.value {
-			t.Error(result)
+	for _, c := range cases {
+		if result[c.in].Int("Value") != c.want {
+			t.Fail()
 		}
 	}
 }
@@ -60,9 +60,9 @@ func TestOrderByIntReverse(t *testing.T) {
 	v := clause.OrderByInt{"Value", true}
 	result := v.Apply(events)
 
-	var test = []struct {
-		index int
-		value int
+	var cases = []struct {
+		in   int
+		want int
 	}{
 		{0, 60},
 		{1, 50},
@@ -72,9 +72,9 @@ func TestOrderByIntReverse(t *testing.T) {
 		{5, 10},
 	}
 
-	for _, tt := range test {
-		if result[tt.index].Int("Value") != tt.value {
-			t.Error(result)
+	for _, c := range cases {
+		if result[c.in].Int("Value") != c.want {
+			t.Fail()
 		}
 	}
 }
@@ -96,9 +96,9 @@ func TestOrderByFloat(t *testing.T) {
 	v := clause.OrderByFloat{"Value", false}
 	result := v.Apply(events)
 
-	var test = []struct {
-		index int
-		value float64
+	var cases = []struct {
+		in   int
+		want float64
 	}{
 		{0, 10.0},
 		{1, 20.0},
@@ -108,9 +108,9 @@ func TestOrderByFloat(t *testing.T) {
 		{5, 60.0},
 	}
 
-	for _, tt := range test {
-		if result[tt.index].Float("Value") != tt.value {
-			t.Error(result)
+	for _, c := range cases {
+		if result[c.in].Float("Value") != c.want {
+			t.Fail()
 		}
 	}
 }
@@ -132,9 +132,9 @@ func TestOrderByFloatReverse(t *testing.T) {
 	v := clause.OrderByFloat{"Value", true}
 	result := v.Apply(events)
 
-	var test = []struct {
-		index int
-		value float64
+	var cases = []struct {
+		in   int
+		want float64
 	}{
 		{0, 60.0},
 		{1, 50.0},
@@ -144,9 +144,9 @@ func TestOrderByFloatReverse(t *testing.T) {
 		{5, 10.0},
 	}
 
-	for _, tt := range test {
-		if result[tt.index].Float("Value") != tt.value {
-			t.Error(result)
+	for _, c := range cases {
+		if result[c.in].Float("Value") != c.want {
+			t.Fail()
 		}
 	}
 }
