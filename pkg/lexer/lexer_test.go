@@ -30,13 +30,13 @@ func TestLexerIgnore(t *testing.T) {
 				{lexer.DOT, "."},
 				{lexer.TIME, "time"},
 				{lexer.LPAREN, "("},
-				{lexer.IDENTIFIER, "10"},
+				{lexer.INT, "10"},
 				{lexer.SEC, "sec"},
 				{lexer.RPAREN, ")"},
 				{lexer.WHERE, "where"},
 				{lexer.IDENTIFIER, "Level"},
 				{lexer.LARGER, ">"},
-				{lexer.IDENTIFIER, "2"},
+				{lexer.INT, "2"},
 			},
 		},
 		{
@@ -52,15 +52,13 @@ func TestLexerIgnore(t *testing.T) {
 				{lexer.DOT, "."},
 				{lexer.TIME, "time"},
 				{lexer.LPAREN, "("},
-				{lexer.IDENTIFIER, "10"},
+				{lexer.INT, "10"},
 				{lexer.SEC, "sec"},
 				{lexer.RPAREN, ")"},
 				{lexer.WHERE, "where"},
 				{lexer.IDENTIFIER, "Level"},
 				{lexer.LARGER, ">"},
-				{lexer.IDENTIFIER, "2"},
-				{lexer.DOT, "."},
-				{lexer.IDENTIFIER, "5"},
+				{lexer.FLOAT, "2.5"},
 			},
 		},
 		{
@@ -76,13 +74,13 @@ func TestLexerIgnore(t *testing.T) {
 				{lexer.DOT, "."},
 				{lexer.TIME, "time"},
 				{lexer.LPAREN, "("},
-				{lexer.IDENTIFIER, "10"},
+				{lexer.INT, "10"},
 				{lexer.SEC, "sec"},
 				{lexer.RPAREN, ")"},
 				{lexer.WHERE, "where"},
 				{lexer.IDENTIFIER, "Level"},
 				{lexer.LARGER, ">"},
-				{lexer.IDENTIFIER, "2"},
+				{lexer.INT, "2"},
 			},
 		},
 		{
@@ -110,13 +108,13 @@ func TestLexerIgnore(t *testing.T) {
 				{lexer.DOT, "."},
 				{lexer.TIME, "time"},
 				{lexer.LPAREN, "("},
-				{lexer.IDENTIFIER, "10"},
+				{lexer.INT, "10"},
 				{lexer.SEC, "sec"},
 				{lexer.RPAREN, ")"},
 				{lexer.WHERE, "where"},
 				{lexer.IDENTIFIER, "Value"},
 				{lexer.LARGER, ">"},
-				{lexer.IDENTIFIER, "97"},
+				{lexer.INT, "97"},
 			},
 		},
 	}
@@ -124,9 +122,9 @@ func TestLexerIgnore(t *testing.T) {
 	for _, c := range cases {
 		lex := lexer.New(strings.NewReader(c.in))
 		for _, w := range c.want {
-			token, str := lex.TokenizeIgnore(lexer.WHITESPACE)
+			token, str := lex.Tokenize()
 			if token != w.token || str != w.str {
-				t.Fail()
+				t.Errorf("got=%v:%v, want=%v:%v", token, str, w.token, w.str)
 			}
 		}
 	}
@@ -146,45 +144,34 @@ func TestLexerTokenize(t *testing.T) {
 			in: "select Value, count(*), avg(Value), sum(Value) from MyEvent.time(10 sec) where Value > 97",
 			want: []token{
 				{lexer.SELECT, "select"},
-				{lexer.WHITESPACE, " "},
 				{lexer.IDENTIFIER, "Value"},
 				{lexer.COMMA, ","},
-				{lexer.WHITESPACE, " "},
 				{lexer.COUNT, "count"},
 				{lexer.LPAREN, "("},
 				{lexer.ASTERISK, "*"},
 				{lexer.RPAREN, ")"},
 				{lexer.COMMA, ","},
-				{lexer.WHITESPACE, " "},
 				{lexer.AVG, "avg"},
 				{lexer.LPAREN, "("},
 				{lexer.IDENTIFIER, "Value"},
 				{lexer.RPAREN, ")"},
 				{lexer.COMMA, ","},
-				{lexer.WHITESPACE, " "},
 				{lexer.SUM, "sum"},
 				{lexer.LPAREN, "("},
 				{lexer.IDENTIFIER, "Value"},
 				{lexer.RPAREN, ")"},
-				{lexer.WHITESPACE, " "},
 				{lexer.FROM, "from"},
-				{lexer.WHITESPACE, " "},
 				{lexer.IDENTIFIER, "MyEvent"},
 				{lexer.DOT, "."},
 				{lexer.TIME, "time"},
 				{lexer.LPAREN, "("},
-				{lexer.IDENTIFIER, "10"},
-				{lexer.WHITESPACE, " "},
+				{lexer.INT, "10"},
 				{lexer.SEC, "sec"},
 				{lexer.RPAREN, ")"},
-				{lexer.WHITESPACE, " "},
 				{lexer.WHERE, "where"},
-				{lexer.WHITESPACE, " "},
 				{lexer.IDENTIFIER, "Value"},
-				{lexer.WHITESPACE, " "},
 				{lexer.LARGER, ">"},
-				{lexer.WHITESPACE, " "},
-				{lexer.IDENTIFIER, "97"},
+				{lexer.INT, "97"},
 			},
 		},
 	}
@@ -194,7 +181,7 @@ func TestLexerTokenize(t *testing.T) {
 		for _, w := range c.want {
 			token, str := lex.Tokenize()
 			if token != w.token || str != w.str {
-				t.Fail()
+				t.Errorf("got=%v:%v, want=%v:%v", token, str, w.token, w.str)
 			}
 		}
 	}
