@@ -1,4 +1,4 @@
-package clause
+package function
 
 import (
 	"reflect"

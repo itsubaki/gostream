@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
+	"github.com/itsubaki/gostream/pkg/function"
 	"github.com/itsubaki/gostream/pkg/window"
 )
 
@@ -39,7 +39,7 @@ func BenchmarkLengthWindowSumInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		clause.SumInt{
+		function.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -61,7 +61,7 @@ func BenchmarkLengthWindowSumInt64(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		clause.SumInt{
+		function.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -83,7 +83,7 @@ func BenchmarkLengthWindowSumInt128(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		clause.SumInt{
+		function.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -105,7 +105,7 @@ func BenchmarkLengthWindowSumInt256(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		clause.SumInt{
+		function.SumInt{
 			Name: "Value",
 			As:   "sum(Value)",
 		},
@@ -126,7 +126,7 @@ func BenchmarkLengthWindowAverageMap(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		clause.AverageMapInt{
+		function.AverageMapInt{
 			Name: "Record",
 			Key:  "Value",
 			As:   "avg(Value)",
@@ -153,7 +153,7 @@ func BenchmarkLengthWindowAverageInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetFunction(
-		clause.AverageInt{
+		function.AverageInt{
 			Name: "Value",
 			As:   "avg(Value)",
 		},
@@ -174,7 +174,7 @@ func BenchmarkLengthWindowLargerThanMap(b *testing.B) {
 	defer w.Close()
 
 	w.SetWhere(
-		clause.LargerThanMapInt{
+		function.LargerThanMapInt{
 			Name:  "Record",
 			Key:   "Value",
 			Value: 100,
@@ -200,7 +200,7 @@ func BenchmarkLengthWindowLargerThanInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetWhere(
-		clause.LargerThanInt{
+		function.LargerThanInt{
 			Name:  "Value",
 			Value: 100,
 		},
@@ -221,7 +221,7 @@ func BenchmarkLengthWindowOrderByMap(b *testing.B) {
 	defer w.Close()
 
 	w.SetOrderBy(
-		clause.OrderByMapInt{
+		function.OrderByMapInt{
 			Name: "Record",
 			Key:  "Value",
 			Desc: false,
@@ -247,7 +247,7 @@ func BenchmarkLengthWindowOrderByInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetOrderBy(
-		clause.OrderByInt{
+		function.OrderByInt{
 			Name: "Value",
 			Desc: false,
 		},
@@ -268,7 +268,7 @@ func BenchmarkLengthWindowOrderByReverseMap(b *testing.B) {
 	defer w.Close()
 
 	w.SetOrderBy(
-		clause.OrderByMapInt{
+		function.OrderByMapInt{
 			Name: "Record",
 			Key:  "Value",
 			Desc: true,
@@ -293,7 +293,7 @@ func BenchmarkLengthWindowOrderByReverseInt(b *testing.B) {
 	defer w.Close()
 
 	w.SetOrderBy(
-		clause.OrderByInt{
+		function.OrderByInt{
 			Name: "Value",
 			Desc: true,
 		},
@@ -315,18 +315,18 @@ func TestConcurrency(t *testing.T) {
 	defer w.Close()
 
 	w.SetWhere(
-		clause.LargerThanInt{
+		function.LargerThanInt{
 			Name:  "Value",
 			Value: 1,
 		},
 	)
 	w.SetFunction(
-		clause.Count{
+		function.Count{
 			As: "count",
 		},
 	)
 	w.SetOrderBy(
-		clause.OrderByInt{
+		function.OrderByInt{
 			Name: "Value",
 			Desc: true,
 		},
@@ -357,18 +357,18 @@ func TestLengthWindow(t *testing.T) {
 	defer w.Close()
 
 	w.SetWhere(
-		clause.LargerThanInt{
+		function.LargerThanInt{
 			Name:  "Value",
 			Value: 1,
 		},
 	)
 	w.SetFunction(
-		clause.Count{
+		function.Count{
 			As: "count",
 		},
 	)
 	w.SetOrderBy(
-		clause.OrderByInt{
+		function.OrderByInt{
 			Name: "Value",
 			Desc: true,
 		},
@@ -416,24 +416,24 @@ func TestLengthWindowMap(t *testing.T) {
 	defer w.Close()
 
 	w.SetWhere(
-		clause.LargerThanMapInt{
+		function.LargerThanMapInt{
 			Name:  "Record",
 			Key:   "Value",
 			Value: 1,
 		},
 	)
 	w.SetFunction(
-		clause.Count{
+		function.Count{
 			As: "count",
 		},
-		clause.AverageMapInt{
+		function.AverageMapInt{
 			Name: "Record",
 			Key:  "Value",
 			As:   "avg(Record:Value)",
 		},
 	)
 	w.SetOrderBy(
-		clause.OrderByMapInt{
+		function.OrderByMapInt{
 			Name: "Record",
 			Key:  "Value",
 			Desc: true,
@@ -574,7 +574,7 @@ func TestLengthWindowPanic(t *testing.T) {
 
 	// IntEvent and Map Function -> panic!!
 	w.SetFunction(
-		clause.AverageMapInt{
+		function.AverageMapInt{
 			Name: "Record",
 			Key:  "Value",
 			As:   "avg(Record:Value)",

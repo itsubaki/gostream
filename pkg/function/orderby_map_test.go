@@ -1,10 +1,10 @@
-package clause_test
+package function_test
 
 import (
 	"testing"
 
-	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
+	"github.com/itsubaki/gostream/pkg/function"
 )
 
 func TestOrderByMapInt(t *testing.T) {
@@ -19,7 +19,7 @@ func TestOrderByMapInt(t *testing.T) {
 		events = append(events, event.New(MapEvent{m}))
 	}
 
-	v := clause.OrderByMapInt{"Record", "foo", false}
+	v := function.OrderByMapInt{"Record", "foo", false}
 	result := v.Apply(events)
 
 	var cases = []struct {
@@ -54,7 +54,7 @@ func TestOrderByMapIntReverse(t *testing.T) {
 		events = append(events, event.New(MapEvent{m}))
 	}
 
-	v := clause.OrderByMapInt{"Record", "foo", true}
+	v := function.OrderByMapInt{"Record", "foo", true}
 	result := v.Apply(events)
 
 	var cases = []struct {
@@ -88,7 +88,7 @@ func TestOrderByMapFloat(t *testing.T) {
 		events = append(events, event.New(MapEvent{m}))
 	}
 
-	v := clause.OrderByMapFloat{"Record", "foo", false}
+	v := function.OrderByMapFloat{"Record", "foo", false}
 	result := v.Apply(events)
 
 	var cases = []struct {
@@ -122,7 +122,7 @@ func TestOrderByMapFloatReverse(t *testing.T) {
 		events = append(events, event.New(MapEvent{m}))
 	}
 
-	v := clause.OrderByMapFloat{"Record", "foo", true}
+	v := function.OrderByMapFloat{"Record", "foo", true}
 	result := v.Apply(events)
 
 	var cases = []struct {

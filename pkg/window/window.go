@@ -1,21 +1,20 @@
 package window
 
 import (
+	"fmt"
 	"log"
 	"sync"
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
+	"github.com/itsubaki/gostream/pkg/function"
 )
 
 type Window interface {
-	Chain
-
-	SetWhere(w ...clause.Where)
-	SetFunction(f ...clause.Function)
-	SetOrderBy(o ...clause.OrderBy)
-	SetLimit(l ...clause.LimitIF)
+	SetWhere(w ...function.Where)
+	SetFunction(f ...function.Function)
+	SetOrderBy(o ...function.OrderBy)
+	SetLimit(l ...function.LimitIF)
 
 	Input() chan interface{}
 	Output() chan []event.Event
@@ -26,6 +25,105 @@ type Window interface {
 	Listen(input interface{})
 	Update(input interface{}) []event.Event
 	Close()
+
+	// shortcut
+	Function() *Function
+	Select() *Select
+	Sum() *Sum
+	Average() *Average
+	Count()
+	Where() *Where
+	OrderBy() *OrderBy
+	Limit(limit int) *Limit
+}
+
+type Where struct {
+	w *IdentityWindow
+}
+
+type LargerThan struct {
+	w *Where
+}
+
+func (w *Where) LargerThan() *LargerThan {
+	return &LargerThan{w}
+}
+
+func (l *LargerThan) Int(name string, value int) {
+	l.w.w.SetWhere(function.LargerThanInt{Name: name, Value: value})
+}
+
+type Function struct {
+	w *IdentityWindow
+}
+
+func (f *Function) Count() {
+	f.w.SetFunction(function.Count{As: "count(*)"})
+}
+
+type Select struct {
+	f *Function
+}
+
+func (f *Function) Select() *Select {
+	return &Select{f}
+}
+
+func (s *Select) String(name string) {
+	s.f.w.SetFunction(function.SelectString{Name: name, As: name})
+}
+
+func (s *Select) Int(name string) {
+	s.f.w.SetFunction(function.SelectInt{Name: name, As: name})
+}
+
+type Average struct {
+	f *Function
+}
+
+func (f *Function) Average() *Average {
+	return &Average{f}
+}
+
+func (a *Average) Int(name string) {
+	as := fmt.Sprintf("avg(%s)", name)
+	a.f.w.SetFunction(function.AverageInt{Name: name, As: as})
+}
+
+type Sum struct {
+	f *Function
+}
+
+func (f *Function) Sum() *Sum {
+	return &Sum{f}
+}
+
+func (a *Sum) Int(name string) {
+	as := fmt.Sprintf("sum(%s)", name)
+	a.f.w.SetFunction(function.SumInt{Name: name, As: as})
+}
+
+type OrderBy struct {
+	w    *IdentityWindow
+	desc bool
+}
+
+func (o *OrderBy) Desc() *OrderBy {
+	o.desc = true
+	return o
+}
+
+func (o *OrderBy) Int(name string) {
+	o.w.SetOrderBy(function.OrderByInt{Name: name, Desc: o.desc})
+}
+
+type Limit struct {
+	w     *IdentityWindow
+	limit int
+}
+
+func (l *Limit) Offset(offset int) {
+	l.w.SetLimit(function.Limit{Limit: l.limit, Offset: offset})
 }
 
 type IdentityWindow struct {
@@ -33,10 +131,10 @@ type IdentityWindow struct {
 	in       chan interface{}
 	out      chan []event.Event
 	event    []event.Event
-	where    []clause.Where
-	function []clause.Function
-	orderBy  []clause.OrderBy
-	limit    []clause.LimitIF
+	where    []function.Where
+	function []function.Function
+	orderBy  []function.OrderBy
+	limit    []function.LimitIF
 	closed   bool
 	mutex    sync.RWMutex
 }
@@ -56,10 +154,10 @@ func NewIdentity(capacity ...int) Window {
 		in:       make(chan interface{}, cap),
 		out:      make(chan []event.Event, cap),
 		event:    []event.Event{},
-		where:    []clause.Where{},
-		function: []clause.Function{},
-		orderBy:  []clause.OrderBy{},
-		limit:    []clause.LimitIF{},
+		where:    []function.Where{},
+		function: []function.Function{},
+		orderBy:  []function.OrderBy{},
+		limit:    []function.LimitIF{},
 		closed:   false,
 		mutex:    sync.RWMutex{},
 	}
@@ -68,19 +166,19 @@ func NewIdentity(capacity ...int) Window {
 	return w
 }
 
-func (w *IdentityWindow) SetWhere(wh ...clause.Where) {
+func (w *IdentityWindow) SetWhere(wh ...function.Where) {
 	w.where = append(w.where, wh...)
 }
 
-func (w *IdentityWindow) SetFunction(f ...clause.Function) {
+func (w *IdentityWindow) SetFunction(f ...function.Function) {
 	w.function = append(w.function, f...)
 }
 
-func (w *IdentityWindow) SetOrderBy(o ...clause.OrderBy) {
+func (w *IdentityWindow) SetOrderBy(o ...function.OrderBy) {
 	w.orderBy = append(w.orderBy, o...)
 }
 
-func (w *IdentityWindow) SetLimit(l ...clause.LimitIF) {
+func (w *IdentityWindow) SetLimit(l ...function.LimitIF) {
 	if len(l) < 1 {
 		return
 	}
@@ -181,11 +279,52 @@ func (w *IdentityWindow) IsClosed() bool {
 	return w.closed
 }
 
+func (w *IdentityWindow) Select() *Select {
+	return w.Function().Select()
+}
+
+func (w *IdentityWindow) Sum() *Sum {
+	return w.Function().Sum()
+}
+
+func (w *IdentityWindow) Average() *Average {
+	return w.Function().Average()
+}
+
+func (w *IdentityWindow) Count() {
+	w.Function().Count()
+}
+
+func (w *IdentityWindow) Where() *Where {
+	return &Where{w}
+}
+
+func (w *IdentityWindow) Function() *Function {
+	return &Function{w}
+}
+
+func (w *IdentityWindow) OrderBy() *OrderBy {
+	return &OrderBy{w, false}
+}
+
+func (w *IdentityWindow) Limit(limit int) *Limit {
+	w.SetLimit(function.Limit{Limit: limit, Offset: 0})
+	return &Limit{w, limit}
+}
+
+func (w *IdentityWindow) First() {
+	w.SetLimit(function.First{})
+}
+
+func (w *IdentityWindow) Last() {
+	w.SetLimit(function.Last{})
+}
+
 func NewLength(accept interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(clause.EqualsType{Accept: accept})
-	w.SetFunction(&clause.Length{Length: length})
+	w.SetWhere(function.EqualsType{Accept: accept})
+	w.SetFunction(&function.Length{Length: length})
 
 	return w
 }
@@ -193,8 +332,8 @@ func NewLength(accept interface{}, length int, capacity ...int) Window {
 func NewLengthBatch(accept interface{}, length int, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(clause.EqualsType{Accept: accept})
-	w.SetFunction(&clause.LengthBatch{Length: length, Batch: event.List()})
+	w.SetWhere(function.EqualsType{Accept: accept})
+	w.SetFunction(&function.LengthBatch{Length: length, Batch: event.List()})
 
 	return w
 }
@@ -202,8 +341,8 @@ func NewLengthBatch(accept interface{}, length int, capacity ...int) Window {
 func NewTime(accept interface{}, expire time.Duration, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(clause.EqualsType{Accept: accept})
-	w.SetFunction(&clause.TimeDuration{Expire: expire})
+	w.SetWhere(function.EqualsType{Accept: accept})
+	w.SetFunction(&function.TimeDuration{Expire: expire})
 
 	return w
 }
@@ -211,11 +350,11 @@ func NewTime(accept interface{}, expire time.Duration, capacity ...int) Window {
 func NewTimeBatch(accept interface{}, expire time.Duration, capacity ...int) Window {
 	w := NewIdentity(capacity...)
 
-	w.SetWhere(clause.EqualsType{Accept: accept})
+	w.SetWhere(function.EqualsType{Accept: accept})
 
 	start := time.Now()
 	end := start.Add(expire)
-	w.SetFunction(&clause.TimeDurationBatch{
+	w.SetFunction(&function.TimeDurationBatch{
 		Start:  start,
 		End:    end,
 		Expire: expire,
