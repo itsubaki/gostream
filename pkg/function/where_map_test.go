@@ -1,10 +1,10 @@
-package clause_test
+package function_test
 
 import (
 	"testing"
 
-	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
+	"github.com/itsubaki/gostream/pkg/function"
 )
 
 func TestEqualsMapString(t *testing.T) {
@@ -12,7 +12,7 @@ func TestEqualsMapString(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.EqualsMapString{"Record", "foo", "bar"}
+	s := function.EqualsMapString{"Record", "foo", "bar"}
 	m := make(map[string]interface{})
 
 	m["foo"] = "bar"
@@ -31,7 +31,7 @@ func TestNotEqualsMapString(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.NotEqualsMapString{"Record", "foo", "bar"}
+	s := function.NotEqualsMapString{"Record", "foo", "bar"}
 	m := make(map[string]interface{})
 
 	m["foo"] = "bar"
@@ -50,7 +50,7 @@ func TestEqualsMapBool(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.EqualsMapBool{"Record", "foo", false}
+	s := function.EqualsMapBool{"Record", "foo", false}
 	m := make(map[string]interface{})
 
 	m["foo"] = false
@@ -69,7 +69,7 @@ func TestNotEqualsMapBool(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.NotEqualsMapBool{"Record", "foo", false}
+	s := function.NotEqualsMapBool{"Record", "foo", false}
 	m := make(map[string]interface{})
 
 	m["foo"] = false
@@ -88,7 +88,7 @@ func TestEqualsMapInt(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.EqualsMapInt{"Record", "foo", 123}
+	s := function.EqualsMapInt{"Record", "foo", 123}
 	m := make(map[string]interface{})
 
 	m["foo"] = 123
@@ -107,7 +107,7 @@ func TestNotEqualsMapInt(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.NotEqualsMapInt{"Record", "foo", 123}
+	s := function.NotEqualsMapInt{"Record", "foo", 123}
 	m := make(map[string]interface{})
 
 	m["foo"] = 123
@@ -126,7 +126,7 @@ func TestEqualsEqualsMapFloat(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.EqualsMapFloat{"Record", "foo", 12.3}
+	s := function.EqualsMapFloat{"Record", "foo", 12.3}
 	m := make(map[string]interface{})
 
 	m["foo"] = 12.3
@@ -145,7 +145,7 @@ func TestNotEqualsEqualsMapFloat(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.NotEqualsMapFloat{"Record", "foo", 12.3}
+	s := function.NotEqualsMapFloat{"Record", "foo", 12.3}
 	m := make(map[string]interface{})
 
 	m["foo"] = 12.3
@@ -164,7 +164,7 @@ func TestLargerThanMapInt(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.LargerThanMapInt{"Record", "foo", 100}
+	s := function.LargerThanMapInt{"Record", "foo", 100}
 	m := make(map[string]interface{})
 
 	m["foo"] = 100
@@ -183,7 +183,7 @@ func TestLargerThanMapFloat(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.LargerThanMapFloat{"Record", "foo", 10.0}
+	s := function.LargerThanMapFloat{"Record", "foo", 10.0}
 	m := make(map[string]interface{})
 
 	m["foo"] = 10.0
@@ -202,7 +202,7 @@ func TestLessThanMapInt(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.LessThanMapInt{"Record", "foo", 100}
+	s := function.LessThanMapInt{"Record", "foo", 100}
 	m := make(map[string]interface{})
 
 	m["foo"] = 101
@@ -221,7 +221,7 @@ func TestLessThanMapFloat(t *testing.T) {
 		Record map[string]interface{}
 	}
 
-	s := clause.LessThanMapFloat{"Record", "foo", 10.0}
+	s := function.LessThanMapFloat{"Record", "foo", 10.0}
 	m := make(map[string]interface{})
 
 	m["foo"] = 10.1

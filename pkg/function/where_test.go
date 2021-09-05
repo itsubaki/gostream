@@ -1,10 +1,10 @@
-package clause_test
+package function_test
 
 import (
 	"testing"
 
-	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
+	"github.com/itsubaki/gostream/pkg/function"
 )
 
 func BenchmarkEqualsType(b *testing.B) {
@@ -18,7 +18,7 @@ func BenchmarkEqualsType(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		clause.EqualsType{e0}.Apply(event.New(e1))
+		function.EqualsType{e0}.Apply(event.New(e1))
 	}
 }
 
@@ -31,7 +31,7 @@ func TestEqualsType(t *testing.T) {
 	e0 := IntEvent{"foo", 1}
 	e1 := IntEvent{"foo", 1}
 
-	s := clause.EqualsType{e0}
+	s := function.EqualsType{e0}
 	if !s.Apply(event.New(e1)) {
 		t.Error("failed.")
 	}
@@ -46,7 +46,7 @@ func TestNotEqualsType(t *testing.T) {
 	e0 := IntEvent{"foo", 1}
 	e1 := IntEvent{"foo", 1}
 
-	s := clause.NotEqualsType{e0}
+	s := function.NotEqualsType{e0}
 	if s.Apply(event.New(e1)) {
 		t.Error("failed.")
 	}
@@ -58,7 +58,7 @@ func TestEqualsString(t *testing.T) {
 		Value int
 	}
 
-	s := clause.EqualsString{"Name", "foo"}
+	s := function.EqualsString{"Name", "foo"}
 
 	e0 := IntEvent{"foo", 1}
 	if !s.Apply(event.New(e0)) {
@@ -81,7 +81,7 @@ func TestEqualsBool(t *testing.T) {
 		Value bool
 	}
 
-	s := clause.EqualsBool{"Value", true}
+	s := function.EqualsBool{"Value", true}
 
 	e0 := BoolEvent{true}
 	if !s.Apply(event.New(e0)) {
@@ -100,7 +100,7 @@ func TestEqualsInt(t *testing.T) {
 		Value int
 	}
 
-	s := clause.EqualsInt{"Value", 1}
+	s := function.EqualsInt{"Value", 1}
 
 	e0 := IntEvent{"foo", 1}
 	if !s.Apply(event.New(e0)) {
@@ -119,7 +119,7 @@ func TestEqualsFloat(t *testing.T) {
 		Value float64
 	}
 
-	s := clause.EqualsFloat{"Value", 1.0}
+	s := function.EqualsFloat{"Value", 1.0}
 
 	e0 := FloatEvent{"foo", 1.0}
 	if !s.Apply(event.New(e0)) {
@@ -138,7 +138,7 @@ func TestNotEqualsString(t *testing.T) {
 		Value int
 	}
 
-	s := clause.NotEqualsString{"Name", "foo"}
+	s := function.NotEqualsString{"Name", "foo"}
 
 	e0 := IntEvent{"foo", 1}
 	if s.Apply(event.New(e0)) {
@@ -156,7 +156,7 @@ func TestNotEqualsBool(t *testing.T) {
 		Value bool
 	}
 
-	s := clause.NotEqualsBool{"Value", true}
+	s := function.NotEqualsBool{"Value", true}
 
 	e0 := BoolEvent{true}
 	if s.Apply(event.New(e0)) {
@@ -175,7 +175,7 @@ func TestNotEqualsInt(t *testing.T) {
 		Value int
 	}
 
-	s := clause.NotEqualsInt{"Value", 1}
+	s := function.NotEqualsInt{"Value", 1}
 
 	e0 := IntEvent{"foo", 1}
 	if s.Apply(event.New(e0)) {
@@ -194,7 +194,7 @@ func TestNotEqualsFloat(t *testing.T) {
 		Value float64
 	}
 
-	s := clause.NotEqualsFloat{"Value", 1.0}
+	s := function.NotEqualsFloat{"Value", 1.0}
 
 	e0 := FloatEvent{"foo", 1.0}
 	if s.Apply(event.New(e0)) {
@@ -213,7 +213,7 @@ func TestLargerThanInt(t *testing.T) {
 		Value int
 	}
 
-	s := clause.LargerThanInt{"Value", 10}
+	s := function.LargerThanInt{"Value", 10}
 
 	e0 := IntEvent{"foo", 10}
 	if s.Apply(event.New(e0)) {
@@ -232,7 +232,7 @@ func TestLargerThanFloat(t *testing.T) {
 		Value float64
 	}
 
-	s := clause.LargerThanFloat{"Value", 10.0}
+	s := function.LargerThanFloat{"Value", 10.0}
 
 	e0 := FloatEvent{"foo", 10.0}
 	if s.Apply(event.New(e0)) {
@@ -251,7 +251,7 @@ func TestLessThanInt(t *testing.T) {
 		Value int
 	}
 
-	s := clause.LessThanInt{"Value", 10}
+	s := function.LessThanInt{"Value", 10}
 
 	e0 := IntEvent{"foo", 10}
 	if s.Apply(event.New(e0)) {
@@ -270,7 +270,7 @@ func TestLessThanFloat(t *testing.T) {
 		Value float64
 	}
 
-	s := clause.LessThanFloat{"Value", 10.0}
+	s := function.LessThanFloat{"Value", 10.0}
 
 	e0 := FloatEvent{"foo", 10.0}
 	if s.Apply(event.New(e0)) {

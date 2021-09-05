@@ -1,9 +1,10 @@
-package clause
+package function_test
 
 import (
 	"testing"
 
 	"github.com/itsubaki/gostream/pkg/event"
+	"github.com/itsubaki/gostream/pkg/function"
 )
 
 func BenchmarkSumRaw128(b *testing.B) {
@@ -82,7 +83,7 @@ func BenchmarkSumInt(b *testing.B) {
 		events = append(events, event.New(IntEvent{"foo", i}))
 	}
 
-	f := SumInt{"Value", "sun(Value)"}
+	f := function.SumInt{"Value", "sun(Value)"}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		f.Apply(events)
@@ -100,7 +101,7 @@ func BenchmarkSumInt64(b *testing.B) {
 		events = append(events, event.New(IntEvent{"foo", i}))
 	}
 
-	f := SumInt{"Value", "sun(Value)"}
+	f := function.SumInt{"Value", "sun(Value)"}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		f.Apply(events)
@@ -118,7 +119,7 @@ func BenchmarkSumInt128(b *testing.B) {
 		events = append(events, event.New(IntEvent{"foo", i}))
 	}
 
-	f := SumInt{"Value", "sun(Value)"}
+	f := function.SumInt{"Value", "sun(Value)"}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		f.Apply(events)
@@ -136,7 +137,7 @@ func BenchmarkAverageInt(b *testing.B) {
 		events = append(events, event.New(IntEvent{"foo", i}))
 	}
 
-	f := AverageInt{"Value", "avg(Value)"}
+	f := function.AverageInt{"Value", "avg(Value)"}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		f.Apply(events)
@@ -154,7 +155,7 @@ func BenchmarkAverageInt128(b *testing.B) {
 		events = append(events, event.New(IntEvent{"foo", i}))
 	}
 
-	f := AverageInt{"Value", "avg(Value)"}
+	f := function.AverageInt{"Value", "avg(Value)"}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		f.Apply(events)
@@ -167,7 +168,7 @@ func TestSelectAll(t *testing.T) {
 		Value int
 	}
 
-	f := SelectAll{}
+	f := function.SelectAll{}
 	events := f.Apply(event.List(IntEvent{"foo", 10}))
 
 	if events[0].RecordString("Name") != "foo" {
@@ -185,7 +186,7 @@ func TestSelectString(t *testing.T) {
 		Value int
 	}
 
-	f := SelectString{"Name", "Name"}
+	f := function.SelectString{"Name", "Name"}
 	events := f.Apply(event.List(IntEvent{"foo", 10}))
 
 	if events[0].RecordString("Name") != "foo" {
@@ -198,7 +199,7 @@ func TestSelectBool(t *testing.T) {
 		Value bool
 	}
 
-	f := SelectBool{"Value", "Value"}
+	f := function.SelectBool{"Value", "Value"}
 
 	events := event.List()
 	events = append(events, event.New(BoolEvent{false}))
@@ -215,7 +216,7 @@ func TestSelectInt(t *testing.T) {
 		Value int
 	}
 
-	f := SelectInt{"Value", "Value"}
+	f := function.SelectInt{"Value", "Value"}
 
 	events := event.List()
 	events = append(events, event.New(IntEvent{"Name", 10}))
@@ -232,7 +233,7 @@ func TestSelectFloat(t *testing.T) {
 		Value float64
 	}
 
-	f := SelectFloat{"Value", "Value"}
+	f := function.SelectFloat{"Value", "Value"}
 
 	events := event.List()
 	events = append(events, event.New(FloatEvent{"Name", 10.0}))
@@ -249,7 +250,7 @@ func TestSumInt(t *testing.T) {
 		Value int
 	}
 
-	f := SumInt{"Value", "sum(Value)"}
+	f := function.SumInt{"Value", "sum(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(IntEvent{"foo", 30}))
@@ -278,7 +279,7 @@ func TestSumFloat(t *testing.T) {
 		Value float64
 	}
 
-	f := SumFloat{"Value", "sum(Value)"}
+	f := function.SumFloat{"Value", "sum(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(FloatEvent{"foo", 30}))
@@ -307,7 +308,7 @@ func TestAverageInt(t *testing.T) {
 		Value int
 	}
 
-	f := AverageInt{"Value", "avg(Value)"}
+	f := function.AverageInt{"Value", "avg(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(IntEvent{"foo", 10}))
@@ -336,7 +337,7 @@ func TestAverageFloat(t *testing.T) {
 		Value float64
 	}
 
-	f := AverageFloat{"Value", "avg(Value)"}
+	f := function.AverageFloat{"Value", "avg(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(FloatEvent{"foo", 10}))
@@ -365,7 +366,7 @@ func TestMaxInt(t *testing.T) {
 		Value int
 	}
 
-	f := MaxInt{"Value", "max(Value)"}
+	f := function.MaxInt{"Value", "max(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(IntEvent{"foo", 10}))
@@ -394,7 +395,7 @@ func TestMaxFloat(t *testing.T) {
 		Value float64
 	}
 
-	f := MaxFloat{"Value", "max(Value)"}
+	f := function.MaxFloat{"Value", "max(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(FloatEvent{"foo", 10}))
@@ -423,7 +424,7 @@ func TestMinInt(t *testing.T) {
 		Value int
 	}
 
-	f := MinInt{"Value", "min(Value)"}
+	f := function.MinInt{"Value", "min(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(IntEvent{"foo", 10}))
@@ -452,7 +453,7 @@ func TestMinFloat(t *testing.T) {
 		Value float64
 	}
 
-	f := MinFloat{"Value", "min(Value)"}
+	f := function.MinFloat{"Value", "min(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(FloatEvent{"foo", 10}))
@@ -481,7 +482,7 @@ func TestMedianIntEvent(t *testing.T) {
 		Value int
 	}
 
-	f := MedianInt{"Value", "med(Value)"}
+	f := function.MedianInt{"Value", "med(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(IntEvent{"foo", 10}))
@@ -510,7 +511,7 @@ func TestMedianIntOdd(t *testing.T) {
 		Value int
 	}
 
-	f := MedianInt{"Value", "med(Value)"}
+	f := function.MedianInt{"Value", "med(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(IntEvent{"foo", 10}))
@@ -542,7 +543,7 @@ func TestMedianFloatEven(t *testing.T) {
 		Value float64
 	}
 
-	f := MedianFloat{"Value", "med(Value)"}
+	f := function.MedianFloat{"Value", "med(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(FloatEvent{"foo", 10}))
@@ -571,7 +572,7 @@ func TestMedianFloatOdd(t *testing.T) {
 		Value float64
 	}
 
-	f := MedianFloat{"Value", "med(Value)"}
+	f := function.MedianFloat{"Value", "med(Value)"}
 
 	events := event.List()
 	events = append(events, event.New(FloatEvent{"foo", 10}))
@@ -603,7 +604,7 @@ func TestCastStringToInt(t *testing.T) {
 		Value int
 	}
 
-	f := CastStringToInt{"Name", "cast(Name)"}
+	f := function.CastStringToInt{"Name", "cast(Name)"}
 
 	events := event.List(IntEvent{"123", 10})
 	result := f.Apply(events)
@@ -619,7 +620,7 @@ func TestCastStringToFloat(t *testing.T) {
 		Value int
 	}
 
-	f := CastStringToFloat{"Name", "cast(Name)"}
+	f := function.CastStringToFloat{"Name", "cast(Name)"}
 
 	events := event.List(IntEvent{"12.3", 10})
 	result := f.Apply(events)
@@ -635,7 +636,7 @@ func TestCastStringToBool(t *testing.T) {
 		Value int
 	}
 
-	f := CastStringToBool{"Name", "cast(Name)"}
+	f := function.CastStringToBool{"Name", "cast(Name)"}
 
 	events := event.List(IntEvent{"false", 10})
 	result := f.Apply(events)
@@ -666,8 +667,8 @@ func TestFuncEqualsInt(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		f := FuncEqualsInt{
-			SumInt{"Value", "sum(Value)"},
+		f := function.FuncEqualsInt{
+			function.SumInt{"Value", "sum(Value)"},
 			"sum(Value)",
 			c.in,
 		}
@@ -700,8 +701,8 @@ func TestFuncLargerThanInt(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		f := FuncLargerThanInt{
-			SumInt{"Value", "sum(Value)"},
+		f := function.FuncLargerThanInt{
+			function.SumInt{"Value", "sum(Value)"},
 			"sum(Value)",
 			c.in,
 		}
@@ -734,8 +735,8 @@ func TestFuncLessThanInt(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		f := FuncLessThanInt{
-			SumInt{"Value", "sum(Value)"},
+		f := function.FuncLessThanInt{
+			function.SumInt{"Value", "sum(Value)"},
 			"sum(Value)",
 			c.in,
 		}
@@ -758,7 +759,7 @@ func TestDistinctString(t *testing.T) {
 		StringEvent{"foo"},
 	)
 
-	f := DistinctString{
+	f := function.DistinctString{
 		Name: "Name",
 		As:   "distinct",
 	}

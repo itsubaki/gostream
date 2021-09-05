@@ -1,10 +1,10 @@
-package clause_test
+package function_test
 
 import (
 	"testing"
 
-	"github.com/itsubaki/gostream/pkg/clause"
 	"github.com/itsubaki/gostream/pkg/event"
+	"github.com/itsubaki/gostream/pkg/function"
 )
 
 func TestFirst(t *testing.T) {
@@ -13,7 +13,7 @@ func TestFirst(t *testing.T) {
 		Value int
 	}
 
-	v := clause.First{}
+	v := function.First{}
 
 	events := event.List()
 	empty := v.Apply(events)
@@ -40,7 +40,7 @@ func TestLast(t *testing.T) {
 		Value int
 	}
 
-	v := clause.Last{}
+	v := function.Last{}
 
 	events := event.List()
 	empty := v.Apply(events)
@@ -67,7 +67,7 @@ func TestLimit(t *testing.T) {
 		Value int
 	}
 
-	v := clause.Limit{4, 2}
+	v := function.Limit{4, 2}
 
 	events := event.List()
 	empty := v.Apply(events)

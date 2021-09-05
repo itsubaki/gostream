@@ -1,4 +1,4 @@
-package clause
+package function
 
 import "github.com/itsubaki/gostream/pkg/event"
 

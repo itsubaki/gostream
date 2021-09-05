@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/clause"
+	"github.com/itsubaki/gostream/pkg/function"
 	"github.com/itsubaki/gostream/pkg/lexer"
 	"github.com/itsubaki/gostream/pkg/statement"
 )
@@ -25,7 +25,7 @@ func (p *Parser) Register(name string, t interface{}) {
 	p.Registry[name] = t
 }
 
-func (p *Parser) SetFunction(s *statement.Statement, fieldname string, intFunc, floatFunc clause.Function) error {
+func (p *Parser) SetFunction(s *statement.Statement, fieldname string, intFunc, floatFunc function.Function) error {
 	if IsIntField(s.EventType, fieldname) {
 		s.SetFunction(intFunc)
 		return nil
@@ -48,7 +48,7 @@ func (p *Parser) ParseFunction(s *statement.Statement, l *lexer.Lexer) error {
 		case lexer.FROM:
 			return nil
 		case lexer.ASTERISK:
-			s.SetFunction(clause.SelectAll{})
+			s.SetFunction(function.SelectAll{})
 		case lexer.COUNT:
 			lpar, str0 := l.Tokenize()
 			asterisk, str1 := l.Tokenize()
@@ -58,44 +58,44 @@ func (p *Parser) ParseFunction(s *statement.Statement, l *lexer.Lexer) error {
 				return fmt.Errorf("invalid token=%s%s%s", str0, str1, str2)
 			}
 
-			s.SetFunction(clause.Count{As: "count(*)"})
+			s.SetFunction(function.Count{As: "count(*)"})
 		case lexer.MAX:
 			_, name := l.TokenizeIdent()
 			if err := p.SetFunction(s, name,
-				clause.MaxInt{Name: name, As: fmt.Sprintf("max(%s)", name)},
-				clause.MaxFloat{Name: name, As: fmt.Sprintf("max(%s)", name)},
+				function.MaxInt{Name: name, As: fmt.Sprintf("max(%s)", name)},
+				function.MaxFloat{Name: name, As: fmt.Sprintf("max(%s)", name)},
 			); err != nil {
 				return fmt.Errorf("set function: %v", err)
 			}
 		case lexer.MIN:
 			_, name := l.TokenizeIdent()
 			if err := p.SetFunction(s, name,
-				clause.MinInt{Name: name, As: fmt.Sprintf("min(%s)", name)},
-				clause.MinFloat{Name: name, As: fmt.Sprintf("min(%s)", name)},
+				function.MinInt{Name: name, As: fmt.Sprintf("min(%s)", name)},
+				function.MinFloat{Name: name, As: fmt.Sprintf("min(%s)", name)},
 			); err != nil {
 				return fmt.Errorf("set function: %v", err)
 			}
 		case lexer.MED:
 			_, name := l.TokenizeIdent()
 			if err := p.SetFunction(s, name,
-				clause.MedianInt{Name: name, As: fmt.Sprintf("med(%s)", name)},
-				clause.MedianFloat{Name: name, As: fmt.Sprintf("med(%s)", name)},
+				function.MedianInt{Name: name, As: fmt.Sprintf("med(%s)", name)},
+				function.MedianFloat{Name: name, As: fmt.Sprintf("med(%s)", name)},
 			); err != nil {
 				return fmt.Errorf("set function: %v", err)
 			}
 		case lexer.SUM:
 			_, name := l.TokenizeIdent()
 			if err := p.SetFunction(s, name,
-				clause.SumInt{Name: name, As: fmt.Sprintf("sum(%s)", name)},
-				clause.SumFloat{Name: name, As: fmt.Sprintf("sum(%s)", name)},
+				function.SumInt{Name: name, As: fmt.Sprintf("sum(%s)", name)},
+				function.SumFloat{Name: name, As: fmt.Sprintf("sum(%s)", name)},
 			); err != nil {
 				return fmt.Errorf("set function: %v", err)
 			}
 		case lexer.AVG:
 			_, name := l.TokenizeIdent()
 			if err := p.SetFunction(s, name,
-				clause.AverageInt{Name: name, As: fmt.Sprintf("avg(%s)", name)},
-				clause.AverageFloat{Name: name, As: fmt.Sprintf("avg(%s)", name)},
+				function.AverageInt{Name: name, As: fmt.Sprintf("avg(%s)", name)},
+				function.AverageFloat{Name: name, As: fmt.Sprintf("avg(%s)", name)},
 			); err != nil {
 				return fmt.Errorf("set function: %v", err)
 			}
@@ -173,7 +173,7 @@ func (p *Parser) ParseWindow(s *statement.Statement, l *lexer.Lexer) error {
 	return fmt.Errorf("invalid token=%s", str)
 }
 
-func (p *Parser) GetWhere(eventType interface{}, name, value string, ope lexer.Token, l *lexer.Lexer) (clause.Where, error) {
+func (p *Parser) GetWhere(eventType interface{}, name, value string, ope lexer.Token, l *lexer.Lexer) (function.Where, error) {
 	if IsIntField(eventType, name) {
 		v, err := strconv.Atoi(value)
 		if err != nil {
@@ -182,9 +182,9 @@ func (p *Parser) GetWhere(eventType interface{}, name, value string, ope lexer.T
 
 		switch ope {
 		case lexer.LARGER:
-			return clause.LargerThanInt{Name: name, Value: v}, nil
+			return function.LargerThanInt{Name: name, Value: v}, nil
 		case lexer.LESS:
-			return clause.LessThanInt{Name: name, Value: v}, nil
+			return function.LessThanInt{Name: name, Value: v}, nil
 		}
 	}
 
@@ -196,9 +196,9 @@ func (p *Parser) GetWhere(eventType interface{}, name, value string, ope lexer.T
 
 		switch ope {
 		case lexer.LARGER:
-			return clause.LargerThanFloat{Name: name, Value: v}, nil
+			return function.LargerThanFloat{Name: name, Value: v}, nil
 		case lexer.LESS:
-			return clause.LessThanFloat{Name: name, Value: v}, nil
+			return function.LessThanFloat{Name: name, Value: v}, nil
 		}
 	}
 
@@ -212,7 +212,7 @@ func (p *Parser) ParseWhere(s *statement.Statement, l *lexer.Lexer) error {
 		}
 	}
 
-	list := make([]clause.Where, 0)
+	list := make([]function.Where, 0)
 	for {
 		token, _ := l.Tokenize()
 		if token == lexer.EOF {
