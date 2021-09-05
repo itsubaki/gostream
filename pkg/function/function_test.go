@@ -767,10 +767,14 @@ func TestDistinctString(t *testing.T) {
 	result := f.Apply(events)
 	newest := event.Newest(result)
 	distinct := newest.RecordStringSlice("distinct")
-	if distinct[0] != "foo" {
-		t.Error(distinct)
+
+	if distinct[0] == "foo" && distinct[1] == "bar" {
+		return
 	}
-	if distinct[1] != "bar" {
-		t.Error(distinct)
+
+	if distinct[0] == "bar" && distinct[1] == "foo" {
+		return
 	}
+
+	t.Error(distinct)
 }
