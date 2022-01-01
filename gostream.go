@@ -40,14 +40,14 @@ func (s *GoStream) Add(t ...interface{}) *GoStream {
 }
 
 func (s *GoStream) Query(q string) (*GoStream, error) {
-	l := lexer.New(strings.NewReader(q))
-	for {
-		tok, lit := l.Tokenize()
-		if tok == lexer.EOF {
-			break
-		}
+	if s.Option.Verbose {
+		l := lexer.New(strings.NewReader(q))
+		for {
+			tok, lit := l.Tokenize()
+			if tok == lexer.EOF {
+				break
+			}
 
-		if s.Option.Verbose {
 			fmt.Printf("%v", lexer.Tokens[tok])
 			if lexer.IsBasicLit(tok) {
 				fmt.Printf("(%v) ", lit)
@@ -57,10 +57,7 @@ func (s *GoStream) Query(q string) (*GoStream, error) {
 		}
 	}
 
-	s.Stream = &IdentityStream{
-		in:  make(chan interface{}, 0),
-		out: make(chan []Event, 0),
-	}
+	s.Stream = Parse(lexer.New(strings.NewReader(q)))
 	go s.Stream.Run()
 
 	return s, nil

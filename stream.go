@@ -18,11 +18,23 @@ type Stream interface {
 type IdentityStream struct {
 	in     chan interface{}
 	out    chan []Event
-	fn     []Function
+	window []Window
 	where  []Where
 	events []Event
 	closed bool
 	mutex  sync.RWMutex
+}
+
+func NewIdentityStream() *IdentityStream {
+	return &IdentityStream{
+		in:     make(chan interface{}, 0),
+		out:    make(chan []Event, 0),
+		window: make([]Window, 0),
+		where:  make([]Where, 0),
+		events: make([]Event, 0),
+		closed: false,
+		mutex:  sync.RWMutex{},
+	}
 }
 
 func (s *IdentityStream) Input() chan interface{} {
@@ -53,6 +65,7 @@ func (s *IdentityStream) Update(input interface{}) []Event {
 		}
 	}()
 
+	// where
 	for _, w := range s.where {
 		if w.Apply(input) {
 			continue
@@ -61,9 +74,10 @@ func (s *IdentityStream) Update(input interface{}) []Event {
 		return make([]Event, 0)
 	}
 
+	// window
 	buf := append(s.events, NewEvent(input))
-	for _, f := range s.fn {
-		buf = f.Apply(buf)
+	for _, w := range s.window {
+		buf = w.Apply(buf)
 	}
 	s.events = buf
 
@@ -96,33 +110,33 @@ func (s *IdentityStream) Close() error {
 }
 
 func NewLength(accept interface{}, length int) Stream {
-	s := &IdentityStream{}
+	s := NewIdentityStream()
 	s.where = append(s.where, EqualsType{Accept: accept})
-	s.fn = append(s.fn, &Length{Length: length})
+	s.window = append(s.window, &Length{Length: length})
 	return s
 }
 
 func NewLengthBatch(accept interface{}, length int) Stream {
-	s := &IdentityStream{}
+	s := NewIdentityStream()
 	s.where = append(s.where, EqualsType{Accept: accept})
-	s.fn = append(s.fn, &LengthBatch{Length: length, Batch: make([]Event, 0)})
+	s.window = append(s.window, &LengthBatch{Length: length, Batch: make([]Event, 0)})
 	return s
 }
 
 func NewTime(accept interface{}, expire time.Duration, capacity ...int) Stream {
-	s := &IdentityStream{}
+	s := NewIdentityStream()
 	s.where = append(s.where, EqualsType{Accept: accept})
-	s.fn = append(s.fn, &Time{Expire: expire})
+	s.window = append(s.window, &Time{Expire: expire})
 	return s
 }
 
 func NewTimeBatch(accept interface{}, expire time.Duration) Stream {
-	s := &IdentityStream{}
-	s.where = append(s.where, EqualsType{Accept: accept})
-
 	start := time.Now()
 	end := start.Add(expire)
-	s.fn = append(s.fn, &TimeBatch{
+
+	s := NewIdentityStream()
+	s.where = append(s.where, EqualsType{Accept: accept})
+	s.window = append(s.window, &TimeBatch{
 		Start:  start,
 		End:    end,
 		Expire: expire,

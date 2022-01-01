@@ -2,7 +2,7 @@ package gostream
 
 import "time"
 
-type Function interface {
+type Window interface {
 	Apply(events []Event) []Event
 }
 
@@ -10,8 +10,8 @@ type Length struct {
 	Length int
 }
 
-func (f *Length) Apply(events []Event) []Event {
-	if len(events) > f.Length {
+func (w *Length) Apply(events []Event) []Event {
+	if len(events) > w.Length {
 		events = events[1:]
 	}
 
@@ -23,12 +23,12 @@ type LengthBatch struct {
 	Batch  []Event
 }
 
-func (f *LengthBatch) Apply(events []Event) []Event {
-	f.Batch = append(f.Batch, events[len(events)-1])
+func (w *LengthBatch) Apply(events []Event) []Event {
+	w.Batch = append(w.Batch, events[len(events)-1])
 
 	out := make([]Event, 0)
-	if len(f.Batch) == f.Length {
-		out, f.Batch = f.Batch, out
+	if len(w.Batch) == w.Length {
+		out, w.Batch = w.Batch, out
 		return out
 	}
 
@@ -39,10 +39,10 @@ type Time struct {
 	Expire time.Duration
 }
 
-func (f *Time) Apply(events []Event) []Event {
+func (w *Time) Apply(events []Event) []Event {
 	out := make([]Event, 0)
 	for _, e := range events {
-		if time.Since(e.Time) < f.Expire {
+		if time.Since(e.Time) < w.Expire {
 			out = append(out, e)
 		}
 	}
@@ -56,18 +56,19 @@ type TimeBatch struct {
 	Expire time.Duration
 }
 
-func (f *TimeBatch) Apply(events []Event) []Event {
+func (w *TimeBatch) Apply(events []Event) []Event {
 	for {
-		if time.Since(f.Start) < f.Expire {
+		if time.Since(w.Start) < w.Expire {
 			break
 		}
-		f.Start = f.Start.Add(f.Expire)
-		f.End = f.Start.Add(f.Expire)
+
+		w.Start = w.Start.Add(w.Expire)
+		w.End = w.Start.Add(w.Expire)
 	}
 
 	out := make([]Event, 0)
 	for _, e := range events {
-		if !e.Time.Before(f.Start) && !e.Time.After(f.End) {
+		if !e.Time.Before(w.Start) && !e.Time.After(w.End) {
 			out = append(out, e)
 		}
 	}
