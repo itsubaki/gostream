@@ -1,78 +1,47 @@
 package gostream_test
 
 import (
+	"fmt"
 	"time"
 
-	"github.com/itsubaki/gostream/pkg/parser"
-	"github.com/itsubaki/gostream/pkg/window"
+	"github.com/itsubaki/gostream"
 )
 
-func Example_parser() {
-	type MyEvent struct {
-		Name  string
-		Value int
-	}
-
-	p := parser.New()
-	p.Register("MyEvent", MyEvent{})
-
-	query := "select * from MyEvent.length(10)"
-	statement, err := p.Parse(query)
-	if err != nil {
-		return
-	}
-
-	window := statement.New()
-	defer window.Close()
-
-	// Output:
-}
-
-func Example_timeWindow() {
+func ExampleGoStream_Add() {
 	type LogEvent struct {
 		Time    time.Time
 		Level   int
 		Message string
 	}
 
-	w := window.NewTime(LogEvent{}, 10*time.Second)
-	defer w.Close()
-
-	w.Count()
-	w.Where().LargerThan().Int("Level", 2)
-
-	// Output:
-}
-
-func Example_lengthWindow() {
-	type MyEvent struct {
-		Name  string
-		Value int
+	s := gostream.New().Add(LogEvent{})
+	for k := range s.Registry {
+		fmt.Printf(k)
 	}
 
-	w := window.NewLength(MyEvent{}, 10)
-	defer w.Close()
-
-	w.Average().Int("Value")
-	w.Sum().Int("Value")
-
 	// Output:
+	// LogEvent
 }
 
-func Example_view() {
-	type MyEvent struct {
-		Name  string
-		Value int
+func ExampleGoStream_Query() {
+	type LogEvent struct {
+		Time    time.Time
+		Level   int
+		Message string
 	}
 
-	w := window.NewTime(MyEvent{}, 10*time.Millisecond)
-	defer w.Close()
-
-	w.Select().String("Name")
-	w.Select().Int("Value")
-	w.Where().LargerThan().Int("Value", 97)
-	w.OrderBy().Desc().Int("Value")
-	w.Limit(10).Offset(5)
+	s, err := gostream.
+		New(&gostream.Option{
+			Verbose: true,
+		}).
+		Add(LogEvent{}).
+		Query("select * from LogEvent.length(10)")
+	if err != nil {
+		fmt.Printf("query: %v", err)
+		return
+	}
+	defer s.Close()
 
 	// Output:
+	// SELECT * FROM IDENT(LogEvent) . LENGTH ( INT(10) )
 }
