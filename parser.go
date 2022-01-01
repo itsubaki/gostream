@@ -13,13 +13,14 @@ type Cursor struct {
 }
 
 type Parser struct {
-	l      *lexer.Lexer
-	errors []error
-	cursor *Cursor
-	peek   *Cursor
+	l        *lexer.Lexer
+	registry Registry
+	errors   []error
+	cursor   *Cursor
+	peek     *Cursor
 }
 
-func NewParser(l *lexer.Lexer) *Parser {
+func NewParser(l *lexer.Lexer, r Registry) *Parser {
 	return &Parser{
 		l:      l,
 		errors: make([]error, 0),
@@ -40,9 +41,9 @@ func (p *Parser) expect(t lexer.Token) {
 	}
 
 	p.error(fmt.Errorf(
-		"got={Token:%v, Literal: %v}, want={Token:%v, Literal: %v}",
-		p.cursor.Token, p.cursor.Literal,
+		"want={Token:%v, Literal: %v}, got={Token:%v, Literal: %v}",
 		t, lexer.Tokens[t],
+		p.cursor.Token, p.cursor.Literal,
 	))
 }
 
@@ -70,10 +71,9 @@ func (p *Parser) parseTimeDuration() time.Duration {
 	return 10 * time.Minute
 }
 
-func Parse(l *lexer.Lexer) Stream {
+func (p *Parser) Parse() Stream {
 	s := NewStream()
 
-	p := NewParser(l)
 	p.next() // preload
 	for p.next().Token != lexer.EOF {
 		switch p.cursor.Token {

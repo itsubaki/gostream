@@ -2,6 +2,8 @@ package gostream
 
 import (
 	"log"
+	"reflect"
+	"strings"
 	"sync"
 	"time"
 )
@@ -139,4 +141,13 @@ func (s *IdentityStream) TimeBatch(expire time.Duration) Stream {
 	})
 
 	return s
+}
+
+func (s *IdentityStream) String() string {
+	var buf strings.Builder
+	for _, w := range s.window {
+		buf.WriteString(reflect.TypeOf(w).String())
+	}
+
+	return buf.String()
 }

@@ -9,9 +9,15 @@ import (
 )
 
 type GoStream struct {
-	Registry map[string]interface{}
+	Registry Registry
 	Option   *Option
 	Stream   Stream
+}
+
+type Registry map[string]interface{}
+
+func (r Registry) Add(t interface{}) {
+	r[reflect.TypeOf(t).Name()] = t
 }
 
 type Option struct {
@@ -32,8 +38,7 @@ func New(opt ...*Option) *GoStream {
 
 func (s *GoStream) Add(t ...interface{}) *GoStream {
 	for i := range t {
-		name := reflect.TypeOf(t[i]).Name()
-		s.Registry[name] = t[i]
+		s.Registry.Add(t[i])
 	}
 
 	return s
@@ -57,7 +62,11 @@ func (s *GoStream) Query(q string) (*GoStream, error) {
 		}
 	}
 
-	s.Stream = Parse(lexer.New(strings.NewReader(q)))
+	p := NewParser(lexer.New(strings.NewReader(q)), s.Registry)
+	s.Stream = p.Parse()
+	if len(p.errors) > 0 {
+		return nil, fmt.Errorf("parse: %v", p.errors)
+	}
 	go s.Stream.Run()
 
 	return s, nil
