@@ -26,7 +26,7 @@ type Option struct {
 
 func New(opt ...*Option) *GoStream {
 	s := &GoStream{
-		Registry: make(map[string]interface{}),
+		Registry: make(Registry),
 	}
 
 	if len(opt) > 0 {

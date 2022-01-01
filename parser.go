@@ -13,16 +13,17 @@ type Cursor struct {
 }
 
 type Parser struct {
-	l        *lexer.Lexer
-	registry Registry
-	errors   []error
-	cursor   *Cursor
-	peek     *Cursor
+	l      *lexer.Lexer
+	r      Registry
+	errors []error
+	cursor *Cursor
+	peek   *Cursor
 }
 
 func NewParser(l *lexer.Lexer, r Registry) *Parser {
 	return &Parser{
 		l:      l,
+		r:      r,
 		errors: make([]error, 0),
 	}
 }
