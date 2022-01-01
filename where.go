@@ -6,10 +6,10 @@ type Where interface {
 	Apply(input interface{}) bool
 }
 
-type EqualsType struct {
-	Accept interface{}
+type Accept struct {
+	Type interface{}
 }
 
-func (f EqualsType) Apply(input interface{}) bool {
-	return reflect.TypeOf(input) == reflect.TypeOf(f.Accept)
+func (w Accept) Apply(input interface{}) bool {
+	return reflect.TypeOf(input) == reflect.TypeOf(w.Type)
 }

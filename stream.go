@@ -25,7 +25,7 @@ type IdentityStream struct {
 	mutex  sync.RWMutex
 }
 
-func NewIdentityStream() *IdentityStream {
+func NewStream() *IdentityStream {
 	return &IdentityStream{
 		in:     make(chan interface{}, 0),
 		out:    make(chan []Event, 0),
@@ -109,33 +109,29 @@ func (s *IdentityStream) Close() error {
 	return nil
 }
 
-func NewLength(accept interface{}, length int) Stream {
-	s := NewIdentityStream()
-	s.where = append(s.where, EqualsType{Accept: accept})
+func (s *IdentityStream) Accept(t interface{}) Stream {
+	s.where = append(s.where, Accept{Type: t})
+	return s
+}
+
+func (s *IdentityStream) Length(length int) Stream {
 	s.window = append(s.window, &Length{Length: length})
 	return s
 }
 
-func NewLengthBatch(accept interface{}, length int) Stream {
-	s := NewIdentityStream()
-	s.where = append(s.where, EqualsType{Accept: accept})
+func (s *IdentityStream) LengthBatch(length int) Stream {
 	s.window = append(s.window, &LengthBatch{Length: length, Batch: make([]Event, 0)})
 	return s
 }
 
-func NewTime(accept interface{}, expire time.Duration, capacity ...int) Stream {
-	s := NewIdentityStream()
-	s.where = append(s.where, EqualsType{Accept: accept})
+func (s *IdentityStream) Time(expire time.Duration) Stream {
 	s.window = append(s.window, &Time{Expire: expire})
 	return s
 }
 
-func NewTimeBatch(accept interface{}, expire time.Duration) Stream {
+func (s *IdentityStream) TimeBatch(expire time.Duration) Stream {
 	start := time.Now()
 	end := start.Add(expire)
-
-	s := NewIdentityStream()
-	s.where = append(s.where, EqualsType{Accept: accept})
 	s.window = append(s.window, &TimeBatch{
 		Start:  start,
 		End:    end,
