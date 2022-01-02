@@ -8,7 +8,7 @@ const (
 	WHITESPACE
 
 	literal_begin
-	IDENTIFIER
+	IDENT
 	STRING
 	INT
 	FLOAT
@@ -18,6 +18,7 @@ const (
 	ASTERISK  // *
 	DOT       // .
 	COMMA     // ,
+	COLON     // :
 	SEMICOLON // ;
 	LPAREN    // (
 	RPAREN    // )
@@ -29,11 +30,6 @@ const (
 
 	keyword_begin
 	SELECT       // SELECT
-	COUNT        // COUNT
-	SUM          // SUM
-	AVG          // AVG
-	MAX          // MAX
-	MED          // MED
 	FROM         // FROM
 	TIME         // TIME
 	LENGTH       // LENGTH
@@ -41,27 +37,32 @@ const (
 	LENGTH_BATCH // LENGTH_BATCH
 	SEC          // SEC
 	MIN          // MIN
+	HOUR         // HOUR
 	WHERE        // WHERE
-	AND          // AND
-	OR           // OR
+	ORDERBY      // ORDERBY
+	DESC         // DESC
+	LIMIT        // LIMIT
+	OFFSET       // OFFSET
 	keyword_end
 )
 
-var tokens = [...]string{
+var Tokens = [...]string{
 	// Specials
 	ILLEGAL:    "ILLEGAL",
 	EOF:        "EOF",
 	WHITESPACE: "WHITESPACE",
 
 	// Literals
-	IDENTIFIER: "IDENTIFIER",
-	STRING:     "STRING",
-	INT:        "INT",
-	FLOAT:      "FLOAT",
+	IDENT:  "IDENT",
+	STRING: "STRING",
+	INT:    "INT",
+	FLOAT:  "FLOAT",
 
 	// Operators
+	ASTERISK:  "*",
 	DOT:       ".",
 	COMMA:     ",",
+	COLON:     ":",
 	SEMICOLON: ";",
 	LPAREN:    "(",
 	RPAREN:    ")",
@@ -72,12 +73,6 @@ var tokens = [...]string{
 
 	// Keywords
 	SELECT:       "SELECT",
-	ASTERISK:     "*",
-	COUNT:        "COUNT",
-	SUM:          "SUM",
-	AVG:          "AVG",
-	MAX:          "MAX",
-	MED:          "MED",
 	FROM:         "FROM",
 	TIME:         "TIME",
 	LENGTH:       "LENGTH",
@@ -85,7 +80,18 @@ var tokens = [...]string{
 	LENGTH_BATCH: "LENGTH_BATCH",
 	SEC:          "SEC",
 	MIN:          "MIN",
+	HOUR:         "HOUR",
 	WHERE:        "WHERE",
-	AND:          "AND",
-	OR:           "OR",
+	ORDERBY:      "ORDERBY",
+	DESC:         "DESC",
+	LIMIT:        "LIMIT",
+	OFFSET:       "OFFSET",
+}
+
+func IsBasicLit(token Token) bool {
+	if token == IDENT || token == STRING || token == INT || token == FLOAT {
+		return true
+	}
+
+	return false
 }

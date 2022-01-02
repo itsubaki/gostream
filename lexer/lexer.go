@@ -3,6 +3,7 @@ package lexer
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"strings"
 )
@@ -14,65 +15,49 @@ var (
 
 func init() {
 	for i := operator_begin + 1; i < operator_end; i++ {
-		operator[tokens[i]] = i
+		operator[strings.ToLower(Tokens[i])] = i
 	}
 
 	for i := keyword_begin + 1; i < keyword_end; i++ {
-		keyword[tokens[i]] = i
+		keyword[strings.ToLower(Tokens[i])] = i
 	}
 }
 
 type Lexer struct {
-	eof rune
-	r   *bufio.Reader
+	eof    rune
+	r      *bufio.Reader
+	errors []error
 }
 
 func New(r io.Reader) *Lexer {
 	return &Lexer{
-		eof: rune(-1),
-		r:   bufio.NewReader(r),
+		eof:    rune(-1),
+		r:      bufio.NewReader(r),
+		errors: make([]error, 0),
 	}
+}
+
+func (l *Lexer) Errors() []error {
+	return l.errors
 }
 
 func (l *Lexer) Tokenize() (Token, string) {
 	return l.TokenizeIgnore(WHITESPACE)
 }
 
-func (l *Lexer) TokenizeIdent() (Token, string) {
-	for {
-		token, str := l.Tokenize()
-		if token != IDENTIFIER {
-			continue
-		}
-
-		return token, str
-	}
-}
-
-func (l *Lexer) TokenizeNumber() (Token, string) {
-	for {
-		token, str := l.Tokenize()
-		if token != INT && token != FLOAT {
-			continue
-		}
-
-		return token, str
-	}
-}
-
-func (l *Lexer) TokenizeIgnore(token ...Token) (Token, string) {
+func (l *Lexer) TokenizeIgnore(t ...Token) (Token, string) {
 	ignore := make(map[Token]bool)
-	for _, t := range token {
-		ignore[t] = true
+	for _, tt := range t {
+		ignore[tt] = true
 	}
 
 	for {
-		token, str := l.Scan()
+		token, literal := l.Scan()
 		if _, ok := ignore[token]; ok {
 			continue
 		}
 
-		return token, str
+		return token, literal
 	}
 }
 
@@ -91,12 +76,35 @@ func (l *Lexer) Scan() (Token, string) {
 		l.unread()
 		str := l.scan()
 
-		key := strings.ToUpper(str)
-		if v, ok := keyword[key]; ok {
+		if strings.EqualFold(str, "length") {
+			if l.read() == '_' {
+				batch := l.scan()
+				if !strings.EqualFold(batch, "batch") {
+					panic(fmt.Sprintf("invalid suffix=%v", batch))
+				}
+
+				return LENGTH_BATCH, fmt.Sprintf("%v_%v", str, batch)
+			}
+			l.unread()
+		}
+
+		if strings.EqualFold(str, "time") {
+			if l.read() == '_' {
+				batch := l.scan()
+				if !strings.EqualFold(batch, "batch") {
+					panic(fmt.Sprintf("invalid suffix=%v", batch))
+				}
+
+				return TIME_BATCH, fmt.Sprintf("%v_%v", str, batch)
+			}
+			l.unread()
+		}
+
+		if v, ok := keyword[strings.ToLower(str)]; ok {
 			return v, str
 		}
 
-		return IDENTIFIER, str
+		return IDENT, str
 	}
 
 	if isDigit(ch) {
@@ -109,16 +117,22 @@ func (l *Lexer) Scan() (Token, string) {
 		return STRING, l.scanString()
 	}
 
-	if v, ok := operator[string(ch)]; ok {
+	if v, ok := operator[strings.ToLower(string(ch))]; ok {
 		return v, string(ch)
 	}
 
 	return ILLEGAL, string(ch)
 }
 
+func (l *Lexer) error(e error) {
+	l.errors = append(l.errors, e)
+}
+
 func (l *Lexer) scan() string {
 	var buf bytes.Buffer
-	_, _ = buf.WriteRune(l.read())
+	if _, err := buf.WriteRune(l.read()); err != nil {
+		l.error(err)
+	}
 
 	for {
 		ch := l.read()
@@ -127,7 +141,10 @@ func (l *Lexer) scan() string {
 		}
 
 		if isLetter(ch) || isDigit(ch) {
-			_, _ = buf.WriteRune(ch)
+			if _, err := buf.WriteRune(ch); err != nil {
+				l.error(err)
+			}
+
 			continue
 		}
 
@@ -140,7 +157,9 @@ func (l *Lexer) scan() string {
 
 func (l *Lexer) scanString() string {
 	var buf bytes.Buffer
-	_, _ = buf.WriteRune(l.read())
+	if _, err := buf.WriteRune(l.read()); err != nil {
+		l.error(err)
+	}
 
 	for {
 		ch := l.read()
@@ -148,7 +167,9 @@ func (l *Lexer) scanString() string {
 			break
 		}
 
-		_, _ = buf.WriteRune(ch)
+		if _, err := buf.WriteRune(ch); err != nil {
+			l.error(err)
+		}
 
 		if isString(ch) {
 			break
@@ -160,7 +181,9 @@ func (l *Lexer) scanString() string {
 
 func (l *Lexer) scanNumber() (Token, string) {
 	var buf bytes.Buffer
-	_, _ = buf.WriteRune(l.read())
+	if _, err := buf.WriteRune(l.read()); err != nil {
+		l.error(err)
+	}
 
 	token := INT
 	for {
@@ -170,13 +193,19 @@ func (l *Lexer) scanNumber() (Token, string) {
 		}
 
 		if ch == '.' {
-			_, _ = buf.WriteRune(ch)
+			if _, err := buf.WriteRune(ch); err != nil {
+				l.error(err)
+			}
+
 			token = FLOAT
 			continue
 		}
 
 		if isDigit(ch) {
-			_, _ = buf.WriteRune(ch)
+			if _, err := buf.WriteRune(ch); err != nil {
+				l.error(err)
+			}
+
 			continue
 		}
 
@@ -189,7 +218,9 @@ func (l *Lexer) scanNumber() (Token, string) {
 
 func (l *Lexer) whitespace() (Token, string) {
 	var buf bytes.Buffer
-	_, _ = buf.WriteRune(l.read())
+	if _, err := buf.WriteRune(l.read()); err != nil {
+		l.error(err)
+	}
 
 	for {
 		ch := l.read()
@@ -198,7 +229,10 @@ func (l *Lexer) whitespace() (Token, string) {
 		}
 
 		if isWhitespace(ch) {
-			buf.WriteRune(ch)
+			if _, err := buf.WriteRune(ch); err != nil {
+				l.error(err)
+			}
+
 			continue
 		}
 
@@ -219,7 +253,9 @@ func (l *Lexer) read() rune {
 }
 
 func (l *Lexer) unread() {
-	_ = l.r.UnreadRune()
+	if err := l.r.UnreadRune(); err != nil {
+		l.error(err)
+	}
 }
 
 func isWhitespace(ch rune) bool {
