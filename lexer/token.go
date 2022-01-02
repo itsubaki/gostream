@@ -39,6 +39,10 @@ const (
 	MIN          // MIN
 	HOUR         // HOUR
 	WHERE        // WHERE
+	ORDERBY      // ORDERBY
+	DESC         // DESC
+	LIMIT        // LIMIT
+	OFFSET       // OFFSET
 	keyword_end
 )
 
@@ -78,6 +82,10 @@ var Tokens = [...]string{
 	MIN:          "MIN",
 	HOUR:         "HOUR",
 	WHERE:        "WHERE",
+	ORDERBY:      "ORDERBY",
+	DESC:         "DESC",
+	LIMIT:        "LIMIT",
+	OFFSET:       "OFFSET",
 }
 
 func IsBasicLit(token Token) bool {

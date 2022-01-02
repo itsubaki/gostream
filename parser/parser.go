@@ -160,6 +160,36 @@ func (p *Parser) Parse() *stream.Stream {
 			s.Time(p.time())
 		case lexer.TIME_BATCH:
 			s.TimeBatch(p.time())
+		case lexer.ORDERBY:
+			p.next()
+			p.expect(lexer.IDENT)
+			v := p.cursor.Literal
+
+			p.next()
+			s.OrderBy(v, p.cursor.Token == lexer.DESC)
+		case lexer.LIMIT:
+			p.next()
+			p.expect(lexer.INT)
+			l, err := strconv.Atoi(p.cursor.Literal)
+			if err != nil {
+				p.errors = append(p.errors, err)
+			}
+
+			p.next()
+			if p.cursor.Token == lexer.OFFSET {
+				p.next()
+				p.expect(lexer.INT)
+
+				o, err := strconv.Atoi(p.cursor.Literal)
+				if err != nil {
+					p.errors = append(p.errors, err)
+				}
+
+				s.Limit(l, o)
+				continue
+			}
+
+			s.Limit(l, 0)
 		}
 	}
 
