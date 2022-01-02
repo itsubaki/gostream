@@ -66,7 +66,15 @@ func (w *Time) Apply(events []Event) []Event {
 }
 
 func (w *Time) String() string {
-	return fmt.Sprintf("TIME(%v %v)", w.Expire.Minutes(), lexer.Tokens[w.Unit])
+	v := w.Expire.Seconds()
+	if w.Unit == lexer.MIN {
+		v = w.Expire.Minutes()
+	}
+	if w.Unit == lexer.HOUR {
+		v = w.Expire.Hours()
+	}
+
+	return fmt.Sprintf("TIME(%v %v)", v, lexer.Tokens[w.Unit])
 }
 
 type TimeBatch struct {
@@ -97,5 +105,13 @@ func (w *TimeBatch) Apply(events []Event) []Event {
 }
 
 func (w *TimeBatch) String() string {
-	return fmt.Sprintf("TIME_BATCH(%v %v)", w.Expire.Minutes(), lexer.Tokens[w.Unit])
+	v := w.Expire.Seconds()
+	if w.Unit == lexer.MIN {
+		v = w.Expire.Minutes()
+	}
+	if w.Unit == lexer.HOUR {
+		v = w.Expire.Hours()
+	}
+
+	return fmt.Sprintf("TIME_BATCH(%v %v)", v, lexer.Tokens[w.Unit])
 }

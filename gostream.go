@@ -20,7 +20,8 @@ type Option struct {
 
 func New(opt ...*Option) *GoStream {
 	s := &GoStream{
-		r: make(parser.Registry),
+		opt: &Option{Verbose: false},
+		r:   make(parser.Registry),
 	}
 
 	if len(opt) > 0 {
@@ -37,6 +38,7 @@ func (s *GoStream) Add(t interface{}) *GoStream {
 
 func (s *GoStream) Query(q string) (*stream.Stream, error) {
 	if s.opt.Verbose {
+		var buf strings.Builder
 		l := lexer.New(strings.NewReader(q))
 		for {
 			tok, lit := l.Tokenize()
@@ -44,13 +46,14 @@ func (s *GoStream) Query(q string) (*stream.Stream, error) {
 				break
 			}
 
-			fmt.Printf("%v", lexer.Tokens[tok])
+			buf.WriteString(fmt.Sprintf("%v", lexer.Tokens[tok]))
 			if lexer.IsBasicLit(tok) {
-				fmt.Printf("(%v) ", lit)
-			} else {
-				fmt.Printf(" ")
+				buf.WriteString(fmt.Sprintf("(%v)", lit))
 			}
+			buf.WriteString(" ")
 		}
+
+		fmt.Println(strings.TrimRight(buf.String(), " "))
 	}
 
 	p := parser.New().Query(q)

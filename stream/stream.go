@@ -10,13 +10,15 @@ import (
 )
 
 type Stream struct {
-	in     chan interface{}
-	out    chan []Event
-	window Window
-	where  []Where
-	events []Event
-	closed bool
-	mutex  sync.RWMutex
+	in      chan interface{}
+	out     chan []Event
+	window  Window
+	orderby *OrderBy
+	limit   *Limit
+	where   []Where
+	events  []Event
+	closed  bool
+	mutex   sync.RWMutex
 }
 
 func New() *Stream {
@@ -70,6 +72,16 @@ func (s *Stream) Update(input interface{}) []Event {
 	buf := append(s.events, NewEvent(input))
 	s.events = s.window.Apply(buf)
 
+	// order by
+	if s.orderby != nil {
+		s.events = s.orderby.Apply(s.events)
+	}
+
+	// limit
+	if s.limit != nil {
+		return s.limit.Apply(s.events)
+	}
+
 	return s.events
 }
 
@@ -100,7 +112,6 @@ func (s *Stream) Close() error {
 
 func (s *Stream) Accept(t interface{}) {
 	s.where = append(s.where, Accept{Type: t})
-
 }
 
 func (s *Stream) Length(length int) {

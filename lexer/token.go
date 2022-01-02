@@ -37,6 +37,7 @@ const (
 	LENGTH_BATCH // LENGTH_BATCH
 	SEC          // SEC
 	MIN          // MIN
+	HOUR         // HOUR
 	WHERE        // WHERE
 	keyword_end
 )
@@ -75,6 +76,7 @@ var Tokens = [...]string{
 	LENGTH_BATCH: "LENGTH_BATCH",
 	SEC:          "SEC",
 	MIN:          "MIN",
+	HOUR:         "HOUR",
 	WHERE:        "WHERE",
 }
 

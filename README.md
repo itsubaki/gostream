@@ -13,12 +13,12 @@ Stream Processing Library for Go
   - [x] TimeWindow
   - [x] TimeBatchWindow
 - [ ] Select
+  - [ ] First, Last
+  - [ ] Distinct
 - [x] Where
   - [x] Equals, NotEquals
   - [x] Larger, Less
 - [ ] OrderBy, Limit
-- [ ] First, Last
-- [ ] Distinct
 - [ ] Aggregate Function
   - [ ] Max, Min, Median
   - [ ] Count, Sum, Average
