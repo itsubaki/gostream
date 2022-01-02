@@ -1,9 +1,15 @@
 package stream
 
-import "time"
+import (
+	"fmt"
+	"time"
+
+	"github.com/itsubaki/gostream/lexer"
+)
 
 type Window interface {
 	Apply(events []Event) []Event
+	String() string
 }
 
 type Length struct {
@@ -16,6 +22,10 @@ func (w *Length) Apply(events []Event) []Event {
 	}
 
 	return events
+}
+
+func (w *Length) String() string {
+	return fmt.Sprintf("LENGTH(%v)", w.Length)
 }
 
 type LengthBatch struct {
@@ -35,8 +45,13 @@ func (w *LengthBatch) Apply(events []Event) []Event {
 	return out
 }
 
+func (w *LengthBatch) String() string {
+	return fmt.Sprintf("LENGTH_BATCH(%v)", w.Length)
+}
+
 type Time struct {
 	Expire time.Duration
+	Unit   lexer.Token
 }
 
 func (w *Time) Apply(events []Event) []Event {
@@ -50,10 +65,15 @@ func (w *Time) Apply(events []Event) []Event {
 	return out
 }
 
+func (w *Time) String() string {
+	return fmt.Sprintf("TIME(%v %v)", w.Expire.Minutes(), lexer.Tokens[w.Unit])
+}
+
 type TimeBatch struct {
 	Start  time.Time
 	End    time.Time
 	Expire time.Duration
+	Unit   lexer.Token
 }
 
 func (w *TimeBatch) Apply(events []Event) []Event {
@@ -74,4 +94,8 @@ func (w *TimeBatch) Apply(events []Event) []Event {
 	}
 
 	return out
+}
+
+func (w *TimeBatch) String() string {
+	return fmt.Sprintf("TIME_BATCH(%v %v)", w.Expire.Minutes(), lexer.Tokens[w.Unit])
 }

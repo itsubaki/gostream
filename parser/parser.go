@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -84,16 +85,57 @@ func (p *Parser) next() *Cursor {
 	return p.cursor
 }
 
-func (p *Parser) parseAcceptType() interface{} {
-	return nil
+func (p *Parser) accept() interface{} {
+	p.next()
+	p.expect(lexer.IDENT)
+
+	return p.r[p.cursor.Literal]
 }
 
-func (p *Parser) parseLength() int {
-	return 10
+func (p *Parser) length() int64 {
+	p.next()
+	p.expect(lexer.LPAREN)
+	defer func() {
+		p.next()
+		p.expect(lexer.RPAREN)
+	}()
+
+	p.next()
+	p.expect(lexer.INT)
+
+	v, err := strconv.ParseInt(p.cursor.Literal, 10, 64)
+	if err != nil {
+		p.errors = append(p.errors, err)
+	}
+
+	return v
 }
 
-func (p *Parser) parseTimeDuration() time.Duration {
-	return 10 * time.Minute
+func (p *Parser) time() (time.Duration, lexer.Token) {
+	p.next()
+	p.expect(lexer.LPAREN)
+	defer func() {
+		p.next()
+		p.expect(lexer.RPAREN)
+	}()
+
+	p.next()
+	p.expect(lexer.INT)
+
+	v, err := strconv.ParseInt(p.cursor.Literal, 10, 64)
+	if err != nil {
+		p.errors = append(p.errors, err)
+	}
+
+	p.next()
+	if p.cursor.Token == lexer.MIN {
+		return time.Duration(v) * time.Minute, lexer.MIN
+	}
+	if p.cursor.Token == lexer.SEC {
+		return time.Duration(v) * time.Second, lexer.SEC
+	}
+
+	return -1, lexer.EOF
 }
 
 func (p *Parser) Query(q string) *Parser {
@@ -109,16 +151,15 @@ func (p *Parser) Parse() *stream.Stream {
 		switch p.cursor.Token {
 		case lexer.SELECT:
 		case lexer.FROM:
-			s.Accept(p.parseAcceptType())
+			s.Accept(p.accept())
 		case lexer.LENGTH:
-			s.Length(p.parseLength())
+			s.Length(int(p.length()))
 		case lexer.LENGTH_BATCH:
-			s.LengthBatch(p.parseLength())
+			s.LengthBatch(int(p.length()))
 		case lexer.TIME:
-			s.Time(p.parseTimeDuration())
+			s.Time(p.time())
 		case lexer.TIME_BATCH:
-			s.TimeBatch(p.parseTimeDuration())
-		case lexer.WHERE:
+			s.TimeBatch(p.time())
 		}
 	}
 

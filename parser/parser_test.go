@@ -7,7 +7,7 @@ import (
 	"github.com/itsubaki/gostream/parser"
 )
 
-func ExampleParse() {
+func ExampleParse_length() {
 	type LogEvent struct {
 		Time    time.Time
 		Level   int
@@ -23,10 +23,30 @@ func ExampleParse() {
 		return
 	}
 
-	fmt.Println(p)
 	fmt.Println(s)
 
 	// Output:
-	// LogEvent
-	// *stream.Length
+	// SELECT * FROM LogEvent.LENGTH(10)
+}
+
+func ExampleParse_time() {
+	type LogEvent struct {
+		Time    time.Time
+		Level   int
+		Message string
+	}
+
+	q := "select * from LogEvent.time(10 min)"
+	p := parser.New().Query(q).Add(LogEvent{})
+
+	s := p.Parse()
+	if len(p.Errors()) > 0 {
+		fmt.Printf("%v", p.Errors())
+		return
+	}
+
+	fmt.Println(s)
+
+	// Output:
+	// SELECT * FROM LogEvent.TIME(10 MIN)
 }

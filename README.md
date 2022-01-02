@@ -5,6 +5,25 @@
 
 Stream Processing Library for Go
 
+## TODO
+
+- [x] Window
+  - [x] LengthWindow
+  - [x] LengthBatchWindow
+  - [x] TimeWindow
+  - [x] TimeBatchWindow
+- [ ] Select
+- [x] Where
+  - [x] Equals, NotEquals
+  - [x] Larger, Less
+- [ ] OrderBy, Limit
+- [ ] First, Last
+- [ ] Distinct
+- [ ] Aggregate Function
+  - [ ] Max, Min, Median
+  - [ ] Count, Sum, Average
+  - [ ] GroupBy
+
 ## Example
 
 ```go
@@ -20,6 +39,7 @@ if err != nil {
   fmt.Printf("new gostream: %v", err)
   return
 }
+defer s.Close()
 
 go func() {
   for {

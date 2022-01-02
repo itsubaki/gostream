@@ -2,16 +2,17 @@ package stream
 
 import (
 	"log"
-	"reflect"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/itsubaki/gostream/lexer"
 )
 
 type Stream struct {
 	in     chan interface{}
 	out    chan []Event
-	window []Window
+	window Window
 	where  []Where
 	events []Event
 	closed bool
@@ -22,10 +23,8 @@ func New() *Stream {
 	return &Stream{
 		in:     make(chan interface{}, 0),
 		out:    make(chan []Event, 0),
-		window: make([]Window, 0),
 		where:  make([]Where, 0),
 		events: make([]Event, 0),
-		closed: false,
 		mutex:  sync.RWMutex{},
 	}
 }
@@ -69,10 +68,7 @@ func (s *Stream) Update(input interface{}) []Event {
 
 	// window
 	buf := append(s.events, NewEvent(input))
-	for _, w := range s.window {
-		buf = w.Apply(buf)
-	}
-	s.events = buf
+	s.events = s.window.Apply(buf)
 
 	return s.events
 }
@@ -108,32 +104,34 @@ func (s *Stream) Accept(t interface{}) {
 }
 
 func (s *Stream) Length(length int) {
-	s.window = append(s.window, &Length{Length: length})
+	s.window = &Length{Length: length}
 }
 
 func (s *Stream) LengthBatch(length int) {
-	s.window = append(s.window, &LengthBatch{Length: length, Batch: make([]Event, 0)})
+	s.window = &LengthBatch{Length: length, Batch: make([]Event, 0)}
 }
 
-func (s *Stream) Time(expire time.Duration) {
-	s.window = append(s.window, &Time{Expire: expire})
+func (s *Stream) Time(expire time.Duration, unit lexer.Token) {
+	s.window = &Time{Expire: expire, Unit: unit}
 }
 
-func (s *Stream) TimeBatch(expire time.Duration) {
+func (s *Stream) TimeBatch(expire time.Duration, unit lexer.Token) {
 	start := time.Now()
 	end := start.Add(expire)
-	s.window = append(s.window, &TimeBatch{
+	s.window = &TimeBatch{
 		Start:  start,
 		End:    end,
 		Expire: expire,
-	})
+		Unit:   unit,
+	}
 }
 
 func (s *Stream) String() string {
 	var buf strings.Builder
-	for _, w := range s.window {
-		buf.WriteString(reflect.TypeOf(w).String())
-	}
+	buf.WriteString("SELECT * FROM ")
+	buf.WriteString(s.where[0].String())
+	buf.WriteString(".")
+	buf.WriteString(s.window.String())
 
 	return buf.String()
 }

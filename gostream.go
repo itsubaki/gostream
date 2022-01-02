@@ -12,7 +12,6 @@ import (
 type GoStream struct {
 	opt *Option
 	r   parser.Registry
-	s   *stream.Stream
 }
 
 type Option struct {
@@ -36,7 +35,7 @@ func (s *GoStream) Add(t interface{}) *GoStream {
 	return s
 }
 
-func (s *GoStream) Query(q string) (*GoStream, error) {
+func (s *GoStream) Query(q string) (*stream.Stream, error) {
 	if s.opt.Verbose {
 		l := lexer.New(strings.NewReader(q))
 		for {
@@ -59,15 +58,11 @@ func (s *GoStream) Query(q string) (*GoStream, error) {
 		p.Add(s.r[k])
 	}
 
-	s.s = p.Parse()
+	out := p.Parse()
 	if len(p.Errors()) > 0 {
 		return nil, fmt.Errorf("parse: %v", p.Errors())
 	}
-	go s.s.Run()
+	go out.Run()
 
-	return s, nil
-}
-
-func (s *GoStream) Close() error {
-	return s.s.Close()
+	return out, nil
 }

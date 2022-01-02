@@ -86,7 +86,7 @@ func TestLexer(t *testing.T) {
 		for _, w := range c.want {
 			token, literal := l.Tokenize()
 			if token != w.token || literal != w.literal {
-				t.Errorf("got=%v:%v, want=%v:%v", token, literal, w.token, w.literal)
+				t.Errorf("want=%v:%v, got=%v:%v", w.token, w.literal, token, literal)
 			}
 		}
 
