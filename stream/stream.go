@@ -1,4 +1,4 @@
-package gostream
+package stream
 
 import (
 	"log"
@@ -8,16 +8,7 @@ import (
 	"time"
 )
 
-type Stream interface {
-	Input() chan interface{}
-	Output() chan []Event
-	Listen(input interface{})
-	Update(input interface{}) []Event
-	Run()
-	Close() error
-}
-
-type IdentityStream struct {
+type Stream struct {
 	in     chan interface{}
 	out    chan []Event
 	window []Window
@@ -27,8 +18,8 @@ type IdentityStream struct {
 	mutex  sync.RWMutex
 }
 
-func NewStream() *IdentityStream {
-	return &IdentityStream{
+func New() *Stream {
+	return &Stream{
 		in:     make(chan interface{}, 0),
 		out:    make(chan []Event, 0),
 		window: make([]Window, 0),
@@ -39,15 +30,15 @@ func NewStream() *IdentityStream {
 	}
 }
 
-func (s *IdentityStream) Input() chan interface{} {
+func (s *Stream) Input() chan interface{} {
 	return s.in
 }
 
-func (s *IdentityStream) Output() chan []Event {
+func (s *Stream) Output() chan []Event {
 	return s.out
 }
 
-func (s *IdentityStream) Listen(input interface{}) {
+func (s *Stream) Listen(input interface{}) {
 	if s.IsClosed() {
 		return
 	}
@@ -60,7 +51,7 @@ func (s *IdentityStream) Listen(input interface{}) {
 	s.Output() <- events
 }
 
-func (s *IdentityStream) Update(input interface{}) []Event {
+func (s *Stream) Update(input interface{}) []Event {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Printf("[WARNING] recover() %v %v", err, input)
@@ -86,17 +77,17 @@ func (s *IdentityStream) Update(input interface{}) []Event {
 	return s.events
 }
 
-func (s *IdentityStream) IsClosed() bool {
+func (s *Stream) IsClosed() bool {
 	return s.closed
 }
 
-func (s *IdentityStream) Run() {
+func (s *Stream) Run() {
 	for input := range s.in {
 		s.Listen(input)
 	}
 }
 
-func (s *IdentityStream) Close() error {
+func (s *Stream) Close() error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -111,27 +102,24 @@ func (s *IdentityStream) Close() error {
 	return nil
 }
 
-func (s *IdentityStream) Accept(t interface{}) Stream {
+func (s *Stream) Accept(t interface{}) {
 	s.where = append(s.where, Accept{Type: t})
-	return s
+
 }
 
-func (s *IdentityStream) Length(length int) Stream {
+func (s *Stream) Length(length int) {
 	s.window = append(s.window, &Length{Length: length})
-	return s
 }
 
-func (s *IdentityStream) LengthBatch(length int) Stream {
+func (s *Stream) LengthBatch(length int) {
 	s.window = append(s.window, &LengthBatch{Length: length, Batch: make([]Event, 0)})
-	return s
 }
 
-func (s *IdentityStream) Time(expire time.Duration) Stream {
+func (s *Stream) Time(expire time.Duration) {
 	s.window = append(s.window, &Time{Expire: expire})
-	return s
 }
 
-func (s *IdentityStream) TimeBatch(expire time.Duration) Stream {
+func (s *Stream) TimeBatch(expire time.Duration) {
 	start := time.Now()
 	end := start.Add(expire)
 	s.window = append(s.window, &TimeBatch{
@@ -139,11 +127,9 @@ func (s *IdentityStream) TimeBatch(expire time.Duration) Stream {
 		End:    end,
 		Expire: expire,
 	})
-
-	return s
 }
 
-func (s *IdentityStream) String() string {
+func (s *Stream) String() string {
 	var buf strings.Builder
 	for _, w := range s.window {
 		buf.WriteString(reflect.TypeOf(w).String())

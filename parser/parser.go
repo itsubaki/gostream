@@ -1,10 +1,13 @@
-package gostream
+package parser
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
 	"time"
 
 	"github.com/itsubaki/gostream/lexer"
+	"github.com/itsubaki/gostream/stream"
 )
 
 type Cursor struct {
@@ -15,21 +18,42 @@ type Cursor struct {
 type Parser struct {
 	l      *lexer.Lexer
 	r      Registry
-	errors []error
+	opt    *Option
 	cursor *Cursor
 	peek   *Cursor
+	errors []error
 }
 
-func NewParser(l *lexer.Lexer, r Registry) *Parser {
-	return &Parser{
-		l:      l,
-		r:      r,
+type Option struct {
+	Verbose bool
+}
+
+type Registry map[string]interface{}
+
+func (r Registry) Add(t interface{}) {
+	r[reflect.TypeOf(t).Name()] = t
+}
+
+func New(opt ...*Option) *Parser {
+	p := &Parser{
+		r:      make(Registry),
 		errors: make([]error, 0),
 	}
+
+	if len(opt) > 0 {
+		p.opt = opt[0]
+	}
+
+	return p
 }
 
 func (p *Parser) Errors() []error {
 	return p.errors
+}
+
+func (p *Parser) Add(t interface{}) *Parser {
+	p.r.Add(t)
+	return p
 }
 
 func (p *Parser) error(e error) {
@@ -72,8 +96,13 @@ func (p *Parser) parseTimeDuration() time.Duration {
 	return 10 * time.Minute
 }
 
-func (p *Parser) Parse() Stream {
-	s := NewStream()
+func (p *Parser) Query(q string) *Parser {
+	p.l = lexer.New(strings.NewReader(q))
+	return p
+}
+
+func (p *Parser) Parse() *stream.Stream {
+	s := stream.New()
 
 	p.next() // preload
 	for p.next().Token != lexer.EOF {
@@ -94,4 +123,13 @@ func (p *Parser) Parse() Stream {
 	}
 
 	return s
+}
+
+func (p *Parser) String() string {
+	var buf strings.Builder
+	for k := range p.r {
+		buf.WriteString(k)
+	}
+
+	return buf.String()
 }

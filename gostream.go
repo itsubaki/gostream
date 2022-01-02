@@ -2,22 +2,17 @@ package gostream
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/itsubaki/gostream/lexer"
+	"github.com/itsubaki/gostream/parser"
+	"github.com/itsubaki/gostream/stream"
 )
 
 type GoStream struct {
-	Registry Registry
-	Option   *Option
-	Stream   Stream
-}
-
-type Registry map[string]interface{}
-
-func (r Registry) Add(t interface{}) {
-	r[reflect.TypeOf(t).Name()] = t
+	opt *Option
+	r   parser.Registry
+	s   *stream.Stream
 }
 
 type Option struct {
@@ -26,26 +21,23 @@ type Option struct {
 
 func New(opt ...*Option) *GoStream {
 	s := &GoStream{
-		Registry: make(Registry),
+		r: make(parser.Registry),
 	}
 
 	if len(opt) > 0 {
-		s.Option = opt[0]
+		s.opt = opt[0]
 	}
 
 	return s
 }
 
-func (s *GoStream) Add(t ...interface{}) *GoStream {
-	for i := range t {
-		s.Registry.Add(t[i])
-	}
-
+func (s *GoStream) Add(t interface{}) *GoStream {
+	s.r.Add(t)
 	return s
 }
 
 func (s *GoStream) Query(q string) (*GoStream, error) {
-	if s.Option.Verbose {
+	if s.opt.Verbose {
 		l := lexer.New(strings.NewReader(q))
 		for {
 			tok, lit := l.Tokenize()
@@ -62,16 +54,20 @@ func (s *GoStream) Query(q string) (*GoStream, error) {
 		}
 	}
 
-	p := NewParser(lexer.New(strings.NewReader(q)), s.Registry)
-	s.Stream = p.Parse()
-	if len(p.errors) > 0 {
-		return nil, fmt.Errorf("parse: %v", p.errors)
+	p := parser.New().Query(q)
+	for k := range s.r {
+		p.Add(s.r[k])
 	}
-	go s.Stream.Run()
+
+	s.s = p.Parse()
+	if len(p.Errors()) > 0 {
+		return nil, fmt.Errorf("parse: %v", p.Errors())
+	}
+	go s.s.Run()
 
 	return s, nil
 }
 
 func (s *GoStream) Close() error {
-	return s.Stream.Close()
+	return s.s.Close()
 }

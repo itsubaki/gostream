@@ -7,22 +7,6 @@ import (
 	"github.com/itsubaki/gostream"
 )
 
-func ExampleGoStream_Add() {
-	type LogEvent struct {
-		Time    time.Time
-		Level   int
-		Message string
-	}
-
-	s := gostream.New().Add(LogEvent{})
-	for k := range s.Registry {
-		fmt.Printf(k)
-	}
-
-	// Output:
-	// LogEvent
-}
-
 func ExampleGoStream_Query() {
 	type LogEvent struct {
 		Time    time.Time

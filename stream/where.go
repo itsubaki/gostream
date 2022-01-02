@@ -1,4 +1,4 @@
-package gostream
+package stream
 
 import "reflect"
 
