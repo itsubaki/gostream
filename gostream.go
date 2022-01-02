@@ -20,8 +20,10 @@ type Option struct {
 
 func New(opt ...*Option) *GoStream {
 	s := &GoStream{
-		opt: &Option{Verbose: false},
-		r:   make(parser.Registry),
+		opt: &Option{
+			Verbose: false,
+		},
+		r: make(parser.Registry),
 	}
 
 	if len(opt) > 0 {

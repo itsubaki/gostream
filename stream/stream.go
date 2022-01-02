@@ -10,26 +10,26 @@ import (
 )
 
 type Stream struct {
-	in     chan interface{}
-	out    chan []Event
-	events []Event
-	window Window
-	where  []Where
-	order  OrderByIF
-	limit  LimitIF
-	closed bool
-	mutex  sync.RWMutex
+	in      chan interface{}
+	out     chan []Event
+	events  []Event
+	window  Window
+	where   []Where
+	orderby OrderByIF
+	limit   LimitIF
+	closed  bool
+	mutex   sync.RWMutex
 }
 
 func New() *Stream {
 	return &Stream{
-		in:     make(chan interface{}, 0),
-		out:    make(chan []Event, 0),
-		events: make([]Event, 0),
-		where:  make([]Where, 0),
-		order:  &NoOrder{},
-		limit:  &NoLimit{},
-		mutex:  sync.RWMutex{},
+		in:      make(chan interface{}, 1024),
+		out:     make(chan []Event, 1024),
+		events:  make([]Event, 0),
+		where:   make([]Where, 0),
+		orderby: &NoOrder{},
+		limit:   &NoLimit{},
+		mutex:   sync.RWMutex{},
 	}
 }
 
@@ -75,9 +75,9 @@ func (s *Stream) Update(input interface{}) []Event {
 	s.events = s.window.Apply(buf)
 
 	// order by
-	ordered := s.order.Apply(s.events)
+	ordered := s.orderby.Apply(s.events)
 
-	// limit
+	// limit offset
 	return s.limit.Apply(ordered)
 }
 
@@ -134,7 +134,7 @@ func (s *Stream) TimeBatch(expire time.Duration, unit lexer.Token) {
 }
 
 func (s *Stream) OrderBy(name string, desc bool) {
-	s.order = &OrderBy{
+	s.orderby = &OrderBy{
 		Name: name,
 		Desc: desc,
 	}
@@ -155,7 +155,7 @@ func (s *Stream) String() string {
 	buf.WriteString(".")
 	buf.WriteString(s.window.String())
 	buf.WriteString(" ")
-	buf.WriteString(s.order.String())
+	buf.WriteString(s.orderby.String())
 	buf.WriteString(" ")
 	buf.WriteString(s.limit.String())
 
