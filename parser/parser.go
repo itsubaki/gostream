@@ -85,13 +85,6 @@ func (p *Parser) next() *Cursor {
 	return p.cursor
 }
 
-func (p *Parser) accept() interface{} {
-	p.next()
-	p.expect(lexer.IDENT)
-
-	return p.r[p.cursor.Literal]
-}
-
 func (p *Parser) length() int64 {
 	p.next()
 	p.expect(lexer.LPAREN)
@@ -151,7 +144,9 @@ func (p *Parser) Parse() *stream.Stream {
 		switch p.cursor.Token {
 		case lexer.SELECT:
 		case lexer.FROM:
-			s.Accept(p.accept())
+			p.next()
+			p.expect(lexer.IDENT)
+			s.Accept(p.r[p.cursor.Literal])
 		case lexer.LENGTH:
 			s.Length(int(p.length()))
 		case lexer.LENGTH_BATCH:
