@@ -12,8 +12,8 @@ Stream Processing Library for Go
   - [x] LengthBatchWindow
   - [x] TimeWindow
   - [x] TimeBatchWindow
-- [ ] Select
-  - [ ] Distinct
+- [x] Select
+- [ ] Distinct
 - [x] Where
   - [x] Equals, NotEquals
   - [x] Larger, Less

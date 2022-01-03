@@ -21,12 +21,12 @@ func (o *NoOrder) String() string {
 }
 
 type OrderBy struct {
-	Name string
-	Desc bool
+	Name  string
+	Index int
+	Desc  bool
 }
 
 func (o *OrderBy) Apply(e []Event) []Event {
-
 	return nil
 }
 
