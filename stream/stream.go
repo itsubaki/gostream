@@ -150,10 +150,11 @@ func (s *Stream) Distinct(name string) {
 	s.sel = append(s.sel, Distinct{Name: name})
 }
 
-func (s *Stream) OrderBy(name string, desc bool) {
+func (s *Stream) OrderBy(name string, index int, desc bool) {
 	s.orderby = &OrderBy{
-		Name: name,
-		Desc: desc,
+		Name:  name,
+		Index: index,
+		Desc:  desc,
 	}
 }
 
@@ -184,6 +185,6 @@ func (s *Stream) String() string {
 	buf.WriteString(" ")
 	buf.WriteString(s.limit.String())
 
-	trim := strings.TrimRight(buf.String(), " ")
-	return strings.ReplaceAll(trim, "  ", " ")
+	rep := strings.ReplaceAll(buf.String(), "  ", " ")
+	return strings.TrimRight(rep, " ")
 }
