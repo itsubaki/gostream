@@ -13,6 +13,7 @@ type Stream struct {
 	in      chan interface{}
 	out     chan []Event
 	events  []Event
+	sel     []SelectIF
 	window  Window
 	where   []Where
 	orderby OrderByIF
@@ -26,6 +27,7 @@ func New() *Stream {
 		in:      make(chan interface{}, 1024),
 		out:     make(chan []Event, 1024),
 		events:  make([]Event, 0),
+		sel:     make([]SelectIF, 0),
 		where:   make([]Where, 0),
 		orderby: &NoOrder{},
 		limit:   &NoLimit{},
@@ -46,15 +48,20 @@ func (s *Stream) Listen(input interface{}) {
 		return
 	}
 
-	events := s.Update(input)
-	if len(events) == 0 {
+	s.Update(input)
+
+	// order by limit offset
+	// no effect to s.events
+	out := s.limit.Apply(s.orderby.Apply(s.events))
+
+	if len(out) == 0 {
 		return
 	}
 
-	s.Output() <- events
+	s.Output() <- out
 }
 
-func (s *Stream) Update(input interface{}) []Event {
+func (s *Stream) Update(input interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Printf("[WARNING] recover() %v %v", err, input)
@@ -66,19 +73,17 @@ func (s *Stream) Update(input interface{}) []Event {
 		if w.Apply(input) {
 			continue
 		}
-
-		return make([]Event, 0)
+		return
 	}
 
 	// window
 	buf := append(s.events, NewEvent(input))
 	s.events = s.window.Apply(buf)
 
-	// order by
-	ordered := s.orderby.Apply(s.events)
-
-	// limit offset
-	return s.limit.Apply(ordered)
+	// select
+	for _, sl := range s.sel {
+		s.events = sl.Apply(s.events)
+	}
 }
 
 func (s *Stream) IsClosed() bool {
@@ -133,6 +138,18 @@ func (s *Stream) TimeBatch(expire time.Duration, unit lexer.Token) {
 	}
 }
 
+func (s *Stream) SelectAll() {
+	s.sel = append(s.sel, SelectAll{})
+}
+
+func (s *Stream) Select(name string) {
+	s.sel = append(s.sel, Select{Name: name})
+}
+
+func (s *Stream) Distinct(name string) {
+	s.sel = append(s.sel, Distinct{Name: name})
+}
+
 func (s *Stream) OrderBy(name string, desc bool) {
 	s.orderby = &OrderBy{
 		Name: name,
@@ -150,7 +167,15 @@ func (s *Stream) Limit(limit, offset int) {
 func (s *Stream) String() string {
 	var buf strings.Builder
 
-	buf.WriteString("SELECT * FROM ")
+	buf.WriteString("SELECT ")
+	var sel strings.Builder
+	for _, e := range s.sel {
+		sel.WriteString(e.String())
+		sel.WriteString(", ")
+	}
+	buf.WriteString(strings.TrimRight(sel.String(), ", "))
+	buf.WriteString(" ")
+	buf.WriteString("FROM ")
 	buf.WriteString(s.where[0].String())
 	buf.WriteString(".")
 	buf.WriteString(s.window.String())

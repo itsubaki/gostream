@@ -25,7 +25,7 @@ type OrderBy struct {
 	Desc bool
 }
 
-func (o *OrderBy) Apply(ev []Event) []Event {
+func (o *OrderBy) Apply(e []Event) []Event {
 
 	return nil
 }

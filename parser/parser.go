@@ -121,11 +121,14 @@ func (p *Parser) time() (time.Duration, lexer.Token) {
 	}
 
 	p.next()
+	if p.cursor.Token == lexer.SEC {
+		return time.Duration(v) * time.Second, lexer.SEC
+	}
 	if p.cursor.Token == lexer.MIN {
 		return time.Duration(v) * time.Minute, lexer.MIN
 	}
-	if p.cursor.Token == lexer.SEC {
-		return time.Duration(v) * time.Second, lexer.SEC
+	if p.cursor.Token == lexer.HOUR {
+		return time.Duration(v) * time.Hour, lexer.HOUR
 	}
 
 	return -1, lexer.EOF
@@ -143,7 +146,13 @@ func (p *Parser) Parse() *stream.Stream {
 	for p.next().Token != lexer.EOF {
 		switch p.cursor.Token {
 		case lexer.SELECT:
-		case lexer.FROM:
+			for p.next().Token != lexer.FROM {
+				if p.cursor.Token == lexer.ASTERISK {
+					s.SelectAll()
+					continue
+				}
+			}
+
 			p.next()
 			p.expect(lexer.IDENT)
 			s.Accept(p.r[p.cursor.Literal])

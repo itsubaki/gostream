@@ -8,7 +8,7 @@ import (
 )
 
 type Window interface {
-	Apply(events []Event) []Event
+	Apply(e []Event) []Event
 	String() string
 }
 
@@ -16,12 +16,12 @@ type Length struct {
 	Length int
 }
 
-func (w *Length) Apply(events []Event) []Event {
-	if len(events) > w.Length {
-		events = events[1:]
+func (w *Length) Apply(e []Event) []Event {
+	if len(e) > w.Length {
+		e = e[1:]
 	}
 
-	return events
+	return e
 }
 
 func (w *Length) String() string {
@@ -33,8 +33,8 @@ type LengthBatch struct {
 	Batch  []Event
 }
 
-func (w *LengthBatch) Apply(events []Event) []Event {
-	w.Batch = append(w.Batch, events[len(events)-1])
+func (w *LengthBatch) Apply(e []Event) []Event {
+	w.Batch = append(w.Batch, e[len(e)-1])
 
 	out := make([]Event, 0)
 	if len(w.Batch) == w.Length {
@@ -54,11 +54,11 @@ type Time struct {
 	Unit   lexer.Token
 }
 
-func (w *Time) Apply(events []Event) []Event {
+func (w *Time) Apply(e []Event) []Event {
 	out := make([]Event, 0)
-	for _, e := range events {
-		if time.Since(e.Time) < w.Expire {
-			out = append(out, e)
+	for _, ev := range e {
+		if time.Since(ev.Time) < w.Expire {
+			out = append(out, ev)
 		}
 	}
 
@@ -84,7 +84,7 @@ type TimeBatch struct {
 	Unit   lexer.Token
 }
 
-func (w *TimeBatch) Apply(events []Event) []Event {
+func (w *TimeBatch) Apply(e []Event) []Event {
 	for {
 		if time.Since(w.Start) < w.Expire {
 			break
@@ -95,9 +95,9 @@ func (w *TimeBatch) Apply(events []Event) []Event {
 	}
 
 	out := make([]Event, 0)
-	for _, e := range events {
-		if !e.Time.Before(w.Start) && !e.Time.After(w.End) {
-			out = append(out, e)
+	for _, ev := range e {
+		if !ev.Time.Before(w.Start) && !ev.Time.After(w.End) {
+			out = append(out, ev)
 		}
 	}
 

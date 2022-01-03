@@ -15,3 +15,7 @@ func NewEvent(input interface{}) Event {
 		ResultSet:  make([]interface{}, 0),
 	}
 }
+
+func Newest(e []Event) Event {
+	return e[len(e)-1]
+}
