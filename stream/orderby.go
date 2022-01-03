@@ -33,7 +33,7 @@ func (o *OrderBy) Apply(ev []Event) []Event {
 func (o *OrderBy) String() string {
 	var buf strings.Builder
 
-	buf.WriteString(fmt.Sprintf("ORDERBY %v", o.Name))
+	buf.WriteString(fmt.Sprintf("ORDER BY %v", o.Name))
 	if o.Desc {
 		buf.WriteString(" DESC")
 	}

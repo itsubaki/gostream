@@ -39,7 +39,7 @@ const (
 	MIN          // MIN
 	HOUR         // HOUR
 	WHERE        // WHERE
-	ORDERBY      // ORDERBY
+	ORDER_BY     // ORDER BY
 	DESC         // DESC
 	LIMIT        // LIMIT
 	OFFSET       // OFFSET
@@ -82,7 +82,7 @@ var Tokens = [...]string{
 	MIN:          "MIN",
 	HOUR:         "HOUR",
 	WHERE:        "WHERE",
-	ORDERBY:      "ORDERBY",
+	ORDER_BY:     "ORDER BY",
 	DESC:         "DESC",
 	LIMIT:        "LIMIT",
 	OFFSET:       "OFFSET",

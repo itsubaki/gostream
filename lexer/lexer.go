@@ -76,6 +76,15 @@ func (l *Lexer) Scan() (Token, string) {
 		l.unread()
 		str := l.scan()
 
+		if strings.EqualFold(str, "order") {
+			by := l.scan()
+			if !strings.EqualFold(by, " by") {
+				panic(fmt.Sprintf("invalid suffix=%v", by))
+			}
+
+			return ORDER_BY, fmt.Sprintf("%v%v", str, by)
+		}
+
 		if strings.EqualFold(str, "length") {
 			if l.read() == '_' {
 				batch := l.scan()

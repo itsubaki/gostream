@@ -155,7 +155,7 @@ func (p *Parser) Parse() *stream.Stream {
 			s.Time(p.time())
 		case lexer.TIME_BATCH:
 			s.TimeBatch(p.time())
-		case lexer.ORDERBY:
+		case lexer.ORDER_BY:
 			p.next()
 			p.expect(lexer.IDENT)
 			v := p.cursor.Literal

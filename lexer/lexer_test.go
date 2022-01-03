@@ -79,6 +79,23 @@ func TestLexer(t *testing.T) {
 				{lexer.RPAREN, ")"},
 			},
 		},
+		{
+			in: "select * from LogEvent.time_batch(10 sec) order by Level",
+			want: []Token{
+				{lexer.SELECT, "select"},
+				{lexer.ASTERISK, "*"},
+				{lexer.FROM, "from"},
+				{lexer.IDENT, "LogEvent"},
+				{lexer.DOT, "."},
+				{lexer.TIME_BATCH, "time_batch"},
+				{lexer.LPAREN, "("},
+				{lexer.INT, "10"},
+				{lexer.SEC, "sec"},
+				{lexer.RPAREN, ")"},
+				{lexer.ORDER_BY, "order by"},
+				{lexer.IDENT, "Level"},
+			},
+		},
 	}
 
 	for _, c := range cases {
