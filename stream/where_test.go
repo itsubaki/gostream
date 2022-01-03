@@ -18,7 +18,7 @@ func TestWhereString(t *testing.T) {
 		in   stream.Where
 		want string
 	}{
-		{stream.Accept{Type: LogEvent{}}, "LogEvent"},
+		{stream.From{Type: LogEvent{}}, "LogEvent"},
 		{stream.LargerThan{Name: "Level", Value: 2}, "Level > 2"},
 	}
 

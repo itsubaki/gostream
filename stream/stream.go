@@ -1,7 +1,9 @@
 package stream
 
 import (
+	"fmt"
 	"log"
+	"reflect"
 	"strings"
 	"sync"
 	"time"
@@ -18,6 +20,7 @@ type Stream struct {
 	where   []Where
 	orderby OrderByIF
 	limit   LimitIF
+	from    interface{}
 	closed  bool
 	mutex   sync.RWMutex
 }
@@ -111,23 +114,28 @@ func (s *Stream) Close() error {
 	return nil
 }
 
-func (s *Stream) Accept(t interface{}) {
-	s.where = append(s.where, Accept{Type: t})
+func (s *Stream) From(t interface{}) *Stream {
+	s.from = t
+	s.where = append(s.where, From{Type: t})
+	return s
 }
 
-func (s *Stream) Length(length int) {
+func (s *Stream) Length(length int) *Stream {
 	s.window = &Length{Length: length}
+	return s
 }
 
-func (s *Stream) LengthBatch(length int) {
+func (s *Stream) LengthBatch(length int) *Stream {
 	s.window = &LengthBatch{Length: length, Batch: make([]Event, 0)}
+	return s
 }
 
-func (s *Stream) Time(expire time.Duration, unit lexer.Token) {
+func (s *Stream) Time(expire time.Duration, unit lexer.Token) *Stream {
 	s.window = &Time{Expire: expire, Unit: unit}
+	return s
 }
 
-func (s *Stream) TimeBatch(expire time.Duration, unit lexer.Token) {
+func (s *Stream) TimeBatch(expire time.Duration, unit lexer.Token) *Stream {
 	start := time.Now()
 	end := start.Add(expire)
 	s.window = &TimeBatch{
@@ -136,33 +144,56 @@ func (s *Stream) TimeBatch(expire time.Duration, unit lexer.Token) {
 		Expire: expire,
 		Unit:   unit,
 	}
+
+	return s
 }
 
-func (s *Stream) SelectAll() {
+func (s *Stream) SelectAll() *Stream {
 	s.sel = append(s.sel, SelectAll{})
+	return s
 }
 
-func (s *Stream) Select(name string) {
+func (s *Stream) Select(name string) *Stream {
 	s.sel = append(s.sel, Select{Name: name})
+	return s
 }
 
-func (s *Stream) Distinct(name string) {
+func (s *Stream) Distinct(name string) *Stream {
 	s.sel = append(s.sel, Distinct{Name: name})
+	return s
 }
 
-func (s *Stream) OrderBy(name string, index int, desc bool) {
+func (s *Stream) OrderBy(name string, desc bool) *Stream {
+	if s.from == nil {
+		panic(fmt.Errorf("from is nil"))
+	}
+
+	var index int
+	v := reflect.ValueOf(s.from)
+	t := v.Type()
+	for i := 0; i < t.NumField(); i++ {
+		if t.Field(i).Name == name {
+			index = i
+			break
+		}
+	}
+
 	s.orderby = &OrderBy{
 		Name:  name,
 		Index: index,
 		Desc:  desc,
 	}
+
+	return s
 }
 
-func (s *Stream) Limit(limit, offset int) {
+func (s *Stream) Limit(limit, offset int) *Stream {
 	s.limit = &Limit{
 		Limit:  limit,
 		Offset: offset,
 	}
+
+	return s
 }
 
 func (s *Stream) String() string {

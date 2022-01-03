@@ -23,7 +23,6 @@ type Parser struct {
 	cursor *Cursor
 	peek   *Cursor
 	errors []error
-	atype  interface{}
 }
 
 type Option struct {
@@ -160,23 +159,6 @@ func (p *Parser) limit() (int, int) {
 	return l, 0
 }
 
-func (p *Parser) index(name string) int {
-	if p.atype == nil {
-		p.errors = append(p.errors, fmt.Errorf("accept type is nil"))
-		return -1
-	}
-
-	v := reflect.ValueOf(p.atype)
-	t := v.Type()
-	for i := 0; i < t.NumField(); i++ {
-		if t.Field(i).Name == name {
-			return i
-		}
-	}
-
-	return -1
-}
-
 func (p *Parser) Query(q string) *Parser {
 	p.l = lexer.New(strings.NewReader(q))
 	return p
@@ -204,8 +186,7 @@ func (p *Parser) Parse() *stream.Stream {
 			p.next()
 			p.expect(lexer.IDENT)
 
-			p.atype = p.r[p.cursor.Literal]
-			s.Accept(p.atype)
+			s.From(p.r[p.cursor.Literal])
 		case lexer.LENGTH:
 			s.Length(int(p.length()))
 		case lexer.LENGTH_BATCH:
@@ -217,12 +198,10 @@ func (p *Parser) Parse() *stream.Stream {
 		case lexer.ORDER_BY:
 			p.next()
 			p.expect(lexer.IDENT)
-
 			v := p.cursor.Literal
-			i := p.index(v)
 
 			p.next()
-			s.OrderBy(v, i, p.cursor.Token == lexer.DESC)
+			s.OrderBy(v, p.cursor.Token == lexer.DESC)
 
 			// limit
 			if p.cursor.Token == lexer.DESC {

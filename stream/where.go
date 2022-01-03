@@ -10,15 +10,15 @@ type Where interface {
 	String() string
 }
 
-type Accept struct {
+type From struct {
 	Type interface{}
 }
 
-func (w Accept) Apply(input interface{}) bool {
+func (w From) Apply(input interface{}) bool {
 	return reflect.TypeOf(input) == reflect.TypeOf(w.Type)
 }
 
-func (w Accept) String() string {
+func (w From) String() string {
 	return reflect.TypeOf(w.Type).Name()
 }
 
