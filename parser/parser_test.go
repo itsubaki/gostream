@@ -37,7 +37,7 @@ func ExampleParse_time() {
 		Message string
 	}
 
-	q := "SELECT * FROM LogEvent.TIME(10 MIN) ORDER BY Level DESC LIMIT 1 OFFSET 1"
+	q := "SELECT * FROM LogEvent.TIME(10 MIN)"
 	p := parser.New().Query(q).Add(LogEvent{})
 
 	s := p.Parse()
@@ -49,7 +49,7 @@ func ExampleParse_time() {
 	fmt.Println(s)
 
 	// Output:
-	// SELECT * FROM LogEvent.TIME(10 MIN) ORDER BY Level DESC LIMIT 1 OFFSET 1
+	// SELECT * FROM LogEvent.TIME(10 MIN)
 }
 
 func TestParse(t *testing.T) {
@@ -62,8 +62,14 @@ func TestParse(t *testing.T) {
 	var cases = []struct {
 		in string
 	}{
-		{"SELECT * FROM LogEvent.LENGTH(10)"},
 		{"SELECT `Time`, Level, Message FROM LogEvent.LENGTH(10)"},
+		{"SELECT * FROM LogEvent.LENGTH(10)"},
+		{"SELECT * FROM LogEvent.LENGTH(10) LIMIT 1"},
+		{"SELECT * FROM LogEvent.LENGTH(10) LIMIT 1 OFFSET 1"},
+		{"SELECT * FROM LogEvent.LENGTH(10) ORDER BY Level"},
+		{"SELECT * FROM LogEvent.LENGTH(10) ORDER BY Level DESC"},
+		{"SELECT * FROM LogEvent.LENGTH(10) ORDER BY Level DESC LIMIT 1 OFFSET 1"},
+		{"SELECT * FROM LogEvent.LENGTH(10) ORDER BY Level LIMIT 1 OFFSET 1"},
 	}
 
 	p := parser.New().Add(LogEvent{})

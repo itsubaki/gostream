@@ -134,6 +134,31 @@ func (p *Parser) time() (time.Duration, lexer.Token) {
 	return -1, lexer.EOF
 }
 
+func (p *Parser) limit() (int, int) {
+	p.next()
+	p.expect(lexer.INT)
+
+	l, err := strconv.Atoi(p.cursor.Literal)
+	if err != nil {
+		p.errors = append(p.errors, err)
+	}
+
+	p.next()
+	if p.cursor.Token == lexer.OFFSET {
+		p.next()
+		p.expect(lexer.INT)
+
+		o, err := strconv.Atoi(p.cursor.Literal)
+		if err != nil {
+			p.errors = append(p.errors, err)
+		}
+
+		return l, o
+	}
+
+	return l, 0
+}
+
 func (p *Parser) Query(q string) *Parser {
 	p.l = lexer.New(strings.NewReader(q))
 	return p
@@ -176,29 +201,18 @@ func (p *Parser) Parse() *stream.Stream {
 
 			p.next()
 			s.OrderBy(v, p.cursor.Token == lexer.DESC)
-		case lexer.LIMIT:
-			p.next()
-			p.expect(lexer.INT)
-			l, err := strconv.Atoi(p.cursor.Literal)
-			if err != nil {
-				p.errors = append(p.errors, err)
-			}
 
-			p.next()
-			if p.cursor.Token == lexer.OFFSET {
+			// limit
+			if p.cursor.Token == lexer.DESC {
 				p.next()
-				p.expect(lexer.INT)
-
-				o, err := strconv.Atoi(p.cursor.Literal)
-				if err != nil {
-					p.errors = append(p.errors, err)
-				}
-
-				s.Limit(l, o)
+			}
+			if p.cursor.Token != lexer.LIMIT {
 				continue
 			}
 
-			s.Limit(l, 0)
+			s.Limit(p.limit())
+		case lexer.LIMIT:
+			s.Limit(p.limit())
 		}
 	}
 
