@@ -184,5 +184,5 @@ func (s *Stream) String() string {
 	buf.WriteString(" ")
 	buf.WriteString(s.limit.String())
 
-	return buf.String()
+	return strings.TrimRight(buf.String(), " ")
 }
