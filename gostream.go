@@ -39,6 +39,10 @@ func (s *GoStream) Add(t interface{}) *GoStream {
 }
 
 func (s *GoStream) Query(q string) (*stream.Stream, error) {
+	if len(s.r) == 0 {
+		return nil, fmt.Errorf("Type Registry is empty")
+	}
+
 	if s.opt.Verbose {
 		var buf strings.Builder
 		l := lexer.New(strings.NewReader(q))
