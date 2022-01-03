@@ -72,6 +72,15 @@ func (l *Lexer) Scan() (Token, string) {
 		return l.whitespace()
 	}
 
+	if ch == '`' {
+		str := l.scan()
+		if l.read() != '`' {
+			panic(fmt.Sprintf("invalid escape"))
+		}
+
+		return IDENT, fmt.Sprintf("`%v`", str)
+	}
+
 	if isLetter(ch) {
 		l.unread()
 		str := l.scan()

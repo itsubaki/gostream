@@ -63,7 +63,7 @@ func TestParse(t *testing.T) {
 		in string
 	}{
 		{"SELECT * FROM LogEvent.LENGTH(10)"},
-		{"SELECT Level, Message FROM LogEvent.LENGTH(10)"},
+		{"SELECT `Time`, Level, Message FROM LogEvent.LENGTH(10)"},
 	}
 
 	p := parser.New().Add(LogEvent{})

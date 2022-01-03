@@ -6,6 +6,7 @@ const (
 	ILLEGAL Token = iota
 	EOF
 	WHITESPACE
+	ESCAPE
 
 	literal_begin
 	IDENT
@@ -51,6 +52,7 @@ var Tokens = [...]string{
 	ILLEGAL:    "ILLEGAL",
 	EOF:        "EOF",
 	WHITESPACE: "WHITESPACE",
+	ESCAPE:     "`",
 
 	// Literals
 	IDENT:  "IDENT",

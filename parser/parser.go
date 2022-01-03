@@ -151,6 +151,7 @@ func (p *Parser) Parse() *stream.Stream {
 					s.SelectAll()
 					continue
 				}
+
 				if p.cursor.Token == lexer.IDENT {
 					s.Select(p.cursor.Literal)
 					continue

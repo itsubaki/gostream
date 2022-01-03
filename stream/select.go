@@ -3,6 +3,7 @@ package stream
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 type SelectIF interface {
@@ -38,7 +39,8 @@ func (s Select) Apply(e []Event) []Event {
 	v := reflect.ValueOf(newest.Underlying)
 	t := v.Type()
 	for i := 0; i < t.NumField(); i++ {
-		if t.Field(i).Name == s.Name {
+
+		if t.Field(i).Name == strings.Trim(s.Name, "`") {
 			newest.ResultSet = append(newest.ResultSet, v.Field(i).Interface())
 		}
 	}
