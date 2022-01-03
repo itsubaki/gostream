@@ -18,7 +18,7 @@ Stream Processing Library for Go
 - [x] Where
   - [x] Equals, NotEquals
   - [x] Larger, Less
-- [ ] OrderBy
+- [x] OrderBy
 - [x] Limit, Offset
 - [ ] Aggregate Function
   - [ ] Max, Min, Median

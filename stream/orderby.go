@@ -2,6 +2,8 @@ package stream
 
 import (
 	"fmt"
+	"reflect"
+	"sort"
 	"strings"
 )
 
@@ -27,7 +29,37 @@ type OrderBy struct {
 }
 
 func (o *OrderBy) Apply(e []Event) []Event {
-	return nil
+	out := append(make([]Event, 0), e...)
+
+	sort.Slice(out, func(i, j int) bool {
+		vi := reflect.ValueOf(out[i].Underlying).Field(o.Index).Interface()
+		vj := reflect.ValueOf(out[j].Underlying).Field(o.Index).Interface()
+
+		switch v := vi.(type) {
+		case int:
+			return v < vj.(int)
+		case int32:
+			return v < vj.(int32)
+		case int64:
+			return v < vj.(int64)
+		case float32:
+			return v < vj.(float32)
+		case float64:
+			return v < vj.(float64)
+		case string:
+			return v < vj.(string)
+		}
+
+		return false
+	})
+
+	if o.Desc {
+		for i := 0; i < len(out)/2; i++ {
+			out[i], out[len(out)-1-i] = out[len(out)-1-i], out[i]
+		}
+	}
+
+	return out
 }
 
 func (o *OrderBy) String() string {
