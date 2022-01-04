@@ -27,6 +27,7 @@ const (
 	RBRACE    // }
 	LARGER    // >
 	LESS      // <
+	EQUALS    // =
 	operator_end
 
 	keyword_begin
@@ -72,6 +73,7 @@ var Tokens = [...]string{
 	RBRACE:    "}",
 	LARGER:    ">",
 	LESS:      "<",
+	EQUALS:    "=",
 
 	// Keywords
 	SELECT:       "SELECT",

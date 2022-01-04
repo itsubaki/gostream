@@ -38,7 +38,7 @@ func ExampleParse_time() {
 	}
 
 	q := "SELECT * FROM LogEvent.TIME(10 MIN)"
-	p := parser.New().Query(q).Add(LogEvent{})
+	p := parser.New().Add(LogEvent{}).Query(q)
 
 	s := p.Parse()
 	if len(p.Errors()) > 0 {
@@ -64,6 +64,8 @@ func TestParse(t *testing.T) {
 	}{
 		{"SELECT `Time`, Level, Message FROM LogEvent.LENGTH(10)"},
 		{"SELECT * FROM LogEvent.LENGTH(10)"},
+		{"SELECT * FROM LogEvent.LENGTH(10) WHERE Level > 1"},
+		{"SELECT * FROM LogEvent.LENGTH(10) WHERE Level < 1"},
 		{"SELECT * FROM LogEvent.LENGTH(10) LIMIT 1"},
 		{"SELECT * FROM LogEvent.LENGTH(10) LIMIT 1 OFFSET 1"},
 		{"SELECT * FROM LogEvent.LENGTH(10) ORDER BY Level"},

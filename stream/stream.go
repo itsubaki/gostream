@@ -163,6 +163,33 @@ func (s *Stream) Distinct(name string) *Stream {
 	return s
 }
 
+func (s *Stream) LargerThan(name string, value interface{}) *Stream {
+	s.where = append(s.where, &LargerThan{
+		Name:  name,
+		Value: value,
+	})
+
+	return s
+}
+
+func (s *Stream) LessThan(name string, value interface{}) *Stream {
+	s.where = append(s.where, &LessThan{
+		Name:  name,
+		Value: value,
+	})
+
+	return s
+}
+
+func (s *Stream) Equals(name string, value interface{}) *Stream {
+	s.where = append(s.where, &Equals{
+		Name:  name,
+		Value: value,
+	})
+
+	return s
+}
+
 func (s *Stream) OrderBy(name string, desc bool) *Stream {
 	if s.from == nil {
 		panic(fmt.Errorf("from is nil"))
@@ -211,6 +238,13 @@ func (s *Stream) String() string {
 	buf.WriteString(s.where[0].String())
 	buf.WriteString(".")
 	buf.WriteString(s.window.String())
+	if len(s.where) > 1 {
+		buf.WriteString(" ")
+		buf.WriteString("WHERE ")
+	}
+	for i := 1; i < len(s.where); i++ {
+		buf.WriteString(s.where[i].String())
+	}
 	buf.WriteString(" ")
 	buf.WriteString(s.orderby.String())
 	buf.WriteString(" ")

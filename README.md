@@ -14,12 +14,13 @@ Stream Processing Library for Go
   - [x] TimeWindow
   - [x] TimeBatchWindow
 - [x] Select
-- [ ] Distinct
 - [x] Where
   - [x] Equals, NotEquals
   - [x] Larger, Less
+  - [ ] AND, OR
 - [x] OrderBy
 - [x] Limit, Offset
+- [ ] Distinct
 - [ ] Aggregate Function
   - [ ] Max, Min, Median
   - [ ] Count, Sum, Average
@@ -35,7 +36,9 @@ type LogEvent struct {
 }
 
 q := "select * from LogEvent.length(10)"
-s, err := gostream.New().Add(LogEvent{}).Query(q)
+s, err := gostream.New().
+    Add(LogEvent{}).
+    Query(q)
 if err != nil {
   fmt.Printf("new gostream: %v", err)
   return

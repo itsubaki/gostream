@@ -214,6 +214,44 @@ func (p *Parser) Parse() *stream.Stream {
 			s.Limit(p.limit())
 		case lexer.LIMIT:
 			s.Limit(p.limit())
+		case lexer.WHERE:
+			p.next()
+			p.expect(lexer.IDENT)
+			name := p.cursor.Literal
+
+			// >, <, =
+			op := p.next()
+
+			p.next()
+			var value interface{}
+			value = p.cursor.Literal // string
+			if p.cursor.Token == lexer.INT {
+				v, err := strconv.Atoi(p.cursor.Literal)
+				if err != nil {
+					p.errors = append(p.errors, err)
+				}
+				value = v
+			}
+
+			if p.cursor.Token == lexer.FLOAT {
+				v, err := strconv.ParseFloat(p.cursor.Literal, 64)
+				if err != nil {
+					p.errors = append(p.errors, err)
+				}
+				value = v
+			}
+
+			if op.Token == lexer.LARGER {
+				s.LargerThan(name, value)
+			}
+
+			if op.Token == lexer.LESS {
+				s.LessThan(name, value)
+			}
+
+			if op.Token == lexer.EQUALS {
+				s.Equals(name, value)
+			}
 		}
 	}
 
