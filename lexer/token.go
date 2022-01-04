@@ -46,6 +46,9 @@ const (
 	LIMIT        // LIMIT
 	OFFSET       // OFFSET
 	AVG          // AVG
+	SUM          // SUM
+	COUNT        // COUNT
+	MAX          // MAX
 	keyword_end
 )
 
@@ -92,6 +95,9 @@ var Tokens = [...]string{
 	LIMIT:        "LIMIT",
 	OFFSET:       "OFFSET",
 	AVG:          "AVG",
+	SUM:          "SUM",
+	COUNT:        "COUNT",
+	MAX:          "MAX",
 }
 
 func IsBasicLit(token Token) bool {

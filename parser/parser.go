@@ -188,6 +188,43 @@ func (p *Parser) Parse() *stream.Stream {
 					s.Average(p.next().Literal)
 					p.next()
 					p.expect(lexer.RPAREN)
+					continue
+				}
+
+				if p.cursor.Token == lexer.SUM {
+					p.next()
+					p.expect(lexer.LPAREN)
+					s.Sum(p.next().Literal)
+					p.next()
+					p.expect(lexer.RPAREN)
+					continue
+				}
+
+				if p.cursor.Token == lexer.COUNT {
+					p.next()
+					p.expect(lexer.LPAREN)
+					s.Count(p.next().Literal)
+					p.next()
+					p.expect(lexer.RPAREN)
+					continue
+				}
+
+				if p.cursor.Token == lexer.MAX {
+					p.next()
+					p.expect(lexer.LPAREN)
+					s.Max(p.next().Literal)
+					p.next()
+					p.expect(lexer.RPAREN)
+					continue
+				}
+
+				if p.cursor.Token == lexer.MIN {
+					p.next()
+					p.expect(lexer.LPAREN)
+					s.Min(p.next().Literal)
+					p.next()
+					p.expect(lexer.RPAREN)
+					continue
 				}
 			}
 

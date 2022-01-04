@@ -20,11 +20,9 @@ Stream Processing Library for Go
   - [ ] AND, OR
 - [x] OrderBy
 - [x] Limit, Offset
-- [ ] Distinct
-- [ ] Aggregate Function
-  - [ ] Avg, Sum, Count
-  - [ ] Max, Min
-  - [ ] GroupBy
+- [x] Aggregate Function
+  - [x] Avg, Sum, Count
+  - [x] Max, Min
 
 ## Example
 

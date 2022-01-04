@@ -14,12 +14,11 @@ type SelectIF interface {
 type SelectAll struct{}
 
 func (s SelectAll) Apply(e []Event) []Event {
-	newest := Newest(e)
-
-	v := reflect.ValueOf(newest.Underlying)
+	v := reflect.ValueOf(e[len(e)-1].Underlying)
 	t := v.Type()
+
 	for i := 0; i < t.NumField(); i++ {
-		newest.ResultSet = append(newest.ResultSet, v.Field(i).Interface())
+		e[len(e)-1].ResultSet = append(e[len(e)-1].ResultSet, v.Field(i).Interface())
 	}
 
 	return e
@@ -34,13 +33,12 @@ type Select struct {
 }
 
 func (s Select) Apply(e []Event) []Event {
-	newest := Newest(e)
-
-	v := reflect.ValueOf(newest.Underlying)
+	v := reflect.ValueOf(e[len(e)-1].Underlying)
 	t := v.Type()
+
 	for i := 0; i < t.NumField(); i++ {
 		if t.Field(i).Name == strings.Trim(s.Name, "`") {
-			newest.ResultSet = append(newest.ResultSet, v.Field(i).Interface())
+			e[len(e)-1].ResultSet = append(e[len(e)-1].ResultSet, v.Field(i).Interface())
 		}
 	}
 
@@ -61,39 +59,4 @@ func (s Distinct) Apply(e []Event) []Event {
 
 func (s Distinct) String() string {
 	return fmt.Sprintf("DISTINCT(%v)", s.Name)
-}
-
-type Average struct {
-	Name string
-}
-
-func (s Average) Apply(e []Event) []Event {
-	var sum float64
-	for _, ev := range e {
-		v := reflect.ValueOf(ev.Underlying)
-		t := v.Type()
-		for i := 0; i < t.NumField(); i++ {
-			val := v.Field(i).Interface()
-			switch val := val.(type) {
-			case int:
-				sum += float64(val)
-			case int32:
-				sum += float64(val)
-			case int64:
-				sum += float64(val)
-			case float32:
-				sum += float64(val)
-			case float64:
-				sum += val
-			}
-		}
-	}
-
-	newest := Newest(e)
-	newest.ResultSet = append(newest.ResultSet, sum/float64(len(e)))
-	return e
-}
-
-func (s Average) String() string {
-	return fmt.Sprintf("AVG(%v)", s.Name)
 }

@@ -16,6 +16,7 @@ type Stream struct {
 	out     chan []Event
 	events  []Event
 	sel     []SelectIF
+	agr     []Aggeregate
 	window  Window
 	where   []Where
 	orderby OrderByIF
@@ -53,10 +54,14 @@ func (s *Stream) Listen(input interface{}) {
 
 	s.Update(input)
 
-	// order by limit offset
-	// no effect to s.events
-	out := s.limit.Apply(s.orderby.Apply(s.events))
+	// aggregate function
+	out := append(make([]Event, 0), s.events...)
+	for _, a := range s.agr {
+		out = a.Apply(out)
+	}
 
+	// order by limit offset
+	out = s.limit.Apply(s.orderby.Apply(out))
 	if len(out) == 0 {
 		return
 	}
@@ -159,12 +164,32 @@ func (s *Stream) Select(name string) *Stream {
 }
 
 func (s *Stream) Average(name string) *Stream {
-	s.sel = append(s.sel, Average{Name: name})
+	s.agr = append(s.agr, Average{Name: name})
+	return s
+}
+
+func (s *Stream) Sum(name string) *Stream {
+	s.agr = append(s.agr, Sum{Name: name})
+	return s
+}
+
+func (s *Stream) Count(name string) *Stream {
+	s.agr = append(s.agr, Count{Name: name})
+	return s
+}
+
+func (s *Stream) Max(name string) *Stream {
+	s.agr = append(s.agr, Max{Name: name})
+	return s
+}
+
+func (s *Stream) Min(name string) *Stream {
+	s.agr = append(s.agr, Min{Name: name})
 	return s
 }
 
 func (s *Stream) Distinct(name string) *Stream {
-	s.sel = append(s.sel, Distinct{Name: name})
+	s.agr = append(s.agr, Distinct{Name: name})
 	return s
 }
 
@@ -234,6 +259,10 @@ func (s *Stream) String() string {
 	buf.WriteString("SELECT ")
 	var sel strings.Builder
 	for _, e := range s.sel {
+		sel.WriteString(e.String())
+		sel.WriteString(", ")
+	}
+	for _, e := range s.agr {
 		sel.WriteString(e.String())
 		sel.WriteString(", ")
 	}
