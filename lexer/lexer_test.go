@@ -127,6 +127,23 @@ func TestLexer(t *testing.T) {
 				{lexer.RPAREN, ")"},
 			},
 		},
+		{
+			in: "select COUNT(*) from LogEvent.length(10)",
+			want: []Token{
+				{lexer.SELECT, "select"},
+				{lexer.COUNT, "COUNT"},
+				{lexer.LPAREN, "("},
+				{lexer.ASTERISK, "*"},
+				{lexer.RPAREN, ")"},
+				{lexer.FROM, "from"},
+				{lexer.IDENT, "LogEvent"},
+				{lexer.DOT, "."},
+				{lexer.LENGTH, "length"},
+				{lexer.LPAREN, "("},
+				{lexer.INT, "10"},
+				{lexer.RPAREN, ")"},
+			},
+		},
 	}
 
 	for _, c := range cases {

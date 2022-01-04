@@ -62,6 +62,7 @@ func TestParse(t *testing.T) {
 	var cases = []struct {
 		in string
 	}{
+		{"SELECT COUNT(*) FROM LogEvent.LENGTH(10)"},
 		{"SELECT `Time`, Level, Message FROM LogEvent.LENGTH(10)"},
 		{"SELECT AVG(Level), SUM(Level), COUNT(Level), MAX(Level), MIN(Level) FROM LogEvent.LENGTH(10)"},
 		{"SELECT * FROM LogEvent.LENGTH(10)"},
