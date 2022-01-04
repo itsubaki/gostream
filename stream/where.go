@@ -137,3 +137,16 @@ func (w NotEquals) Apply(input interface{}) bool {
 func (w NotEquals) String() string {
 	return fmt.Sprintf("%v != %v", w.Name, w.Value)
 }
+
+type AND struct {
+	Lhs Where
+	Rhs Where
+}
+
+func (w AND) Apply(input interface{}) bool {
+	return w.Lhs.Apply(input) && w.Rhs.Apply(input)
+}
+
+func (w AND) String() string {
+	return fmt.Sprintf("%v AND %v", w.Lhs, w.Rhs)
+}

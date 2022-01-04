@@ -158,6 +158,11 @@ func (s *Stream) Select(name string) *Stream {
 	return s
 }
 
+func (s *Stream) Average(name string) *Stream {
+	s.sel = append(s.sel, Average{Name: name})
+	return s
+}
+
 func (s *Stream) Distinct(name string) *Stream {
 	s.sel = append(s.sel, Distinct{Name: name})
 	return s

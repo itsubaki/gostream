@@ -45,6 +45,7 @@ const (
 	DESC         // DESC
 	LIMIT        // LIMIT
 	OFFSET       // OFFSET
+	AVG          // AVG
 	keyword_end
 )
 
@@ -90,6 +91,7 @@ var Tokens = [...]string{
 	DESC:         "DESC",
 	LIMIT:        "LIMIT",
 	OFFSET:       "OFFSET",
+	AVG:          "AVG",
 }
 
 func IsBasicLit(token Token) bool {

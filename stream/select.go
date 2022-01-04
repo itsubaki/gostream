@@ -63,14 +63,37 @@ func (s Distinct) String() string {
 	return fmt.Sprintf("DISTINCT(%v)", s.Name)
 }
 
-type AVG struct {
+type Average struct {
 	Name string
 }
 
-func (s AVG) Apply(e []Event) []Event {
+func (s Average) Apply(e []Event) []Event {
+	var sum float64
+	for _, ev := range e {
+		v := reflect.ValueOf(ev.Underlying)
+		t := v.Type()
+		for i := 0; i < t.NumField(); i++ {
+			val := v.Field(i).Interface()
+			switch val := val.(type) {
+			case int:
+				sum += float64(val)
+			case int32:
+				sum += float64(val)
+			case int64:
+				sum += float64(val)
+			case float32:
+				sum += float64(val)
+			case float64:
+				sum += val
+			}
+		}
+	}
+
+	newest := Newest(e)
+	newest.ResultSet = append(newest.ResultSet, sum/float64(len(e)))
 	return e
 }
 
-func (s AVG) String() string {
+func (s Average) String() string {
 	return fmt.Sprintf("AVG(%v)", s.Name)
 }

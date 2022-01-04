@@ -63,6 +63,7 @@ func TestParse(t *testing.T) {
 		in string
 	}{
 		{"SELECT `Time`, Level, Message FROM LogEvent.LENGTH(10)"},
+		{"SELECT AVG(Level) FROM LogEvent.LENGTH(10)"},
 		{"SELECT * FROM LogEvent.LENGTH(10)"},
 		{"SELECT * FROM LogEvent.LENGTH(10) WHERE Level > 1"},
 		{"SELECT * FROM LogEvent.LENGTH(10) WHERE Level < 1"},

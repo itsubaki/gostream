@@ -14,7 +14,7 @@ Stream Processing Library for Go
   - [x] TimeWindow
   - [x] TimeBatchWindow
 - [x] Select
-- [x] Where
+- [ ] Where
   - [x] Equals, NotEquals
   - [x] Larger, Less
   - [ ] AND, OR
@@ -22,8 +22,8 @@ Stream Processing Library for Go
 - [x] Limit, Offset
 - [ ] Distinct
 - [ ] Aggregate Function
-  - [ ] Max, Min, Median
-  - [ ] Count, Sum, Average
+  - [ ] Avg, Sum, Count
+  - [ ] Max, Min
   - [ ] GroupBy
 
 ## Example

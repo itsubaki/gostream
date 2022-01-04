@@ -181,6 +181,14 @@ func (p *Parser) Parse() *stream.Stream {
 					s.Select(p.cursor.Literal)
 					continue
 				}
+
+				if p.cursor.Token == lexer.AVG {
+					p.next()
+					p.expect(lexer.LPAREN)
+					s.Average(p.next().Literal)
+					p.next()
+					p.expect(lexer.RPAREN)
+				}
 			}
 
 			p.next()
