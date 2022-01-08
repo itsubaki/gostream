@@ -59,16 +59,16 @@ s.Input() <- LogEvent{
 ```go
 type LogEvent struct {
   Time    time.Time
-	Level   int
-	Message string
+  Level   int
+  Message string
 }
 
 s := stream.New().
-	SelectAll().
-	From(LogEvent{}).
-	Length(10).
-	OrderBy("Level", true).
-	Limit(10, 5)
+  SelectAll().
+  From(LogEvent{}).
+  Length(10).
+  OrderBy("Level", true).
+  Limit(10, 5)
 defer s.Close()
 go s.Run()
 
