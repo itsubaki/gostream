@@ -110,3 +110,26 @@ func ExampleMin() {
 	// Output:
 	// [0]
 }
+
+func ExampleDistinct() {
+	type LogEvent struct {
+		Level int
+	}
+
+	e := make([]stream.Event, 0)
+	e = append(e, stream.NewEvent(LogEvent{Level: 0}))
+	e = append(e, stream.NewEvent(LogEvent{Level: 0}))
+	e = append(e, stream.NewEvent(LogEvent{Level: 1}))
+	e = append(e, stream.NewEvent(LogEvent{Level: 1}))
+	e = append(e, stream.NewEvent(LogEvent{Level: 2}))
+	e = append(e, stream.NewEvent(LogEvent{Level: 2}))
+	e = append(e, stream.NewEvent(LogEvent{Level: 2}))
+	e = append(e, stream.NewEvent(LogEvent{Level: 2}))
+
+	d := &stream.Distinct{Name: "Level"}
+	out := d.Apply(e)
+
+	fmt.Println(len(out))
+	// Output:
+	// 3
+}

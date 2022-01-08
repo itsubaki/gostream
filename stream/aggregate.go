@@ -196,7 +196,24 @@ type Distinct struct {
 }
 
 func (s Distinct) Apply(e []Event) []Event {
-	return e
+	dist := make(map[interface{}]int)
+	for i, ev := range e {
+		v := reflect.ValueOf(ev.Underlying)
+		for j := 0; j < v.Type().NumField(); j++ {
+			if v.Type().Field(j).Name != s.Name {
+				continue
+			}
+
+			dist[v.Field(j).Interface()] = i
+		}
+	}
+
+	out := make([]Event, 0)
+	for _, v := range dist {
+		out = append(out, e[v])
+	}
+
+	return out
 }
 
 func (s Distinct) String() string {

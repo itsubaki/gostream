@@ -49,6 +49,7 @@ const (
 	SUM          // SUM
 	COUNT        // COUNT
 	MAX          // MAX
+	DISTINCT     // DISTINCT
 	keyword_end
 )
 
@@ -98,6 +99,7 @@ var Tokens = [...]string{
 	SUM:          "SUM",
 	COUNT:        "COUNT",
 	MAX:          "MAX",
+	DISTINCT:     "DISTINCT",
 }
 
 func IsBasicLit(token Token) bool {

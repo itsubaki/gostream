@@ -226,6 +226,15 @@ func (p *Parser) Parse() *stream.Stream {
 					p.expect(lexer.RPAREN)
 					continue
 				}
+
+				if p.cursor.Token == lexer.DISTINCT {
+					p.next()
+					p.expect(lexer.LPAREN)
+					s.Distinct(p.next().Literal)
+					p.next()
+					p.expect(lexer.RPAREN)
+					continue
+				}
 			}
 
 			p.next()
