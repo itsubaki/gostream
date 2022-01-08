@@ -1,7 +1,6 @@
 package stream
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 )
@@ -47,16 +46,4 @@ func (s Select) Apply(e []Event) []Event {
 
 func (s Select) String() string {
 	return s.Name
-}
-
-type Distinct struct {
-	Name string
-}
-
-func (s Distinct) Apply(e []Event) []Event {
-	return e
-}
-
-func (s Distinct) String() string {
-	return fmt.Sprintf("DISTINCT(%v)", s.Name)
 }

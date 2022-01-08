@@ -19,6 +19,10 @@ func (s Average) Apply(e []Event) []Event {
 	for _, ev := range e {
 		v := reflect.ValueOf(ev.Underlying)
 		for i := 0; i < v.Type().NumField(); i++ {
+			if v.Type().Field(i).Name != s.Name {
+				continue
+			}
+
 			val := v.Field(i).Interface()
 			switch val := val.(type) {
 			case int:
@@ -52,6 +56,10 @@ func (s Sum) Apply(e []Event) []Event {
 	for _, ev := range e {
 		v := reflect.ValueOf(ev.Underlying)
 		for i := 0; i < v.Type().NumField(); i++ {
+			if v.Type().Field(i).Name != s.Name {
+				continue
+			}
+
 			val := v.Field(i).Interface()
 			switch val := val.(type) {
 			case int:
@@ -98,6 +106,10 @@ func (s Max) Apply(e []Event) []Event {
 	for _, ev := range e {
 		v := reflect.ValueOf(ev.Underlying)
 		for i := 0; i < v.Type().NumField(); i++ {
+			if v.Type().Field(i).Name != s.Name {
+				continue
+			}
+
 			val := v.Field(i).Interface()
 			switch val := val.(type) {
 			case int:
@@ -141,6 +153,10 @@ func (s Min) Apply(e []Event) []Event {
 	for _, ev := range e {
 		v := reflect.ValueOf(ev.Underlying)
 		for i := 0; i < v.Type().NumField(); i++ {
+			if v.Type().Field(i).Name != s.Name {
+				continue
+			}
+
 			val := v.Field(i).Interface()
 			switch val := val.(type) {
 			case int:
@@ -173,4 +189,16 @@ func (s Min) Apply(e []Event) []Event {
 
 func (s Min) String() string {
 	return fmt.Sprintf("MIN(%v)", s.Name)
+}
+
+type Distinct struct {
+	Name string
+}
+
+func (s Distinct) Apply(e []Event) []Event {
+	return e
+}
+
+func (s Distinct) String() string {
+	return fmt.Sprintf("DISTINCT(%v)", s.Name)
 }
