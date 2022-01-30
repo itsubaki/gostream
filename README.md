@@ -67,7 +67,7 @@ s := stream.New().
   SelectAll().
   From(LogEvent{}).
   Length(10).
-  OrderBy("Level", true).
+  OrderBy("Level", stream.DESC).
   Limit(10, 5)
 defer s.Close()
 go s.Run()

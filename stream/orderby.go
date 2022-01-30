@@ -7,6 +7,9 @@ import (
 	"strings"
 )
 
+const DESC = true
+const ASC = false
+
 type OrderByIF interface {
 	Apply(e []Event) []Event
 	String() string
