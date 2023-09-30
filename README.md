@@ -2,7 +2,7 @@
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/itsubaki/gostream)](https://pkg.go.dev/github.com/itsubaki/gostream)
 [![Go Report Card](https://goreportcard.com/badge/github.com/itsubaki/gostream?style=flat-square)](https://goreportcard.com/report/github.com/itsubaki/gostream)
-[![tests](https://github.com/itsubaki/gostream/workflows/tests/badge.svg?branch=develop)](https://github.com/itsubaki/gostream/actions)
+[![tests](https://github.com/itsubaki/gostream/workflows/tests/badge.svg?branch=main)](https://github.com/itsubaki/gostream/actions)
 
 Stream Processing library for Go
 
