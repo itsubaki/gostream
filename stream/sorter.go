@@ -7,10 +7,17 @@ import (
 	"strings"
 )
 
-const DESC = true
-const ASC = false
+const (
+	DESC = true
+	ASC  = false
+)
 
-type OrderByIF interface {
+var (
+	_ Sorter = (*NoOrder)(nil)
+	_ Sorter = (*OrderBy)(nil)
+)
+
+type Sorter interface {
 	Apply(e []Event) []Event
 	String() string
 }
@@ -76,7 +83,12 @@ func (o *OrderBy) String() string {
 	return buf.String()
 }
 
-type LimitIF interface {
+var (
+	_ Limiter = (*NoLimit)(nil)
+	_ Limiter = (*Limit)(nil)
+)
+
+type Limiter interface {
 	Apply(e []Event) []Event
 	String() string
 }

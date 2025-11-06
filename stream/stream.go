@@ -12,34 +12,34 @@ import (
 )
 
 type Stream struct {
-	in      chan interface{}
-	out     chan []Event
-	events  []Event
-	sel     []SelectIF
-	agr     []Aggeregate
-	window  Window
-	where   []Where
-	orderby OrderByIF
-	limit   LimitIF
-	from    interface{}
-	closed  bool
-	mutex   sync.RWMutex
+	in         chan any
+	out        chan []Event
+	events     []Event
+	selector   []Selector
+	aggregator []Aggeregator
+	window     Window
+	where      []Where
+	orderby    Sorter
+	limit      Limiter
+	from       any
+	closed     bool
+	mutex      sync.RWMutex
 }
 
 func New() *Stream {
 	return &Stream{
-		in:      make(chan interface{}, 1024),
-		out:     make(chan []Event, 1024),
-		events:  make([]Event, 0),
-		sel:     make([]SelectIF, 0),
-		where:   make([]Where, 0),
-		orderby: &NoOrder{},
-		limit:   &NoLimit{},
-		mutex:   sync.RWMutex{},
+		in:       make(chan any, 1024),
+		out:      make(chan []Event, 1024),
+		events:   make([]Event, 0),
+		selector: make([]Selector, 0),
+		where:    make([]Where, 0),
+		orderby:  &NoOrder{},
+		limit:    &NoLimit{},
+		mutex:    sync.RWMutex{},
 	}
 }
 
-func (s *Stream) Input() chan interface{} {
+func (s *Stream) Input() chan any {
 	return s.in
 }
 
@@ -47,7 +47,7 @@ func (s *Stream) Output() chan []Event {
 	return s.out
 }
 
-func (s *Stream) Listen(input interface{}) {
+func (s *Stream) Listen(input any) {
 	if s.IsClosed() {
 		return
 	}
@@ -56,7 +56,7 @@ func (s *Stream) Listen(input interface{}) {
 
 	// aggregate function
 	out := append(make([]Event, 0), s.events...)
-	for _, a := range s.agr {
+	for _, a := range s.aggregator {
 		out = a.Apply(out)
 	}
 
@@ -69,7 +69,7 @@ func (s *Stream) Listen(input interface{}) {
 	s.Output() <- out
 }
 
-func (s *Stream) Update(input interface{}) {
+func (s *Stream) Update(input any) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Printf("[WARNING] recover() %v %v", err, input)
@@ -81,6 +81,7 @@ func (s *Stream) Update(input interface{}) {
 		if w.Apply(input) {
 			continue
 		}
+
 		return
 	}
 
@@ -89,7 +90,7 @@ func (s *Stream) Update(input interface{}) {
 	s.events = s.window.Apply(buf)
 
 	// select
-	for _, sl := range s.sel {
+	for _, sl := range s.selector {
 		s.events = sl.Apply(s.events)
 	}
 }
@@ -119,9 +120,9 @@ func (s *Stream) Close() error {
 	return nil
 }
 
-func (s *Stream) From(t interface{}) *Stream {
-	s.from = t
-	s.where = append(s.where, From{Type: t})
+func (s *Stream) From(typ any) *Stream {
+	s.from = typ
+	s.where = append(s.where, From{Type: typ})
 	return s
 }
 
@@ -154,46 +155,46 @@ func (s *Stream) TimeBatch(expire time.Duration, unit lexer.Token) *Stream {
 }
 
 func (s *Stream) SelectAll() *Stream {
-	s.sel = append(s.sel, SelectAll{})
+	s.selector = append(s.selector, SelectAll{})
 	return s
 }
 
 func (s *Stream) Select(name string) *Stream {
-	s.sel = append(s.sel, Select{Name: name})
+	s.selector = append(s.selector, Select{Name: name})
 	return s
 }
 
 func (s *Stream) Average(name string) *Stream {
-	s.agr = append(s.agr, Average{Name: name})
+	s.aggregator = append(s.aggregator, Average{Name: name})
 	return s
 }
 
 func (s *Stream) Sum(name string) *Stream {
-	s.agr = append(s.agr, Sum{Name: name})
+	s.aggregator = append(s.aggregator, Sum{Name: name})
 	return s
 }
 
 func (s *Stream) Count(name string) *Stream {
-	s.agr = append(s.agr, Count{Name: name})
+	s.aggregator = append(s.aggregator, Count{Name: name})
 	return s
 }
 
 func (s *Stream) Max(name string) *Stream {
-	s.agr = append(s.agr, Max{Name: name})
+	s.aggregator = append(s.aggregator, Max{Name: name})
 	return s
 }
 
 func (s *Stream) Min(name string) *Stream {
-	s.agr = append(s.agr, Min{Name: name})
+	s.aggregator = append(s.aggregator, Min{Name: name})
 	return s
 }
 
 func (s *Stream) Distinct(name string) *Stream {
-	s.agr = append(s.agr, Distinct{Name: name})
+	s.aggregator = append(s.aggregator, Distinct{Name: name})
 	return s
 }
 
-func (s *Stream) LargerThan(name string, value interface{}) *Stream {
+func (s *Stream) LargerThan(name string, value any) *Stream {
 	s.where = append(s.where, &LargerThan{
 		Name:  name,
 		Value: value,
@@ -202,7 +203,7 @@ func (s *Stream) LargerThan(name string, value interface{}) *Stream {
 	return s
 }
 
-func (s *Stream) LessThan(name string, value interface{}) *Stream {
+func (s *Stream) LessThan(name string, value any) *Stream {
 	s.where = append(s.where, &LessThan{
 		Name:  name,
 		Value: value,
@@ -211,8 +212,8 @@ func (s *Stream) LessThan(name string, value interface{}) *Stream {
 	return s
 }
 
-func (s *Stream) Equals(name string, value interface{}) *Stream {
-	s.where = append(s.where, &Equals{
+func (s *Stream) Equals(name string, value any) *Stream {
+	s.where = append(s.where, &Equal{
 		Name:  name,
 		Value: value,
 	})
@@ -258,11 +259,11 @@ func (s *Stream) String() string {
 
 	buf.WriteString("SELECT ")
 	var sel strings.Builder
-	for _, e := range s.sel {
+	for _, e := range s.selector {
 		sel.WriteString(e.String())
 		sel.WriteString(", ")
 	}
-	for _, e := range s.agr {
+	for _, e := range s.aggregator {
 		sel.WriteString(e.String())
 		sel.WriteString(", ")
 	}

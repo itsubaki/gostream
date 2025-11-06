@@ -1,6 +1,7 @@
 package gostream
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -9,9 +10,11 @@ import (
 	"github.com/itsubaki/gostream/stream"
 )
 
+var ErrEmptyRegistry = errors.New("type registry is empty")
+
 type GoStream struct {
-	opt *Option
-	r   parser.Registry
+	opt      *Option
+	registry parser.Registry
 }
 
 type Option struct {
@@ -23,7 +26,7 @@ func New(opt ...*Option) *GoStream {
 		opt: &Option{
 			Verbose: false,
 		},
-		r: make(parser.Registry),
+		registry: make(parser.Registry),
 	}
 
 	if len(opt) > 0 {
@@ -33,14 +36,14 @@ func New(opt ...*Option) *GoStream {
 	return s
 }
 
-func (s *GoStream) Add(t interface{}) *GoStream {
-	s.r.Add(t)
+func (s *GoStream) Add(typ any) *GoStream {
+	s.registry.Add(typ)
 	return s
 }
 
 func (s *GoStream) Query(q string) (*stream.Stream, error) {
-	if len(s.r) == 0 {
-		return nil, fmt.Errorf("Type Registry is empty")
+	if len(s.registry) == 0 {
+		return nil, ErrEmptyRegistry
 	}
 
 	if s.opt.Verbose {
@@ -63,15 +66,15 @@ func (s *GoStream) Query(q string) (*stream.Stream, error) {
 	}
 
 	p := parser.New().Query(q)
-	for k := range s.r {
-		p.Add(s.r[k])
+	for k := range s.registry {
+		p.Add(s.registry[k])
 	}
 
-	out := p.Parse()
+	stream := p.Parse()
 	if len(p.Errors()) > 0 {
 		return nil, fmt.Errorf("parse: %v", p.Errors())
 	}
-	go out.Run()
 
-	return out, nil
+	go stream.Run()
+	return stream, nil
 }

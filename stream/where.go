@@ -5,16 +5,25 @@ import (
 	"reflect"
 )
 
+var (
+	_ Where = (*From)(nil)
+	_ Where = (*LargerThan)(nil)
+	_ Where = (*LessThan)(nil)
+	_ Where = (*Equal)(nil)
+	_ Where = (*NotEqual)(nil)
+	_ Where = (*And)(nil)
+)
+
 type Where interface {
-	Apply(input interface{}) bool
+	Apply(input any) bool
 	String() string
 }
 
 type From struct {
-	Type interface{}
+	Type any
 }
 
-func (w From) Apply(input interface{}) bool {
+func (w From) Apply(input any) bool {
 	return reflect.TypeOf(input) == reflect.TypeOf(w.Type)
 }
 
@@ -24,10 +33,10 @@ func (w From) String() string {
 
 type LargerThan struct {
 	Name  string
-	Value interface{}
+	Value any
 }
 
-func (w LargerThan) Apply(input interface{}) bool {
+func (w LargerThan) Apply(input any) bool {
 	v := reflect.ValueOf(input).FieldByName(w.Name).Interface()
 
 	switch val := w.Value.(type) {
@@ -52,10 +61,10 @@ func (w LargerThan) String() string {
 
 type LessThan struct {
 	Name  string
-	Value interface{}
+	Value any
 }
 
-func (w LessThan) Apply(input interface{}) bool {
+func (w LessThan) Apply(input any) bool {
 	v := reflect.ValueOf(input).FieldByName(w.Name).Interface()
 
 	switch val := w.Value.(type) {
@@ -78,12 +87,12 @@ func (w LessThan) String() string {
 	return fmt.Sprintf("%v < %v", w.Name, w.Value)
 }
 
-type Equals struct {
+type Equal struct {
 	Name  string
-	Value interface{}
+	Value any
 }
 
-func (w Equals) Apply(input interface{}) bool {
+func (w Equal) Apply(input any) bool {
 	v := reflect.ValueOf(input).FieldByName(w.Name).Interface()
 
 	switch val := w.Value.(type) {
@@ -104,16 +113,16 @@ func (w Equals) Apply(input interface{}) bool {
 	return true
 }
 
-func (w Equals) String() string {
+func (w Equal) String() string {
 	return fmt.Sprintf("%v = %v", w.Name, w.Value)
 }
 
-type NotEquals struct {
+type NotEqual struct {
 	Name  string
-	Value interface{}
+	Value any
 }
 
-func (w NotEquals) Apply(input interface{}) bool {
+func (w NotEqual) Apply(input any) bool {
 	v := reflect.ValueOf(input).FieldByName(w.Name).Interface()
 
 	switch val := w.Value.(type) {
@@ -134,19 +143,19 @@ func (w NotEquals) Apply(input interface{}) bool {
 	return true
 }
 
-func (w NotEquals) String() string {
+func (w NotEqual) String() string {
 	return fmt.Sprintf("%v != %v", w.Name, w.Value)
 }
 
-type AND struct {
+type And struct {
 	Lhs Where
 	Rhs Where
 }
 
-func (w AND) Apply(input interface{}) bool {
+func (w And) Apply(input any) bool {
 	return w.Lhs.Apply(input) && w.Rhs.Apply(input)
 }
 
-func (w AND) String() string {
+func (w And) String() string {
 	return fmt.Sprintf("%v AND %v", w.Lhs, w.Rhs)
 }

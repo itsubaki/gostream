@@ -5,7 +5,12 @@ import (
 	"strings"
 )
 
-type SelectIF interface {
+var (
+	_ Selector = (*SelectAll)(nil)
+	_ Selector = (*Select)(nil)
+)
+
+type Selector interface {
 	Apply(e []Event) []Event
 	String() string
 }

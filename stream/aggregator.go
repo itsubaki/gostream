@@ -5,7 +5,16 @@ import (
 	"reflect"
 )
 
-type Aggeregate interface {
+var (
+	_ Aggeregator = (*Average)(nil)
+	_ Aggeregator = (*Sum)(nil)
+	_ Aggeregator = (*Count)(nil)
+	_ Aggeregator = (*Max)(nil)
+	_ Aggeregator = (*Min)(nil)
+	_ Aggeregator = (*Distinct)(nil)
+)
+
+type Aggeregator interface {
 	Apply(e []Event) []Event
 	String() string
 }

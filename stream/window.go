@@ -7,6 +7,13 @@ import (
 	"github.com/itsubaki/gostream/lexer"
 )
 
+var (
+	_ Window = (*Length)(nil)
+	_ Window = (*LengthBatch)(nil)
+	_ Window = (*Time)(nil)
+	_ Window = (*TimeBatch)(nil)
+)
+
 type Window interface {
 	Apply(e []Event) []Event
 	String() string

@@ -35,42 +35,12 @@ type LogEvent struct {
 
 q := "select * from LogEvent.length(10)"
 s, err := gostream.New().
-    Add(LogEvent{}).
-    Query(q)
+  Add(LogEvent{}).
+  Query(q)
 if err != nil {
-  fmt.Printf("new gostream: %v", err)
-  return
+  panic(err)
 }
 defer s.Close()
-
-go func() {
-  for {
-    fmt.Printf("%v\n", <-s.Output())
-  }
-}()
-
-s.Input() <- LogEvent{
-  Time: time.Now()
-  Level: 1
-  Message: "something happened"
-}
-```
-
-```go
-type LogEvent struct {
-  Time    time.Time
-  Level   int
-  Message string
-}
-
-s := stream.New().
-  SelectAll().
-  From(LogEvent{}).
-  Length(10).
-  OrderBy("Level", stream.DESC).
-  Limit(10, 5)
-defer s.Close()
-go s.Run()
 
 go func() {
   for {

@@ -17,12 +17,12 @@ type Cursor struct {
 }
 
 type Parser struct {
-	l      *lexer.Lexer
-	r      Registry
-	opt    *Option
-	cursor *Cursor
-	peek   *Cursor
-	errors []error
+	l        *lexer.Lexer
+	registry Registry
+	opt      *Option
+	cursor   *Cursor
+	peek     *Cursor
+	errors   []error
 }
 
 type Option struct {
@@ -37,8 +37,8 @@ func (r Registry) Add(t interface{}) {
 
 func New(opt ...*Option) *Parser {
 	p := &Parser{
-		r:      make(Registry),
-		errors: make([]error, 0),
+		registry: make(Registry),
+		errors:   make([]error, 0),
 	}
 
 	if len(opt) > 0 {
@@ -53,7 +53,7 @@ func (p *Parser) Errors() []error {
 }
 
 func (p *Parser) Add(t interface{}) *Parser {
-	p.r.Add(t)
+	p.registry.Add(t)
 	return p
 }
 
@@ -240,7 +240,7 @@ func (p *Parser) Parse() *stream.Stream {
 			p.next()
 			p.expect(lexer.IDENT)
 
-			s.From(p.r[p.cursor.Literal])
+			s.From(p.registry[p.cursor.Literal])
 		case lexer.LENGTH:
 			s.Length(int(p.length()))
 		case lexer.LENGTH_BATCH:
@@ -261,6 +261,7 @@ func (p *Parser) Parse() *stream.Stream {
 			if p.cursor.Token == lexer.DESC {
 				p.next()
 			}
+
 			if p.cursor.Token != lexer.LIMIT {
 				continue
 			}
@@ -314,7 +315,7 @@ func (p *Parser) Parse() *stream.Stream {
 
 func (p *Parser) String() string {
 	var buf strings.Builder
-	for k := range p.r {
+	for k := range p.registry {
 		buf.WriteString(k)
 	}
 
