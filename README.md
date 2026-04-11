@@ -28,29 +28,29 @@
 
 ```go
 type LogEvent struct {
-  Time    time.Time
-  Level   int
-  Message string
+	Time    time.Time
+	Level   int
+	Message string
 }
 
 q := "select * from LogEvent.length(10)"
 s, err := gostream.New().
-  Add(LogEvent{}).
-  Query(q)
+	Add(LogEvent{}).
+	Query(q)
 if err != nil {
-  panic(err)
+	panic(err)
 }
 defer s.Close()
 
 go func() {
-  for {
-    fmt.Printf("%v\n", <-s.Output())
-  }
+	for {
+		fmt.Printf("%v\n", <-s.Output())
+	}
 }()
 
 s.Input() <- LogEvent{
-  Time: time.Now()
-  Level: 1
-  Message: "something happened"
+	Time: time.Now()
+	Level: 1
+	Message: "something happened"
 }
 ```
