@@ -4,8 +4,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/itsubaki/gostream?style=flat-square)](https://goreportcard.com/report/github.com/itsubaki/gostream)
 [![tests](https://github.com/itsubaki/gostream/workflows/tests/badge.svg?branch=main)](https://github.com/itsubaki/gostream/actions)
 
-Stream processing library in Go.
-
 ## TODO
 
 - [x] Window
