@@ -4,24 +4,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/itsubaki/gostream?style=flat-square)](https://goreportcard.com/report/github.com/itsubaki/gostream)
 [![tests](https://github.com/itsubaki/gostream/workflows/tests/badge.svg)](https://github.com/itsubaki/gostream/actions)
 
-## TODO
-
-- [x] Window
-  - [x] LengthWindow
-  - [x] LengthBatchWindow
-  - [x] TimeWindow
-  - [x] TimeBatchWindow
-- [x] Select
-- [ ] Where
-  - [x] Equals, NotEquals
-  - [x] Larger, Less
-  - [ ] AND, OR
-- [x] OrderBy
-- [x] Limit, Offset
-- [x] Aggregate Function
-  - [x] Avg, Sum, Count
-  - [x] Max, Min
-
 ## Example
 
 ```go
